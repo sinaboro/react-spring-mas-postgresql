@@ -1,0 +1,31 @@
+# 부록 A. 오류 해결
+
+## A-1. DB
+
+| 증상 | 원인 | 해결 |
+|---|---|---|
+| 서비스 콘솔에 `database "userdb" does not exist` | 예전 볼륨이 남아 있어 `init.sql` 이 실행되지 않았다 | 저장소 폴더에서 `docker compose down -v` → `docker compose up -d` (데이터가 지워진다) |
+| `Connection to localhost:5435 refused` | DB 컨테이너가 꺼져 있다 | `docker compose up -d`, `docker compose ps` 로 healthy 확인 |
+| `port is already allocated` (5435) | 다른 프로그램이 5435 를 쓰고 있다 | `docker-compose.yml` 의 `"5435:5432"` 를 `"5436:5432"` 로 바꾸고, 두 서비스의 `DB_URL` 기본값 포트도 같이 바꾼다 |
+
+## A-2. 서비스 실행
+
+| 증상 | 원인 | 해결 |
+|---|---|---|
+| `Port 8080 was already in use` | 다른 서버(예: 심화 과정 게시판)가 8080 을 쓰고 있다 | 그 서버를 끄거나, IntelliJ Services 창에서 중복 실행된 것을 멈춘다 |
+| `Port 8081 (8082) was already in use` | 같은 서비스를 두 번 켰다 | Services 창(`Alt + 8`)에서 하나를 멈춘다 |
+| Gradle sync 가 실패한다 | JDK 21 이 아니다 / 인터넷 연결 | **File → Project Structure → SDK** 를 21 로, Gradle 창의 🔄 로 다시 sync |
+| 게이트웨이 콘솔에 `HV000271 ... deprecated` 경고 | 라이브러리 안쪽 경고 | 무시해도 된다. `Started GatewayApplication` 이 보이면 정상 |
+
+## A-3. 요청과 응답
+
+| 증상 | 원인 | 해결 |
+|---|---|---|
+| 로그인 뒤 글쓰기가 계속 `로그인이 만료되었습니다` (401) | 게이트웨이와 user-service 의 `jwt.secret` 이 다르다 | 두 `application.yml` 의 `jwt.secret` 을 같은 값으로 |
+| 로그인 · 회원가입이 `서비스에 연결할 수 없습니다` (503) | user-service 가 꺼져 있다 | `UserServiceApplication` ▶ |
+| 글 목록이 `서비스에 연결할 수 없습니다` (503) | post-service 가 꺼져 있다 | `PostServiceApplication` ▶ |
+| React 에서 `API 서버에 연결할 수 없습니다` | 게이트웨이(8080)가 꺼져 있다 | `GatewayApplication` ▶ |
+| 브라우저 콘솔에 CORS 오류 | React 가 8081 · 8082 로 직접 요청하고 있다 / 서비스에도 CORS 를 켰다 | `API_URL` 을 8080 으로. CORS 는 게이트웨이에서만 |
+| 서비스를 직접(8082) 불렀더니 `로그인이 필요합니다` (401) | `X-User-Id` 헤더가 없다 | 게이트웨이(8080)로 부르거나, `/docs` 에서 헤더 칸을 채운다 |
+| PowerShell 에서 한글이 `íì¤í¸` 처럼 깨진다 | 응답에 charset 이 없다 / 요청에 charset 이 없다 | 서비스 `application.yml` 에 `spring.servlet.encoding.force-response: true`, 요청은 `-ContentType "application/json; charset=utf-8"` |
+| 글쓴이 닉네임이 `%EB%AF%BC...` 로 저장됐다 | post-service 에서 URL 디코딩을 빠뜨렸다 | `PostController.create` 의 `URLDecoder.decode(...)` 확인 |

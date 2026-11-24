@@ -1,0 +1,50 @@
+# =====================================================================
+# MSA 게시판 데이터베이스 (PostgreSQL 18) - 컨테이너 1개, 데이터베이스 2개
+#
+#   시작        : docker compose up -d        (이 파일이 있는 폴더에서)
+#   상태 확인   : docker compose ps           (STATUS 가 healthy 이면 준비 완료)
+#   멈추기      : docker compose stop         (데이터는 남는다)
+#   완전히 지우기: docker compose down -v      (컨테이너 + 데이터 볼륨 삭제, 되돌릴 수 없음)
+#
+# 접속 정보
+#   호스트 localhost / 포트 5435 / 사용자 postgres / 비밀번호 postgres
+#   데이터베이스 2개
+#     userdb : user-service 만 쓴다 (users 테이블)
+#     postdb : post-service 만 쓴다 (posts 테이블)
+#
+# [MSA 개념] Database per Service - "서비스마다 자기 데이터베이스"
+#   PostgreSQL 서버(컨테이너)는 하나지만, 그 안의 데이터베이스는 서비스마다 따로다.
+#   서로 다른 데이터베이스의 테이블은 JOIN 할 수도, 외래 키(FK)를 걸 수도 없다.
+#   → 서비스끼리 데이터베이스로 엮이지 않으므로 한 서비스를 고쳐도 다른 서비스가 깨지지 않는다.
+#   실제 운영에서는 DB 서버(컨테이너)까지 나누기도 한다. 그래도 서비스 코드는 그대로이고
+#   application.yml 의 접속 주소만 바꾸면 된다.
+# =====================================================================
+
+# 프로젝트 이름. 다른 교안(react-spring-postgresql)의 컨테이너와 섞이지 않게 이름을 따로 붙인다.
+name: react-spring-mas-board
+
+services:
+  db:
+    image: postgres:18
+    container_name: mas-db
+    restart: unless-stopped
+    ports:
+      - "5435:5432"                   # 내 PC 5435 → 컨테이너 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres     # 실습용 비밀번호
+      TZ: Asia/Seoul
+    command: ["postgres", "-c", "timezone=Asia/Seoul"]
+    volumes:
+      - mas_data:/var/lib/postgresql
+      # 컨테이너가 "처음" 만들어질 때 이 폴더의 .sql 파일을 한 번 실행한다 → userdb, postdb 생성
+      # (이미 데이터가 있으면 다시 실행하지 않는다. 처음부터 다시 하려면 docker compose down -v)
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  mas_data:
