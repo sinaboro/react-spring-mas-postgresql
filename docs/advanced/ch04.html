@@ -310,9 +310,10 @@ public class UserEventListener {
 <p><strong>[PS]</strong> Kafka 가 기억하는 post-service 그룹의 읽은 위치</p>
 <pre><code class="language-powershell">docker exec mas-adv-kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group post-service
 </code></pre>
-<pre><code class="language-text">GROUP         TOPIC        PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG
+<pre><code class="language-text">GROUP         TOPIC        PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG  (오른쪽 CONSUMER-ID 등은 생략)
 post-service  user-events  0          1               1               0
 </code></pre>
+<p>숫자는 3장에서 닉네임을 몇 번 바꿨는지에 따라 다르다. 중요한 것은 <code>LAG</code> 이 0 인지다.</p>
 <div class="tbl"><table>
 <thead>
 <tr>

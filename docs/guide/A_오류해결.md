@@ -6,13 +6,13 @@
 |---|---|---|
 | 서비스 콘솔에 `database "userdb" does not exist` | 예전 볼륨이 남아 있어 `init.sql` 이 실행되지 않았다 | 저장소 폴더에서 `docker compose down -v` → `docker compose up -d` (데이터가 지워진다) |
 | `Connection to localhost:5435 refused` | DB 컨테이너가 꺼져 있다 | `docker compose up -d`, `docker compose ps` 로 healthy 확인 |
-| `port is already allocated` (5435) | 다른 프로그램이 5435 를 쓰고 있다 | `docker-compose.yml` 의 `"5435:5432"` 를 `"5436:5432"` 로 바꾸고, 두 서비스의 `DB_URL` 기본값 포트도 같이 바꾼다 |
+| `port is already allocated` (5435) | 다른 프로그램이 5435 를 쓰고 있다 | `docker-compose.yml` 의 `"5435:5432"` 를 `"5437:5432"` 처럼 비어 있는 포트로 바꾸고, 두 서비스의 `DB_URL` 기본값 포트도 같이 바꾼다 (5436 은 MSA 심화 과정 DB 가 쓰므로 피한다) |
 
 ## A-2. 서비스 실행
 
 | 증상 | 원인 | 해결 |
 |---|---|---|
-| `Port 8080 was already in use` | 다른 서버(예: 심화 과정 게시판)가 8080 을 쓰고 있다 | 그 서버를 끄거나, IntelliJ Services 창에서 중복 실행된 것을 멈춘다 |
+| `Port 8080 was already in use` | 다른 서버(예: React 심화 과정 게시판)가 8080 을 쓰고 있다 | 그 서버를 끄거나, IntelliJ Services 창에서 중복 실행된 것을 멈춘다 |
 | `Port 8081 (8082) was already in use` | 같은 서비스를 두 번 켰다 | Services 창(`Alt + 8`)에서 하나를 멈춘다 |
 | Gradle sync 가 실패한다 | JDK 21 이 아니다 / 인터넷 연결 | **File → Project Structure → SDK** 를 21 로, Gradle 창의 🔄 로 다시 sync |
 | 게이트웨이 콘솔에 `HV000271 ... deprecated` 경고 | 라이브러리 안쪽 경고 | 무시해도 된다. `Started GatewayApplication` 이 보이면 정상 |

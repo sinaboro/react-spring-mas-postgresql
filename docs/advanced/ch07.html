@@ -224,8 +224,11 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <li><strong>회원 탈퇴 이벤트</strong> - 7-3 의 표대로 <code>DELETE /api/auth/me</code> 와 <code>USER_DELETED</code> 소식을 만들어 보자. post-service 는 그 회원 글을 지운다. React 의 내 정보 화면에 "탈퇴" 단추도 더해 보자.</li>
 <li><strong>Outbox 맛보기</strong> - user-service 에 <code>outbox</code> 테이블(Entity)과 <code>@Scheduled</code> 일꾼을 만들어, 6장 실험 ④를 다시 해 보자. Kafka 를 다시 켜면 <code>카프카없음</code> 소식이 뒤늦게 도착하는지 확인한다. (힌트: 메인 클래스에 <code>@EnableScheduling</code>)</li>
 <li><strong>두 번째 듣는 쪽</strong> - 새 컨슈머 그룹(<code>group-id: audit</code>)으로 <code>user-events</code> 를 듣고 콘솔에 "닉네임 변경 기록" 만 찍는 작은 리스너를 post-service 에 하나 더 만들어 보자. 같은 소식을 두 그룹이 <strong>따로</strong> 읽는 것을 확인한다.</li>
-<li><strong>파티션 늘리기</strong> - <code>kafka-topics.sh --alter --partitions 3</code> 으로 파티션을 3개로 늘리고 여러 회원의 닉네임을 바꿔 보자. 같은 회원의 소식은 늘 같은 파티션에 들어가는지 <code>kafka-console-consumer.sh --formatter-property print.partition=true</code> 로 확인한다.</li>
+<li><strong>파티션 늘리기</strong> - 아래 명령으로 <code>user-events</code> 의 파티션을 3개로 늘리고, 여러 회원의 닉네임을 바꿔 보자. 같은 회원의 소식은 늘 같은 파티션에 들어가는지 두 번째 명령(맨 앞에 파티션 번호가 찍힌다)으로 확인한다. (파티션은 늘릴 수만 있고 줄일 수는 없다. 되돌리려면 <code>advanced</code> 폴더에서 <code>docker compose down -v</code> 로 Kafka 를 새로 만든다. 이때 심화 DB 의 데이터도 함께 지워진다)</li>
 </ol>
+<pre><code class="language-powershell">docker exec mas-adv-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --alter --topic user-events --partitions 3
+docker exec mas-adv-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic user-events --from-beginning --formatter-property print.partition=true --formatter-property print.key=true --timeout-ms 5000
+</code></pre>
 <h2 id="정리">정리</h2>
 <ul>
 <li>심화 과정은 <strong>이벤트로 복사본을 맞추는 방법</strong>과 그 장단점을 직접 겪어 보는 과정이었다.</li>

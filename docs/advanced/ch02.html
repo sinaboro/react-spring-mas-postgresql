@@ -182,7 +182,7 @@ mas-adv-kafka   apache/kafka:4.3.2   Up 6 seconds             0.0.0.0:9092-&gt;9
 <p><strong>[PS]</strong></p>
 <pre><code class="language-powershell">docker exec mas-adv-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 </code></pre>
-<p>처음에는 아무것도 나오지 않는다. <code>user-events</code> 토픽은 <strong>서비스가 처음 쓸 때 Kafka 가 자동으로 만든다</strong>(자동 생성이 기본으로 켜져 있다). 4장에서 post-service 를 켠 뒤 다시 보면 <code>user-events</code> 가 생겨 있다.</p>
+<p>처음에는 아무것도 나오지 않는다. <code>user-events</code> 토픽은 <strong>서비스가 처음 쓸 때 Kafka 가 자동으로 만든다</strong>(자동 생성이 기본으로 켜져 있다). 3장에서 user-service 가 소식을 처음 보내면(또는 post-service 가 처음 듣기 시작하면) 생긴다. 그 뒤에 이 명령을 다시 실행해 보자.</p>
 <h2 id="2-3-intellij-로-열기">2-3. IntelliJ 로 열기</h2>
 <p>기초 과정과 같다. 다만 <strong><code>advanced\backend</code></strong> 폴더를 연다.</p>
 <ol>

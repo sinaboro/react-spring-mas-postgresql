@@ -114,7 +114,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <tr>
 <td><code>port is already allocated</code> (5435)</td>
 <td>다른 프로그램이 5435 를 쓰고 있다</td>
-<td><code>docker-compose.yml</code> 의 <code>"5435:5432"</code> 를 <code>"5436:5432"</code> 로 바꾸고, 두 서비스의 <code>DB_URL</code> 기본값 포트도 같이 바꾼다</td>
+<td><code>docker-compose.yml</code> 의 <code>"5435:5432"</code> 를 <code>"5437:5432"</code> 처럼 비어 있는 포트로 바꾸고, 두 서비스의 <code>DB_URL</code> 기본값 포트도 같이 바꾼다 (5436 은 MSA 심화 과정 DB 가 쓰므로 피한다)</td>
 </tr>
 </tbody>
 </table></div>
@@ -130,7 +130,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <tbody>
 <tr>
 <td><code>Port 8080 was already in use</code></td>
-<td>다른 서버(예: 심화 과정 게시판)가 8080 을 쓰고 있다</td>
+<td>다른 서버(예: React 심화 과정 게시판)가 8080 을 쓰고 있다</td>
 <td>그 서버를 끄거나, IntelliJ Services 창에서 중복 실행된 것을 멈춘다</td>
 </tr>
 <tr>

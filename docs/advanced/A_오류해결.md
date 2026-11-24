@@ -8,7 +8,7 @@
 |---|---|---|
 | `docker compose up -d` 에서 `port is already allocated` (9092) | 다른 Kafka 가 9092 를 쓰고 있다 | 그 Kafka 를 끄거나, compose 의 `"9092:9092"` 와 두 서비스의 `KAFKA_SERVERS`(기본 `localhost:9092`)를 함께 바꾼다 |
 | `docker logs mas-adv-kafka` 에 `Kafka Server started` 가 안 보인다 | 아직 켜지는 중이거나 메모리가 부족하다 | 10~20초 기다린다. Docker Desktop 의 메모리 설정을 확인한다 |
-| post-service 콘솔에 `Connection to node ... could not be established` 가 계속 찍힌다 | Kafka 가 꺼져 있다 | `docker compose start kafka`. 켜지면 저절로 다시 붙는다 |
+| post-service 콘솔에 `Connection to node ... could not be established` 가 계속 찍힌다 | Kafka 가 꺼져 있다 | `docker start mas-adv-kafka`. 켜지면 저절로 다시 붙는다 |
 | 켜자마자 `NotCoordinatorException` INFO 줄 | Kafka 가 그룹 정보를 저장할 곳을 처음 만드는 중 | 무시해도 된다. `partitions assigned` 가 나오면 정상 |
 
 ## A-2. 이벤트가 오지 않는다

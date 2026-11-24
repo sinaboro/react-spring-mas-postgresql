@@ -147,7 +147,7 @@ npm install
 npm run dev
 </code></pre>
 <blockquote class="note">
-<p><strong>[MSA 개념] React 코드는 심화 과정과 같다.</strong> <code>frontend/src/api.js</code> 의 <code>API_URL</code> 은 여전히 <code>http://localhost:8080/api</code> 다. 그 뒤에 서버가 몇 개로 나뉘었는지 React 는 모른다. 바뀐 것은 주석 몇 줄뿐이다.</p>
+<p><strong>[MSA 개념] React 코드는 React 심화 과정과 같다.</strong> <code>frontend/src/api.js</code> 의 <code>API_URL</code> 은 여전히 <code>http://localhost:8080/api</code> 다. 그 뒤에 서버가 몇 개로 나뉘었는지 React 는 모른다. 바뀐 것은 주석 몇 줄뿐이다.</p>
 </blockquote>
 <h2 id="7-2-react-로-확인하기">7-2. React 로 확인하기</h2>
 <p>http://localhost:5173 을 연다. 처음에는 글이 없다. <strong>회원가입</strong>으로 <code>minsu</code>(민수)와 <code>jieun</code>(지은) 두 사람을 만들고(비밀번호는 둘 다 <code>password123</code>), 각자 로그인해서 글을 몇 개 써 보자. 4장에서 minsu 를 이미 만들었다면 jieun 만 가입하고, minsu 는 로그인만 한다. <strong>두 사람 모두 글을 하나 이상</strong> 써 두어야 7-3 의 "남의 글 삭제" 를 해 볼 수 있다.</p>
@@ -156,7 +156,7 @@ npm run dev
 <figure><a href="../images/s3_list_user.png" target="_blank"><img src="../images/s3_list_user.png" alt="민수로 로그인한 목록 - 작성자 닉네임은 postdb 의 writer 에서 온다" loading="lazy"></a><figcaption>민수로 로그인한 목록 - 작성자 닉네임은 postdb 의 writer 에서 온다</figcaption></figure>
 <figure><a href="../images/s4_detail_owner.png" target="_blank"><img src="../images/s4_detail_owner.png" alt="내 글 - 수정 · 삭제 단추가 보인다" loading="lazy"></a><figcaption>내 글 - 수정 · 삭제 단추가 보인다</figcaption></figure>
 <figure><a href="../images/s5_detail_other.png" target="_blank"><img src="../images/s5_detail_other.png" alt="남의 글 - 단추가 없다. 요청을 직접 보내도 post-service 가 403 으로 막는다" loading="lazy"></a><figcaption>남의 글 - 단추가 없다. 요청을 직접 보내도 post-service 가 403 으로 막는다</figcaption></figure>
-<p>화면은 심화 과정과 똑같다. 하지만 요청 하나하나가 이렇게 흘러간다.</p>
+<p>화면은 React 심화 과정과 똑같다. 하지만 요청 하나하나가 이렇게 흘러간다.</p>
 <div class="tbl"><table>
 <thead>
 <tr>

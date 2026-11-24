@@ -8,7 +8,7 @@
 
 ## 5-1. 모놀리식 판과 무엇이 다른가
 
-| | 모놀리식 (심화 과정) | post-service |
+| | 모놀리식 (React 심화 과정) | post-service |
 |---|---|---|
 | DB | `authboard` (users 와 같은 DB) | **`postdb`** (users 는 다른 DB) |
 | 작성자 | `@ManyToOne User author` (FK) | **`Long userId`** + **`String writer`** |
@@ -229,7 +229,7 @@ Indexes:
 > - 민수가 닉네임을 "민수킹" 으로 바꿔도, 예전 글의 `writer` 는 "민수" 로 남는다.
 > - 민수가 탈퇴해도, DB 가 민수의 글을 함께 지워 주지 않는다(`ON DELETE CASCADE` 를 쓸 수 없다).
 >
-> 실제 서비스에서는 user-service 가 "닉네임이 바뀌었어요", "회원이 탈퇴했어요" 같은 **소식(이벤트)** 을 보내고, post-service 가 그 소식을 받아 자기 데이터를 고친다. 이 교안에는 닉네임 변경·탈퇴 기능이 없으므로 다루지 않는다(8장에서 소개하고, **심화 교안**에서 Kafka 로 직접 만든다).
+> 실제 서비스에서는 user-service 가 "닉네임이 바뀌었어요", "회원이 탈퇴했어요" 같은 **소식(이벤트)** 을 보내고, post-service 가 그 소식을 받아 자기 데이터를 고친다. 이 교안에는 닉네임 변경·탈퇴 기능이 없으므로 다루지 않는다(8장에서 소개하고, **MSA 심화 교안**에서 Kafka 로 직접 만든다).
 
 ### 정규화에 어긋나는 것 아닌가?
 
@@ -286,7 +286,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 }
 ```
 
-심화 과정에서는 작성자 닉네임을 읽느라 `@EntityGraph(attributePaths = "author")` 로 JOIN 을 했다. 이제 닉네임이 posts 안에 있으니 **JOIN 도 N+1 문제도 없다**. 데이터를 복사한 덕분에 읽기는 오히려 단순해졌다.
+React 심화 과정에서는 작성자 닉네임을 읽느라 `@EntityGraph(attributePaths = "author")` 로 JOIN 을 했다. 이제 닉네임이 posts 안에 있으니 **JOIN 도 N+1 문제도 없다**. 데이터를 복사한 덕분에 읽기는 오히려 단순해졌다.
 
 ## 5-5. PostService - UserRepository 가 없다
 
@@ -375,7 +375,7 @@ public class PostService {
 }
 ```
 
-`create` 는 Controller 가 넘겨준 `userId`, `nickname` 을 그대로 `new Post(...)` 에 넣는다. 소유권 검사(`checkOwner`)는 심화 과정과 같다. 글의 `userId` 와 지금 요청한 사람의 번호를 비교해서 다르면 403 을 던진다.
+`create` 는 Controller 가 넘겨준 `userId`, `nickname` 을 그대로 `new Post(...)` 에 넣는다. 소유권 검사(`checkOwner`)는 React 심화 과정과 같다. 글의 `userId` 와 지금 요청한 사람의 번호를 비교해서 다르면 403 을 던진다.
 
 > **401 과 403 은 누가 정할까?**
 > - **401 (로그인 필요)** - 게이트웨이가 정한다. 토큰이 없거나 틀리면 post-service 까지 오지도 않는다.

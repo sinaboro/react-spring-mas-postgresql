@@ -17,7 +17,7 @@ React 심화 과정에서 만든 **로그인 게시판(CRUD + JWT 로그인)** �
 | 내용 | 게이트웨이 · 서비스 분리 · Database per Service · JWT 인증을 정문에서 | Kafka 이벤트로 나뉜 데이터 맞추기 (닉네임 변경 → 글 작성자) |
 | 핵심 낱말 | API Gateway, X-User-Id 헤더, 데이터 복제(비정규화), 장애 격리 | 토픽 · 컨슈머 그룹 · 오프셋, 결과적 일관성, 멱등성, Outbox |
 | 실습 폴더 | 저장소 맨 위 (`backend`, `frontend`, DB 5435) | **`advanced/`** (DB 5436 + Kafka 9092) |
-| 교안 PDF | [React_Spring_MSA_기초_학습교안.pdf](docs/React_Spring_MSA_기초_학습교안.pdf) (62쪽, 8시간) | [React_Spring_MSA_심화_학습교안.pdf](docs/React_Spring_MSA_심화_학습교안.pdf) (41쪽, 8시간) |
+| 교안 PDF | [React_Spring_MSA_기초_학습교안.pdf](docs/React_Spring_MSA_기초_학습교안.pdf) (62쪽, 8시간) | [React_Spring_MSA_심화_학습교안.pdf](docs/React_Spring_MSA_심화_학습교안.pdf) (42쪽, 8시간) |
 
 > 모놀리식 원본(서버 1개): https://github.com/sinaboro/react-spring-postgresql (`advanced/board`)
 > React 코드와 API 모양(JSON)은 원본과 같고, 서버만 MSA 로 나뉘었습니다.

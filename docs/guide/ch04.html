@@ -102,7 +102,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <thead>
 <tr>
 <th></th>
-<th>모놀리식 (심화 과정)</th>
+<th>모놀리식 (React 심화 과정)</th>
 <th>user-service</th>
 </tr>
 </thead>
@@ -186,7 +186,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 ├─ AuthService.java                가입 · 로그인 · 내 정보 규칙
 ├─ JwtProvider.java                토큰 만들기
 ├─ PasswordConfig.java             BCrypt 도구 등록
-├─ SignupRequest, LoginRequest, UserResponse, TokenResponse   요청·응답 JSON (심화 과정과 같음)
+├─ SignupRequest, LoginRequest, UserResponse, TokenResponse   요청·응답 JSON (React 심화 과정과 같음)
 └─ common/ApiException, GlobalExceptionHandler                  오류 → {&quot;detail&quot;: ...}
 </code></pre>
 <h2 id="4-2-설정---userdb-에만-접속">4-2. 설정 - userdb 에만 접속</h2>
@@ -258,7 +258,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 }
 </code></pre>
-<p>심화 과정에서는 <code>spring-boot-starter-security</code> 를 넣었다. 그러면 Spring Security 가 <strong>모든 요청을 막고</strong> 로그인 화면·필터·주소 규칙을 함께 켠다. 이번에는 로그인 검사를 게이트웨이가 하므로, BCrypt 해시 도구가 든 <code>spring-security-crypto</code> 만 넣는다. 도구만 쓰니 Bean 하나만 등록하면 된다.</p>
+<p>React 심화 과정에서는 <code>spring-boot-starter-security</code> 를 넣었다. 그러면 Spring Security 가 <strong>모든 요청을 막고</strong> 로그인 화면·필터·주소 규칙을 함께 켠다. 이번에는 로그인 검사를 게이트웨이가 하므로, BCrypt 해시 도구가 든 <code>spring-security-crypto</code> 만 넣는다. 도구만 쓰니 Bean 하나만 등록하면 된다.</p>
 <div class="file"><span>📄 backend/user-service/src/main/java/com/example/user/PasswordConfig.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/user-service/src/main/java/com/example/user/PasswordConfig.java" target="_blank">GitHub 에서 보기</a></div>
 
 <pre><code class="language-java">package com.example.user;
@@ -354,7 +354,7 @@ public class User {
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
 </code></pre>
-<p>회원 테이블은 심화 과정과 같다. 다른 점은 <strong>어느 DB 에 만들어지는가</strong>(userdb) 하나뿐이다.</p>
+<p>회원 테이블은 React 심화 과정과 같다. 다른 점은 <strong>어느 DB 에 만들어지는가</strong>(userdb) 하나뿐이다.</p>
 <h2 id="4-5-jwtprovider---토큰에-닉네임-싣기">4-5. JwtProvider - 토큰에 닉네임 싣기</h2>
 <div class="file"><span>📄 backend/user-service/src/main/java/com/example/user/JwtProvider.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/user-service/src/main/java/com/example/user/JwtProvider.java" target="_blank">GitHub 에서 보기</a></div>
 
@@ -411,7 +411,7 @@ public class JwtProvider {
     }
 }
 </code></pre>
-<p>심화 과정 토큰에는 사용자 번호(<code>sub</code>)만 있었다. 이번에는 <code>.claim("nickname", ...)</code> 으로 <strong>닉네임</strong>을 더 넣는다. 로그인한 minsu(민수)의 토큰 가운데 부분(내용)을 풀어 보면 이렇다.</p>
+<p>React 심화 과정 토큰에는 사용자 번호(<code>sub</code>)만 있었다. 이번에는 <code>.claim("nickname", ...)</code> 으로 <strong>닉네임</strong>을 더 넣는다. 로그인한 minsu(민수)의 토큰 가운데 부분(내용)을 풀어 보면 이렇다.</p>
 <pre><code class="language-json">{ &quot;sub&quot;: &quot;1&quot;, &quot;nickname&quot;: &quot;민수&quot;, &quot;iat&quot;: 1795493407, &quot;exp&quot;: 1795497007 }
 </code></pre>
 <blockquote class="note">
@@ -479,7 +479,7 @@ public class AuthService {
     }
 }
 </code></pre>
-<p>심화 과정과 거의 같다. 달라진 곳은 <code>jwtProvider.createToken(user)</code> 로 <strong>User 전체</strong>를 넘겨 닉네임까지 담는 것뿐이다.</p>
+<p>React 심화 과정과 거의 같다. 달라진 곳은 <code>jwtProvider.createToken(user)</code> 로 <strong>User 전체</strong>를 넘겨 닉네임까지 담는 것뿐이다.</p>
 <h2 id="4-7-authcontroller---x-user-id-헤더로-나-를-안다">4-7. AuthController - X-User-Id 헤더로 "나" 를 안다</h2>
 <div class="file"><span>📄 backend/user-service/src/main/java/com/example/user/AuthController.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/user-service/src/main/java/com/example/user/AuthController.java" target="_blank">GitHub 에서 보기</a></div>
 
@@ -536,7 +536,7 @@ public class AuthController {
     }
 }
 </code></pre>
-<p><code>/me</code> 를 보자. 심화 과정에서는 Spring Security 가 토큰을 검사해 <code>@AuthenticationPrincipal LoginUser</code> 로 넣어 줬다. 이제는 <strong>게이트웨이가</strong> 토큰을 검사하고 <code>X-User-Id: 1</code> 헤더를 붙여 보낸다. 서비스는 <code>@RequestHeader("X-User-Id") Long userId</code> 로 그 값만 받으면 된다.</p>
+<p><code>/me</code> 를 보자. React 심화 과정에서는 Spring Security 가 토큰을 검사해 <code>@AuthenticationPrincipal LoginUser</code> 로 넣어 줬다. 이제는 <strong>게이트웨이가</strong> 토큰을 검사하고 <code>X-User-Id: 1</code> 헤더를 붙여 보낸다. 서비스는 <code>@RequestHeader("X-User-Id") Long userId</code> 로 그 값만 받으면 된다.</p>
 <p>헤더가 없을 때(게이트웨이를 거치지 않았을 때)는 <code>GlobalExceptionHandler</code> 에 더한 아래 코드가 401 로 응답한다.</p>
 <pre><code class="language-java">@ExceptionHandler(MissingRequestHeaderException.class)
 public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleMissingHeader(MissingRequestHeaderException e) {

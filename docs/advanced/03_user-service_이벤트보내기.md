@@ -263,7 +263,7 @@ kafkaTemplate.send("user-events", "1", "{\"type\":\"NICKNAME_CHANGED\",...}");
 //                  토픽           키(회원 번호)  값(소식 JSON)
 ```
 
-- **`send` 는 기다리지 않는다.** 소식을 보낼 준비만 하고 바로 돌아온다. 실제로 Kafka 에 도착했는지는 `whenComplete` 안에서 나중에 알 수 있다. 그래서 닉네임 바꾸기 응답이 Kafka 때문에 느려지지 않는다.
+- **`send` 는 기다리지 않는다.** 소식을 보낼 준비만 하고 바로 돌아온다. 실제로 Kafka 에 도착했는지는 `whenComplete` 안에서 나중에 알 수 있다. 그래서 닉네임 바꾸기 응답이 Kafka 때문에 느려지지 않는다. (단, 서비스를 켜고 **처음 보낼 때**는 Kafka 와 연결하고 토픽 정보를 받아 오느라 1초쯤 걸릴 수 있다)
 - **Kafka 에 아예 닿지 못하면** `send` 가 3초(`max.block.ms`) 기다린 뒤 예외를 던진다. 닉네임은 이미 저장됐으므로 요청을 실패시키지 않고 로그만 남긴다. 이때 **소식은 사라진다**. 이 약점은 6장에서 직접 보고, 7장의 Outbox 패턴으로 해결 방법을 알아본다.
 
 ## 3-5. AuthController - 저장 다음에 보낸다
@@ -387,7 +387,7 @@ docker exec mas-adv-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-s
 Processed a total of 1 messages
 ```
 
-맨 앞의 `1` 이 키(회원 번호)다. 이 명령은 **구경만** 하는 것이라(따로 만든 임시 그룹으로 읽는다) post-service 가 읽을 위치에는 영향을 주지 않는다. (`timeout` 관련 오류 줄이 몇 줄 함께 보일 수 있는데, 5초가 지나 읽기를 끝냈다는 뜻이니 괜찮다)
+맨 앞의 `1` 이 키(회원 번호)다. 이 명령은 **구경만** 하는 것이라(따로 만든 임시 그룹으로 읽는다) post-service 가 읽을 위치에는 영향을 주지 않는다. (`The consumer rebalance protocol ...` 같은 안내 줄이나 `TimeoutException` 오류 줄이 함께 보일 수 있다. 5초가 지나 읽기를 끝냈다는 뜻이니 괜찮다)
 
 > **post-service 를 아직 켜지 않았는데 소식은 어디에?** Kafka 에 남아 있다. 4장에서 post-service 를 켜면, 켜기 전에 쌓인 이 소식부터 읽어 간다. 이것이 이벤트 방식의 힘이다.
 

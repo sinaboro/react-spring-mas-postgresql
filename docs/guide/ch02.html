@@ -186,7 +186,7 @@ volumes:
 </code></pre>
 <p>눈여겨볼 곳은 두 군데다.</p>
 <ul>
-<li><code>POSTGRES_DB</code> 가 <strong>없다</strong>. 심화 과정 compose 파일에는 <code>POSTGRES_DB: authboard</code> 가 있어서 DB 하나가 자동으로 만들어졌다. 이번에는 DB 를 두 개 만들어야 하므로 아래 <code>init.sql</code> 에 맡긴다.</li>
+<li><code>POSTGRES_DB</code> 가 <strong>없다</strong>. React 심화 과정 compose 파일에는 <code>POSTGRES_DB: authboard</code> 가 있어서 DB 하나가 자동으로 만들어졌다. 이번에는 DB 를 두 개 만들어야 하므로 아래 <code>init.sql</code> 에 맡긴다.</li>
 <li><code>./db:/docker-entrypoint-initdb.d</code> - 내 PC 의 <code>db</code> 폴더를 컨테이너의 "처음 실행할 SQL 폴더" 에 연결한다.</li>
 </ul>
 <h2 id="2-3-initsql---데이터베이스-두-개-만들기">2-3. init.sql - 데이터베이스 두 개 만들기</h2>

@@ -8,7 +8,7 @@
 
 ## 4-1. 모놀리식 판과 무엇이 다른가
 
-| | 모놀리식 (심화 과정) | user-service |
+| | 모놀리식 (React 심화 과정) | user-service |
 |---|---|---|
 | 맡은 일 | 회원 + 게시글 + 보안 | **회원만** |
 | DB | `authboard` | **`userdb`** |
@@ -34,7 +34,7 @@ user-service/src/main/java/com/example/user
 ├─ AuthService.java                가입 · 로그인 · 내 정보 규칙
 ├─ JwtProvider.java                토큰 만들기
 ├─ PasswordConfig.java             BCrypt 도구 등록
-├─ SignupRequest, LoginRequest, UserResponse, TokenResponse   요청·응답 JSON (심화 과정과 같음)
+├─ SignupRequest, LoginRequest, UserResponse, TokenResponse   요청·응답 JSON (React 심화 과정과 같음)
 └─ common/ApiException, GlobalExceptionHandler                  오류 → {"detail": ...}
 ```
 
@@ -114,7 +114,7 @@ dependencies {
 }
 ```
 
-심화 과정에서는 `spring-boot-starter-security` 를 넣었다. 그러면 Spring Security 가 **모든 요청을 막고** 로그인 화면·필터·주소 규칙을 함께 켠다. 이번에는 로그인 검사를 게이트웨이가 하므로, BCrypt 해시 도구가 든 `spring-security-crypto` 만 넣는다. 도구만 쓰니 Bean 하나만 등록하면 된다.
+React 심화 과정에서는 `spring-boot-starter-security` 를 넣었다. 그러면 Spring Security 가 **모든 요청을 막고** 로그인 화면·필터·주소 규칙을 함께 켠다. 이번에는 로그인 검사를 게이트웨이가 하므로, BCrypt 해시 도구가 든 `spring-security-crypto` 만 넣는다. 도구만 쓰니 Bean 하나만 등록하면 된다.
 
 <!-- file: backend/user-service/src/main/java/com/example/user/PasswordConfig.java -->
 
@@ -216,7 +216,7 @@ public class User {
 }
 ```
 
-회원 테이블은 심화 과정과 같다. 다른 점은 **어느 DB 에 만들어지는가**(userdb) 하나뿐이다.
+회원 테이블은 React 심화 과정과 같다. 다른 점은 **어느 DB 에 만들어지는가**(userdb) 하나뿐이다.
 
 ## 4-5. JwtProvider - 토큰에 닉네임 싣기
 
@@ -277,7 +277,7 @@ public class JwtProvider {
 }
 ```
 
-심화 과정 토큰에는 사용자 번호(`sub`)만 있었다. 이번에는 `.claim("nickname", ...)` 으로 **닉네임**을 더 넣는다. 로그인한 minsu(민수)의 토큰 가운데 부분(내용)을 풀어 보면 이렇다.
+React 심화 과정 토큰에는 사용자 번호(`sub`)만 있었다. 이번에는 `.claim("nickname", ...)` 으로 **닉네임**을 더 넣는다. 로그인한 minsu(민수)의 토큰 가운데 부분(내용)을 풀어 보면 이렇다.
 
 ```json
 { "sub": "1", "nickname": "민수", "iat": 1795493407, "exp": 1795497007 }
@@ -352,7 +352,7 @@ public class AuthService {
 }
 ```
 
-심화 과정과 거의 같다. 달라진 곳은 `jwtProvider.createToken(user)` 로 **User 전체**를 넘겨 닉네임까지 담는 것뿐이다.
+React 심화 과정과 거의 같다. 달라진 곳은 `jwtProvider.createToken(user)` 로 **User 전체**를 넘겨 닉네임까지 담는 것뿐이다.
 
 ## 4-7. AuthController - X-User-Id 헤더로 "나" 를 안다
 
@@ -413,7 +413,7 @@ public class AuthController {
 }
 ```
 
-`/me` 를 보자. 심화 과정에서는 Spring Security 가 토큰을 검사해 `@AuthenticationPrincipal LoginUser` 로 넣어 줬다. 이제는 **게이트웨이가** 토큰을 검사하고 `X-User-Id: 1` 헤더를 붙여 보낸다. 서비스는 `@RequestHeader("X-User-Id") Long userId` 로 그 값만 받으면 된다.
+`/me` 를 보자. React 심화 과정에서는 Spring Security 가 토큰을 검사해 `@AuthenticationPrincipal LoginUser` 로 넣어 줬다. 이제는 **게이트웨이가** 토큰을 검사하고 `X-User-Id: 1` 헤더를 붙여 보낸다. 서비스는 `@RequestHeader("X-User-Id") Long userId` 로 그 값만 받으면 된다.
 
 헤더가 없을 때(게이트웨이를 거치지 않았을 때)는 `GlobalExceptionHandler` 에 더한 아래 코드가 401 로 응답한다.
 

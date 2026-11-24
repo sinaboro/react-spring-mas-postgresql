@@ -110,10 +110,10 @@ export default ProfilePage;
 
 ## 5-4. 켜서 확인하기
 
-**[PS]** `advanced\frontend` 에서 (처음 한 번만 `npm install`)
+**[PS]** 새 터미널에서 (처음 한 번만 `npm install`. 기초 과정의 `frontend` 가 아니라 **`advanced\frontend`** 다)
 
 ```powershell
-cd advanced\frontend
+cd C:\study\react-spring-mas-postgresql\advanced\frontend
 npm install
 npm run dev
 ```

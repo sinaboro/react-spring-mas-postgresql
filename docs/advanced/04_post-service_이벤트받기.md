@@ -233,9 +233,11 @@ docker exec mas-adv-kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-se
 ```
 
 ```text
-GROUP         TOPIC        PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG
+GROUP         TOPIC        PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG  (오른쪽 CONSUMER-ID 등은 생략)
 post-service  user-events  0          1               1               0
 ```
+
+숫자는 3장에서 닉네임을 몇 번 바꿨는지에 따라 다르다. 중요한 것은 `LAG` 이 0 인지다.
 
 | 칸 | 뜻 |
 |---|---|

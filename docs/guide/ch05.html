@@ -102,7 +102,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <thead>
 <tr>
 <th></th>
-<th>모놀리식 (심화 과정)</th>
+<th>모놀리식 (React 심화 과정)</th>
 <th>post-service</th>
 </tr>
 </thead>
@@ -367,7 +367,7 @@ Indexes:
 <p>닉네임을 복사해 두면 JOIN 없이 빠르게 읽을 수 있다. 대신 <strong>원본이 바뀌어도 복사본은 그대로</strong>다.
 - 민수가 닉네임을 "민수킹" 으로 바꿔도, 예전 글의 <code>writer</code> 는 "민수" 로 남는다.
 - 민수가 탈퇴해도, DB 가 민수의 글을 함께 지워 주지 않는다(<code>ON DELETE CASCADE</code> 를 쓸 수 없다).</p>
-<p>실제 서비스에서는 user-service 가 "닉네임이 바뀌었어요", "회원이 탈퇴했어요" 같은 <strong>소식(이벤트)</strong> 을 보내고, post-service 가 그 소식을 받아 자기 데이터를 고친다. 이 교안에는 닉네임 변경·탈퇴 기능이 없으므로 다루지 않는다(8장에서 소개하고, <strong>심화 교안</strong>에서 Kafka 로 직접 만든다).</p>
+<p>실제 서비스에서는 user-service 가 "닉네임이 바뀌었어요", "회원이 탈퇴했어요" 같은 <strong>소식(이벤트)</strong> 을 보내고, post-service 가 그 소식을 받아 자기 데이터를 고친다. 이 교안에는 닉네임 변경·탈퇴 기능이 없으므로 다루지 않는다(8장에서 소개하고, <strong>MSA 심화 교안</strong>에서 Kafka 로 직접 만든다).</p>
 </blockquote>
 <h3 id="정규화에-어긋나는-것-아닌가">정규화에 어긋나는 것 아닌가?</h3>
 <p>DB 수업에서 배운 정규화로 <code>posts</code> 를 따져 보자. 두 칸은 사정이 다르다.</p>
@@ -428,7 +428,7 @@ public interface PostRepository extends JpaRepository&lt;Post, Long&gt; {
     List&lt;Post&gt; findAllByUserIdOrderByIdDesc(Long userId);
 }
 </code></pre>
-<p>심화 과정에서는 작성자 닉네임을 읽느라 <code>@EntityGraph(attributePaths = "author")</code> 로 JOIN 을 했다. 이제 닉네임이 posts 안에 있으니 <strong>JOIN 도 N+1 문제도 없다</strong>. 데이터를 복사한 덕분에 읽기는 오히려 단순해졌다.</p>
+<p>React 심화 과정에서는 작성자 닉네임을 읽느라 <code>@EntityGraph(attributePaths = "author")</code> 로 JOIN 을 했다. 이제 닉네임이 posts 안에 있으니 <strong>JOIN 도 N+1 문제도 없다</strong>. 데이터를 복사한 덕분에 읽기는 오히려 단순해졌다.</p>
 <h2 id="5-5-postservice---userrepository-가-없다">5-5. PostService - UserRepository 가 없다</h2>
 <div class="file"><span>📄 backend/post-service/src/main/java/com/example/post/PostService.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/post-service/src/main/java/com/example/post/PostService.java" target="_blank">GitHub 에서 보기</a></div>
 
@@ -513,7 +513,7 @@ public class PostService {
     }
 }
 </code></pre>
-<p><code>create</code> 는 Controller 가 넘겨준 <code>userId</code>, <code>nickname</code> 을 그대로 <code>new Post(...)</code> 에 넣는다. 소유권 검사(<code>checkOwner</code>)는 심화 과정과 같다. 글의 <code>userId</code> 와 지금 요청한 사람의 번호를 비교해서 다르면 403 을 던진다.</p>
+<p><code>create</code> 는 Controller 가 넘겨준 <code>userId</code>, <code>nickname</code> 을 그대로 <code>new Post(...)</code> 에 넣는다. 소유권 검사(<code>checkOwner</code>)는 React 심화 과정과 같다. 글의 <code>userId</code> 와 지금 요청한 사람의 번호를 비교해서 다르면 403 을 던진다.</p>
 <blockquote class="note">
 <p><strong>401 과 403 은 누가 정할까?</strong>
 - <strong>401 (로그인 필요)</strong> - 게이트웨이가 정한다. 토큰이 없거나 틀리면 post-service 까지 오지도 않는다.
