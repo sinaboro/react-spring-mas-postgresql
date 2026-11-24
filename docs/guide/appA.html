@@ -199,6 +199,26 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <td>서비스 <code>application.yml</code> 에 <code>spring.servlet.encoding.force-response: true</code>, 요청은 <code>-ContentType "application/json; charset=utf-8"</code></td>
 </tr>
 <tr>
+<td>user-service 를 끈 뒤 새로고침(F5)했더니 로그아웃됐다</td>
+<td>React 가 새로 열릴 때 <code>/api/auth/me</code>(user-service)로 토큰을 확인하는데, 503 이 와서 토큰을 지웠다</td>
+<td>정상 동작이다(7-5). user-service 를 켜고 다시 로그인한다. 고쳐 보려면 8장 도전 과제 4</td>
+</tr>
+<tr>
+<td>7장 회원가입에서 <code>이미 사용 중인 아이디입니다</code> (409)</td>
+<td>4장에서 minsu 를 이미 만들었다</td>
+<td>가입하지 말고 로그인한다</td>
+</tr>
+<tr>
+<td><code>/docs</code> 에서 <code>GET /api/auth/me</code> 를 Execute 해도 요청이 가지 않고 칸이 빨개진다</td>
+<td><code>X-User-Id</code> 칸이 필수인데 비어 있다</td>
+<td>칸에 <code>1</code> 을 넣는다. 헤더 없이 보내 보려면 4-8 의 PowerShell 명령</td>
+</tr>
+<tr>
+<td><code>/docs</code> 에서 <code>X-User-Nickname</code> 에 한글을 넣으니 오류가 난다</td>
+<td>헤더에는 한글을 바로 실을 수 없다</td>
+<td>영문으로 넣거나 <code>%EB%AF%BC%EC%88%98</code> 처럼 인코딩한 값을 넣는다</td>
+</tr>
+<tr>
 <td>글쓴이 닉네임이 <code>%EB%AF%BC...</code> 로 저장됐다</td>
 <td>post-service 에서 URL 디코딩을 빠뜨렸다</td>
 <td><code>PostController.create</code> 의 <code>URLDecoder.decode(...)</code> 확인</td>

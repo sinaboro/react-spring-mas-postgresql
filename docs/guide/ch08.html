@@ -220,7 +220,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <tr>
 <td><strong>회로 차단기</strong> (Resilience4j)</td>
 <td>고장 난 서비스로 계속 요청하지 않고 바로 대체 응답</td>
-<td><code>GatewayErrorHandler</code> 의 503</td>
+<td>없음. 요청마다 연결을 시도하고, 실패하면 <code>GatewayErrorHandler</code> 가 503 으로 알려 줄 뿐</td>
 </tr>
 <tr>
 <td><strong>분산 추적</strong> (Zipkin, Micrometer Tracing)</td>
@@ -243,6 +243,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <li><strong>post-service 만 끄기</strong> - 7장의 실험을 post-service 로 해 보고, 무엇이 되고 무엇이 안 되는지 표로 정리하자.</li>
 <li><strong>글 개수 보여 주기</strong> - user-service 의 <code>/api/auth/me</code> 응답에 "내가 쓴 글 수" 를 넣고 싶다. user-service 는 postdb 를 볼 수 없다. 어떤 방법이 있을까? (힌트: post-service 에 <code>GET /api/posts?user_id=1</code> 이 이미 있다. 누가 이 API 를 부를지 정해 보자)</li>
 <li><strong>댓글 서비스 설계</strong> - <code>comment-service</code> 를 추가한다면 포트, DB 이름, 게이트웨이 라우팅 규칙, 필요한 헤더를 적어 보자. (코드는 post-service 를 복사해서 시작하면 된다)</li>
+<li><strong>새로고침해도 로그인 유지하기</strong> - 7장에서 user-service 를 끄고 F5 를 누르면 로그아웃됐다. <code>frontend/src/context/AuthContext.jsx</code> 의 <code>.catch(() =&gt; api.tokenStore.clear())</code> 를 "401 일 때만 토큰을 지운다" 로 고쳐 보자. (힌트: <code>.catch((e) =&gt; { if (e.status === 401) ... })</code>. 고친 뒤에도 user-service 가 꺼져 있으면 머리글에 이름은 안 보이지만, 다시 켜고 새로고침하면 로그인 상태가 돌아온다)</li>
 <li><strong>DB 서버 나누기</strong> - <code>docker-compose.yml</code> 에 PostgreSQL 컨테이너를 하나 더 만들고 post-service 를 그쪽으로 옮겨 보자. 서비스 코드에서 바뀌는 곳이 <code>application.yml</code> 한 줄뿐인지 확인하자.</li>
 </ol>
 <h2 id="정리">정리</h2>

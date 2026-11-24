@@ -577,6 +577,7 @@ public class PostController {
 <li><code>GET /api/posts</code> → <strong>Execute</strong> → <code>[]</code> (아직 글 없음)</li>
 <li><code>POST /api/posts</code> → 헤더 칸에 <code>X-User-Id: 1</code>, <code>X-User-Nickname: minsu</code> 를 넣고 본문 <code>{"title": "첫 글", "content": "안녕"}</code> → 201</li>
 </ul>
+<p>닉네임 칸에 "민수" 대신 영문 <code>minsu</code> 를 넣는 이유: 5-6 에서 본 것처럼 헤더에는 한글을 바로 실을 수 없다. 한글로 시험하려면 게이트웨이가 하듯 인코딩한 값 <code>%EB%AF%BC%EC%88%98</code> 를 넣는다. 그러면 <code>writer</code> 가 "민수" 로 저장된다.</p>
 <p>이렇게 <strong>게이트웨이 없이도</strong> 게시글 서비스 하나만 켜서 시험할 수 있다. 서비스가 작고 혼자 설 수 있으니 시험도 쉽다.</p>
 <blockquote class="note">
 <p><strong>[MSA 개념] 서비스 하나만 켜서 시험할 수 있다.</strong> user-service 도 게이트웨이도 꺼져 있는데 게시글 서비스는 잘 동작했다. 서비스가 서로 묶여 있지 않다는 증거다.</p>

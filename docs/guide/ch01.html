@@ -137,7 +137,10 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 </tbody>
 </table></div>
 <h2 id="1-2-msa---업무별로-나눈-작은-서비스">1-2. MSA - 업무별로 나눈 작은 서비스</h2>
-<p><strong>MSA(Microservice Architecture)</strong> 는 큰 프로그램을 <strong>업무(도메인)별로 작은 서비스</strong>로 나누는 방법이다. 서비스 하나하나가 <strong>따로 실행되는 프로그램</strong>이고, 서로 <strong>HTTP(REST API)</strong> 로 이야기한다.</p>
+<p><strong>MSA(Microservice Architecture)</strong> 는 큰 프로그램을 <strong>업무(도메인)별로 작은 서비스</strong>로 나누는 방법이다. 서비스 하나하나가 <strong>따로 실행되는 프로그램</strong>이고, 다른 서비스와 이야기해야 할 때는 <strong>HTTP(REST API)</strong> 로 한다.</p>
+<blockquote class="note">
+<p><strong>이 교안의 두 서비스는 서로를 부르지 않는다.</strong> user-service 와 post-service 는 서로 요청을 주고받지 않고, 각자 게이트웨이가 전달한 요청만 처리한다. 서비스끼리 필요한 정보(누가 보냈는지, 닉네임)는 로그인 토큰에 실려 게이트웨이를 거쳐 온다. 서비스끼리 직접 부르는 방법은 8장에서 소개만 한다.</p>
+</blockquote>
 <figure><a href="../images/fig_monolith_vs_msa.png" target="_blank"><img src="../images/fig_monolith_vs_msa.png" alt="모놀리식을 MSA 로 나누기" loading="lazy"></a><figcaption>모놀리식을 MSA 로 나누기</figcaption></figure>
 <blockquote class="note">
 <p><strong>[MSA 개념] 마이크로서비스의 조건</strong>
@@ -186,14 +189,14 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <h3 id="①-api-gateway---정문">① API Gateway - 정문</h3>
 <p>서비스가 여러 개면 React 가 "로그인은 8081, 글은 8082" 처럼 모든 주소를 알아야 할까? 그렇지 않다. <strong>게이트웨이</strong>라는 정문을 하나 두고, React 는 정문(8080)으로만 요청한다. 게이트웨이가 주소를 보고 알맞은 서비스로 전달한다. 이것을 <strong>라우팅(routing, 길 안내)</strong> 이라고 한다.</p>
 <h3 id="②-정문에서-한-번-인증">② 정문에서 한 번 인증</h3>
-<p>토큰 검사를 서비스마다 하면 같은 코드가 여러 곳에 생긴다. 그래서 <strong>게이트웨이가 한 번만 검사</strong>하고, 통과한 요청에 <code>X-User-Id: 3</code> 같은 헤더를 붙여 서비스로 넘긴다. 서비스는 그 헤더를 믿고 쓴다.</p>
+<p>토큰 검사를 서비스마다 하면 같은 코드가 여러 곳에 생긴다. 그래서 <strong>게이트웨이가 한 번만 검사</strong>하고, 통과한 요청에 <code>X-User-Id: 3</code> 같은 헤더를 붙여 서비스로 넘긴다. 서비스는 그 헤더를 믿고 쓴다. (서비스가 헤더를 믿기 때문에, 실제 운영에서는 서비스 포트를 바깥에 열지 않고 게이트웨이만 연다. 4장에서 직접 확인한다)</p>
 <h3 id="③-database-per-service---서비스마다-자기-db">③ Database per Service - 서비스마다 자기 DB</h3>
 <p>회원 서비스는 <code>userdb</code> 만, 게시글 서비스는 <code>postdb</code> 만 쓴다. 다른 서비스의 테이블을 직접 읽으면, 그 서비스가 테이블을 바꿀 때 내 서비스도 함께 깨진다. 그래서 <strong>DB 를 나눠서 서로 묶이지 않게</strong> 한다.</p>
 <h3 id="④-데이터-복제---fk-대신-복사">④ 데이터 복제 - FK 대신 복사</h3>
 <p>DB 가 나뉘면 <code>posts.user_id → users.id</code> 외래 키를 걸 수 없고, 글 목록에서 JOIN 으로 닉네임을 가져올 수도 없다. 그래서 글을 쓸 때 <strong>작성자 번호와 닉네임을 posts 테이블에 복사해서</strong> 저장한다.</p>
 <figure><a href="../images/fig_db_split.png" target="_blank"><img src="../images/fig_db_split.png" alt="FK 로 연결하던 것을, 번호와 닉네임을 복사하는 방식으로" loading="lazy"></a><figcaption>FK 로 연결하던 것을, 번호와 닉네임을 복사하는 방식으로</figcaption></figure>
 <h3 id="⑤-장애-격리---하나가-죽어도-나머지는-산다">⑤ 장애 격리 - 하나가 죽어도 나머지는 산다</h3>
-<p>회원 서비스가 꺼져도 게시글 서비스는 살아 있다. 이미 로그인한 사람은 글을 읽고 쓸 수 있다. 7장에서 직접 실험한다.</p>
+<p>회원 서비스가 꺼져도 게시글 서비스는 살아 있다. 이미 토큰을 받아 둔 사람은 글을 읽고 쓸 수 있다. 7장에서 직접 실험한다. (단, 브라우저를 새로고침하면 React 가 회원 서비스에 "이 토큰 아직 유효해요?" 를 물어보므로 그때는 로그아웃된다. 7장에서 함께 본다)</p>
 <h2 id="1-5-msa-가-언제나-좋을까">1-5. MSA 가 언제나 좋을까?</h2>
 <p>아니다. MSA 는 <strong>얻는 것만큼 어려운 점도 많다</strong>.</p>
 <div class="tbl"><table>
@@ -206,7 +209,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <tbody>
 <tr>
 <td>서비스별로 따로 고치고 배포한다</td>
-<td>켜야 할 프로그램이 많다 (이 교안만 해도 4개 + DB)</td>
+<td>켜야 할 프로그램이 많다 (이 교안만 해도 게이트웨이 · 서비스 2개 · React 로 4개, 거기에 DB)</td>
 </tr>
 <tr>
 <td>한 서비스 장애가 전체로 번지지 않는다</td>

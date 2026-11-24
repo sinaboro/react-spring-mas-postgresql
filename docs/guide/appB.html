@@ -134,7 +134,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 </ol>
 <h2 id="7장">7장</h2>
 <ol>
-<li>토큰 검사는 게이트웨이가 (같은 비밀 열쇠로) 하고, 글 저장은 post-service 가 하므로 user-service 가 필요 없다. 닉네임도 토큰 안에 들어 있다.</li>
+<li>토큰 검사는 게이트웨이가 (같은 비밀 열쇠로) 하고, 글 저장은 post-service 가 하므로 user-service 가 필요 없다. 닉네임도 토큰 안에 들어 있다. 단, 브라우저를 새로고침하면 React 가 <code>/api/auth/me</code>(user-service)로 토큰을 확인하다 실패해 로그아웃된다.</li>
 <li>로그인은 <strong>된다</strong>(user-service 와 userdb 만 쓴다). 글 목록 · 글쓰기는 게이트웨이가 503 <code>서비스에 연결할 수 없습니다</code> 를 돌려준다. React 머리글의 "민수 님"(<code>/api/auth/me</code>)도 user-service 가 하므로 잘 나온다.</li>
 <li>모든 요청이 멈춘다(React 에는 <code>API 서버에 연결할 수 없습니다</code>). 실제 운영에서는 게이트웨이를 <strong>여러 대</strong> 띄우고 그 앞에 로드 밸런서를 두어, 한 대가 죽어도 다른 게이트웨이가 요청을 받게 한다.</li>
 </ol>

@@ -139,7 +139,7 @@ include 'api-gateway'
 include 'user-service'
 include 'post-service'
 </code></pre>
-<p><code>include</code> 한 줄이 서비스 하나다. 나중에 댓글 서비스를 만든다면 <code>comment-service</code> 폴더를 만들고 <code>include 'comment-service'</code> 를 한 줄 더 적으면 된다.</p>
+<p><code>include</code> 한 줄이 서비스 하나다. 나중에 댓글 서비스를 만든다면 <code>comment-service</code> 폴더(그 안에 <code>build.gradle</code> 과 <code>src</code>)를 만들고, <code>include 'comment-service'</code> 를 한 줄 더 적으면 된다. <code>include</code> 만 적고 폴더를 만들지 않으면 서비스가 생기지 않는다.</p>
 <h2 id="3-3-backendbuildgradle---함께-쓰는-설정">3-3. backend/build.gradle - 함께 쓰는 설정</h2>
 <div class="file"><span>📄 backend/build.gradle</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/build.gradle" target="_blank">GitHub 에서 보기</a></div>
 
@@ -247,7 +247,7 @@ subprojects {
 <p><strong>JDK 설정</strong> - <strong>File → Project Structure → Project → SDK</strong> 가 21 인지 확인한다. 없으면 <strong>Add SDK → Download JDK → 21, Eclipse Temurin</strong> 을 고른다.</p>
 </blockquote>
 <h2 id="3-5-서비스-실행하는-법">3-5. 서비스 실행하는 법</h2>
-<p>각 서비스의 <code>...Application.java</code> 를 열고, class 이름 왼쪽의 <strong>초록색 ▶</strong> 를 눌러 <strong>Run</strong> 을 고른다.</p>
+<p>각 서비스의 <code>...Application.java</code> 를 열고, class 이름 왼쪽의 <strong>초록색 ▶</strong> 를 눌러 <strong>Run</strong> 을 고른다. user-service 와 post-service 는 켜지면서 DB 에 접속하므로, <strong>2장의 DB 를 먼저 켜 둔다.</strong> (지금 다 켜 볼 필요는 없다. 4장부터 하나씩 켠다)</p>
 <div class="tbl"><table>
 <thead>
 <tr>

@@ -153,7 +153,7 @@ npm run dev
 <p><strong>[MSA 개념] React 코드는 심화 과정과 같다.</strong> <code>frontend/src/api.js</code> 의 <code>API_URL</code> 은 여전히 <code>http://localhost:8080/api</code> 다. 그 뒤에 서버가 몇 개로 나뉘었는지 React 는 모른다. 바뀐 것은 주석 몇 줄뿐이다.</p>
 </blockquote>
 <h2 id="7-2-react-로-확인하기">7-2. React 로 확인하기</h2>
-<p>http://localhost:5173 을 연다. 처음에는 글이 없다. <strong>회원가입</strong>으로 <code>minsu</code>(민수)와 <code>jieun</code>(지은) 두 사람을 만들고, 각자 로그인해서 글을 몇 개 써 보자.</p>
+<p>http://localhost:5173 을 연다. 처음에는 글이 없다. <strong>회원가입</strong>으로 <code>minsu</code>(민수)와 <code>jieun</code>(지은) 두 사람을 만들고(비밀번호는 둘 다 <code>password123</code>), 각자 로그인해서 글을 몇 개 써 보자. 4장에서 minsu 를 이미 만들었다면 jieun 만 가입하고, minsu 는 로그인만 한다. <strong>두 사람 모두 글을 하나 이상</strong> 써 두어야 7-3 의 "남의 글 삭제" 를 해 볼 수 있다.</p>
 <figure><a href="../images/s1_list_guest.png" target="_blank"><img src="../images/s1_list_guest.png" alt="로그인하지 않은 목록 - GET /api/posts 는 누구나" loading="lazy"></a><figcaption>로그인하지 않은 목록 - GET /api/posts 는 누구나</figcaption></figure>
 <figure><a href="../images/s2_login.png" target="_blank"><img src="../images/s2_login.png" alt="로그인 - POST /api/auth/login 은 게이트웨이를 지나 user-service 로" loading="lazy"></a><figcaption>로그인 - POST /api/auth/login 은 게이트웨이를 지나 user-service 로</figcaption></figure>
 <figure><a href="../images/s3_list_user.png" target="_blank"><img src="../images/s3_list_user.png" alt="민수로 로그인한 목록 - 작성자 닉네임은 postdb 의 writer 에서 온다" loading="lazy"></a><figcaption>민수로 로그인한 목록 - 작성자 닉네임은 postdb 의 writer 에서 온다</figcaption></figure>
@@ -203,8 +203,8 @@ npm run dev
 </tbody>
 </table></div>
 <h2 id="7-3-powershell-로-확인하기">7-3. PowerShell 로 확인하기</h2>
-<p>화면 단추로는 해 볼 수 없는 요청(남의 글 삭제, 헤더 위조)도 직접 보내 보자. 모든 요청은 <strong>8080(게이트웨이)</strong> 으로 보낸다.</p>
-<p><strong>[PS]</strong> 먼저 오류 응답을 보기 좋게 찍어 주는 작은 함수를 만든다. (PowerShell 창을 새로 열면 다시 붙여 넣는다)</p>
+<p>화면 단추로는 해 볼 수 없는 요청(남의 글 삭제, 헤더 위조)도 직접 보내 보자. 모든 요청은 <strong>8080(게이트웨이)</strong> 으로 보낸다. 아래 결과의 번호(<code>id</code>)는 예시다. 글을 몇 개 썼는지에 따라 내 화면과 다를 수 있다.</p>
+<p><strong>[PS]</strong> 먼저 오류 응답을 보기 좋게 찍어 주는 함수를 만든다. (4장에서 만든 것과 같다. PowerShell 창을 새로 열었다면 다시 붙여 넣는다)</p>
 <pre><code class="language-powershell"># 오류가 나면 &quot;상태코드 {&quot;detail&quot;: &quot;...&quot;}&quot; 모양으로 보여 주는 함수
 function Show-Error($err) {
   if ($err.ErrorDetails.Message) { $body = $err.ErrorDetails.Message }
@@ -242,9 +242,13 @@ content    : 게이트웨이 통과
 <pre><code class="language-text">401 {&quot;detail&quot;:&quot;로그인이 필요합니다&quot;}
 </code></pre>
 <p>게이트웨이가 손님이 보낸 <code>X-User-Id</code> 를 지우고, 토큰이 없으니 401 로 돌려보냈다. (6장 <code>AuthFilter</code> ①, ③)</p>
-<p><strong>[PS]</strong> ④ 남의 글 삭제 - 2번 글은 지은의 글</p>
-<pre><code class="language-powershell">try { Invoke-RestMethod -Method Delete -Uri &quot;$api/posts/2&quot; -Headers $headers } catch { Show-Error $_ }
+<p><strong>[PS]</strong> ④ 남의 글 삭제 - 목록에서 민수가 쓰지 않은 글(지은의 글)을 하나 골라 지워 본다</p>
+<pre><code class="language-powershell"># 글 목록에서 user_id 가 내 번호가 아닌 글 하나 고르기
+$other = (Invoke-RestMethod &quot;$api/posts&quot;) | Where-Object { $_.user_id -ne $login.user.id } | Select-Object -First 1
+$other.id, $other.writer
+try { Invoke-RestMethod -Method Delete -Uri &quot;$api/posts/$($other.id)&quot; -Headers $headers } catch { Show-Error $_ }
 </code></pre>
+<p><code>$other</code> 가 비어 있다면 지은의 글이 없는 것이다. 7-2 로 돌아가 지은으로 글을 하나 쓰고 다시 해 보자.</p>
 <pre><code class="language-text">403 {&quot;detail&quot;:&quot;본인이 쓴 글만 수정·삭제할 수 있습니다&quot;}
 </code></pre>
 <p>이번에는 토큰이 올바르니 게이트웨이를 통과했고, <strong>post-service</strong> 가 글 주인을 비교해 403 을 돌려줬다.</p>
@@ -275,10 +279,15 @@ docker exec mas-db psql -U postgres -d postdb -c &quot;select id, user_id, write
 <h2 id="7-5-장애-실험---user-service-를-꺼-보자">7-5. 장애 실험 - user-service 를 꺼 보자</h2>
 <figure><a href="../images/fig_failure.png" target="_blank"><img src="../images/fig_failure.png" alt="user-service 를 끄면 무엇이 멈추고 무엇이 살아 있을까" loading="lazy"></a><figcaption>user-service 를 끄면 무엇이 멈추고 무엇이 살아 있을까</figcaption></figure>
 <p>React 에서 <strong>민수로 로그인한 상태</strong>로 둔다. 그리고 IntelliJ 의 Services 창에서 <strong>user-service 만 멈춘다</strong>(■).</p>
-<p><strong>① 글은 그대로 된다</strong> - 목록을 새로고침하고, 글을 하나 써 보자. 잘 된다. 토큰 검사는 게이트웨이가, 글 저장은 post-service 가 하므로 user-service 가 없어도 된다.</p>
+<p><strong>① 글은 그대로 된다</strong> - 화면 위쪽의 <strong>내 글</strong>, <strong>전체</strong> 단추를 차례로 눌러 목록을 다시 불러오고, <strong>글쓰기</strong>로 글을 하나 써 보자. 잘 된다. 토큰 검사는 게이트웨이가, 글 저장은 post-service 가 하므로 user-service 가 없어도 된다. (이때 브라우저 새로고침(F5)은 누르지 않는다. 아래 상자 참고)</p>
+<blockquote class="note">
+<p><strong>F5(새로고침)를 누르면 로그아웃된다 - 왜?</strong></p>
+<p>React 앱은 새로 열릴 때 저장해 둔 토큰이 아직 쓸 만한지 <code>GET /api/auth/me</code> 로 확인한다(<code>AuthContext.jsx</code>). 이 요청은 <strong>user-service</strong> 가 받는데, 꺼져 있으니 503 이 오고, React 는 확인에 실패한 토큰을 지우고 로그인 화면으로 보낸다.</p>
+<p>서버를 나눠도 <strong>화면이 어떤 서비스에 기대고 있는지</strong>에 따라 장애가 번질 수 있다는 뜻이다. "401 일 때만 토큰을 지우고, 503 처럼 서버가 잠깐 아플 때는 토큰을 남겨 두기" 처럼 React 쪽도 함께 고민해야 한다. (도전 과제로 <code>AuthContext.jsx</code> 의 <code>.catch</code> 를 고쳐 보자)</p>
+</blockquote>
 <p><strong>② 로그인은 안 된다</strong> - 로그아웃하고 다시 로그인해 보자.</p>
 <figure><a href="../images/s7_login_503.png" target="_blank"><img src="../images/s7_login_503.png" alt="user-service 가 꺼져 있을 때 로그인 - 게이트웨이가 503 과 이유를 돌려준다" loading="lazy"></a><figcaption>user-service 가 꺼져 있을 때 로그인 - 게이트웨이가 503 과 이유를 돌려준다</figcaption></figure>
-<p><strong>[PS]</strong> 같은 일을 PowerShell 로</p>
+<p><strong>[PS]</strong> 같은 일을 PowerShell 로 - <code>$headers</code> 에는 7-3 에서 받아 둔 토큰이 들어 있다 (user-service 를 끄기 <strong>전에</strong> 받은 토큰이라 아직 쓸 수 있다)</p>
 <pre><code class="language-powershell">try { Invoke-RestMethod -Method Post -Uri &quot;$api/auth/login&quot; -ContentType &quot;application/json; charset=utf-8&quot; -Body '{&quot;username&quot;:&quot;minsu&quot;,&quot;password&quot;:&quot;password123&quot;}' } catch { Show-Error $_ }
 Invoke-RestMethod -Method Post -Uri &quot;$api/posts&quot; -Headers $headers -ContentType &quot;application/json; charset=utf-8&quot; -Body '{&quot;title&quot;:&quot;회원 서비스가 꺼져도 글은 써진다&quot;,&quot;content&quot;:&quot;장애 격리&quot;}'
 </code></pre>

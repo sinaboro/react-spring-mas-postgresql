@@ -449,6 +449,8 @@ IntelliJ 에서 `PostServiceApplication` 을 ▶ 로 실행하고 http://localho
 - `GET /api/posts` → **Execute** → `[]` (아직 글 없음)
 - `POST /api/posts` → 헤더 칸에 `X-User-Id: 1`, `X-User-Nickname: minsu` 를 넣고 본문 `{"title": "첫 글", "content": "안녕"}` → 201
 
+닉네임 칸에 "민수" 대신 영문 `minsu` 를 넣는 이유: 5-6 에서 본 것처럼 헤더에는 한글을 바로 실을 수 없다. 한글로 시험하려면 게이트웨이가 하듯 인코딩한 값 `%EB%AF%BC%EC%88%98` 를 넣는다. 그러면 `writer` 가 "민수" 로 저장된다.
+
 이렇게 **게이트웨이 없이도** 게시글 서비스 하나만 켜서 시험할 수 있다. 서비스가 작고 혼자 설 수 있으니 시험도 쉽다.
 
 > **[MSA 개념] 서비스 하나만 켜서 시험할 수 있다.** user-service 도 게이트웨이도 꺼져 있는데 게시글 서비스는 잘 동작했다. 서비스가 서로 묶여 있지 않다는 증거다.

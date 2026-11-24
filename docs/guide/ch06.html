@@ -249,7 +249,10 @@ jwt:
 <p><strong>[MSA 개념] 서비스 주소는 게이트웨이만 안다.</strong></p>
 <p>게시글 서비스를 8082 에서 9000 으로 옮겨도 React 는 고칠 게 없다. 게이트웨이의 <code>uri</code> 한 줄만 바꾸면 된다. 서비스가 두 대로 늘어나도 마찬가지다. 바깥(React)과 안쪽(서비스)이 정문을 사이에 두고 떨어져 있다.</p>
 </blockquote>
-<p><strong>globalcors</strong> - 브라우저가 보는 서버는 게이트웨이 하나다. 그래서 CORS 도 정문 <strong>한 곳에서만</strong> 설정한다. 서비스들에는 CORS 설정이 없다. (서비스에도 CORS 를 켜면 응답에 CORS 헤더가 두 번 붙어서 브라우저가 오히려 거부한다)</p>
+<p><strong>globalcors</strong> - 브라우저가 보는 서버는 게이트웨이 하나다. 그래서 CORS 도 정문 <strong>한 곳에서만</strong> 설정한다. 서비스들에는 CORS 설정이 없다. (서비스에도 CORS 를 켜면 응답에 CORS 헤더가 두 번 붙을 수 있고, 그러면 브라우저가 오히려 거부한다)</p>
+<blockquote class="note">
+<p><strong>"CORS 를 게이트웨이에서 하니 서비스는 아무나 부를 수 있나?"</strong> CORS 는 <strong>브라우저</strong>가 지키는 규칙이라 PowerShell 이나 다른 서버의 요청은 막지 못한다. 서비스를 지키는 것은 CORS 가 아니라 "서비스 포트를 바깥에 열지 않는 것"(4장)과 게이트웨이의 토큰 검사다.</p>
+</blockquote>
 <h2 id="6-4-jwtchecker---같은-열쇠로-검사">6-4. JwtChecker - 같은 열쇠로 검사</h2>
 <div class="file"><span>📄 backend/api-gateway/src/main/java/com/example/gateway/JwtChecker.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/api-gateway/src/main/java/com/example/gateway/JwtChecker.java" target="_blank">GitHub 에서 보기</a></div>
 

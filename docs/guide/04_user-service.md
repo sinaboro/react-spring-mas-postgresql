@@ -81,6 +81,8 @@ springdoc:
 
 > **[MSA 개념] 접속 주소가 곧 경계선이다.** user-service 의 `datasource.url` 에는 `userdb` 만 적혀 있다. 이 서비스는 `postdb` 의 존재조차 모른다. 다른 서비스의 데이터가 필요하면 **DB 가 아니라 API** 로 물어봐야 한다.
 
+`spring.servlet.encoding.force-response` 는 응답에 `charset=UTF-8` 을 붙여 PowerShell 에서도 한글이 깨지지 않게 하는 설정이다(7장 참고). MSA 와는 관계없다.
+
 `jwt.secret` 은 **게이트웨이와 반드시 같은 값**이어야 한다. user-service 가 이 열쇠로 서명한 토큰을, 게이트웨이가 같은 열쇠로 검사하기 때문이다. (6장)
 
 ## 4-3. 라이브러리 - Security 전체 대신 crypto 만
@@ -457,9 +459,37 @@ docker exec mas-db psql -U postgres -d postdb -c "\dt"
 Did not find any relations.        ← postdb 에는 아직 아무 테이블도 없다
 ```
 
-`users` 는 `userdb` 에만 생겼다. post-service 를 켜지 않았으니 `postdb` 는 비어 있다.
+`users` 는 `userdb` 에만 생겼다. post-service 를 켜지 않았으니 `postdb` 는 비어 있다. (0장 끝에서 전체를 먼저 켜 봤다면 `postdb` 에 `posts` 가 이미 있다. 그래도 `users` 는 `postdb` 에 없다는 점은 같다)
 
-**③ /me 를 직접 불러 보기** - `/docs` 에서 `GET /api/auth/me` 를 열면 `X-User-Id` 입력 칸이 보인다. 비워 두고 Execute 하면 401 `로그인이 필요합니다`, `1` 을 넣으면 민수의 정보가 나온다.
+> **이 minsu 계정은 7장에서도 그대로 쓴다.** 7장에서 React 로 회원가입할 때 minsu 가 이미 있다고 나오면(409 `이미 사용 중인 아이디입니다`) 가입하지 말고 바로 로그인하면 된다.
+
+**③ /me 를 직접 불러 보기** - `/docs` 에서 `GET /api/auth/me` 를 열면 `X-User-Id` 입력 칸이 보인다. `1` 을 넣고 Execute 하면 민수의 정보가 나온다. (이 칸은 필수라서 비워 두면 Swagger 화면이 요청을 보내지 않고 빨간 테두리만 보여 준다)
+
+헤더 **없이** 보내면 어떻게 될까? PowerShell 로 직접 보내 보자. 먼저 오류 응답을 보기 좋게 찍어 주는 작은 함수를 만든다. (Windows PowerShell 5.1 은 오류 응답의 내용을 보여 주지 않을 때가 있어서 이 함수가 필요하다. 7장에서도 쓴다)
+
+**[PS]**
+
+```powershell
+# 오류가 나면 "상태코드 {"detail": "..."}" 모양으로 보여 주는 함수
+function Show-Error($err) {
+  if ($err.ErrorDetails.Message) { $body = $err.ErrorDetails.Message }
+  else {
+    $reader = New-Object System.IO.StreamReader($err.Exception.Response.GetResponseStream(), [System.Text.Encoding]::UTF8)
+    $body = $reader.ReadToEnd()
+  }
+  "$([int]$err.Exception.Response.StatusCode) $body"
+}
+try { Invoke-RestMethod http://localhost:8081/api/auth/me } catch { Show-Error $_ }
+Invoke-RestMethod http://localhost:8081/api/auth/me -Headers @{ "X-User-Id" = "1" }
+```
+
+```text
+401 {"detail":"로그인이 필요합니다"}
+
+id username nickname
+-- -------- --------
+ 1 minsu    민수
+```
 
 > **[MSA 개념] 서비스 포트는 바깥에 열지 않는다.**
 >

@@ -28,4 +28,8 @@
 | 브라우저 콘솔에 CORS 오류 | React 가 8081 · 8082 로 직접 요청하고 있다 / 서비스에도 CORS 를 켰다 | `API_URL` 을 8080 으로. CORS 는 게이트웨이에서만 |
 | 서비스를 직접(8082) 불렀더니 `로그인이 필요합니다` (401) | `X-User-Id` 헤더가 없다 | 게이트웨이(8080)로 부르거나, `/docs` 에서 헤더 칸을 채운다 |
 | PowerShell 에서 한글이 `íì¤í¸` 처럼 깨진다 | 응답에 charset 이 없다 / 요청에 charset 이 없다 | 서비스 `application.yml` 에 `spring.servlet.encoding.force-response: true`, 요청은 `-ContentType "application/json; charset=utf-8"` |
+| user-service 를 끈 뒤 새로고침(F5)했더니 로그아웃됐다 | React 가 새로 열릴 때 `/api/auth/me`(user-service)로 토큰을 확인하는데, 503 이 와서 토큰을 지웠다 | 정상 동작이다(7-5). user-service 를 켜고 다시 로그인한다. 고쳐 보려면 8장 도전 과제 4 |
+| 7장 회원가입에서 `이미 사용 중인 아이디입니다` (409) | 4장에서 minsu 를 이미 만들었다 | 가입하지 말고 로그인한다 |
+| `/docs` 에서 `GET /api/auth/me` 를 Execute 해도 요청이 가지 않고 칸이 빨개진다 | `X-User-Id` 칸이 필수인데 비어 있다 | 칸에 `1` 을 넣는다. 헤더 없이 보내 보려면 4-8 의 PowerShell 명령 |
+| `/docs` 에서 `X-User-Nickname` 에 한글을 넣으니 오류가 난다 | 헤더에는 한글을 바로 실을 수 없다 | 영문으로 넣거나 `%EB%AF%BC%EC%88%98` 처럼 인코딩한 값을 넣는다 |
 | 글쓴이 닉네임이 `%EB%AF%BC...` 로 저장됐다 | post-service 에서 URL 디코딩을 빠뜨렸다 | `PostController.create` 의 `URLDecoder.decode(...)` 확인 |

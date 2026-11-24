@@ -128,7 +128,7 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 </tr>
 </tbody>
 </table></div>
-<p>PostgreSQL 에서는 <strong>서로 다른 데이터베이스의 테이블을 한 SQL 로 JOIN 할 수 없고, 외래 키도 걸 수 없다.</strong> 같은 서버(컨테이너) 안에 있어도 마찬가지다. 그래서 컨테이너를 하나만 써도 "서비스마다 자기 DB" 원칙을 지킬 수 있다.</p>
+<p>PostgreSQL 에서는 <strong>서로 다른 데이터베이스의 테이블을 한 SQL 로 JOIN 할 수 없고, 외래 키도 걸 수 없다.</strong> 같은 서버(컨테이너) 안에 있어도 마찬가지다. (<code>dblink</code> 같은 확장 기능을 따로 설치하면 억지로 이을 수는 있지만, 그러면 서비스끼리 다시 DB 로 묶이므로 MSA 에서는 쓰지 않는다) 그래서 컨테이너를 하나만 써도 "서비스마다 자기 DB" 원칙을 지킬 수 있다.</p>
 <blockquote class="note">
 <p><strong>[MSA 개념] 왜 컨테이너를 하나만 쓸까?</strong></p>
 <p>실제 운영에서는 DB 서버까지 서비스마다 나누기도 한다. 하지만 실습 PC 에는 이미 서비스 3개와 React 가 떠 있다. 그래서 이 교안은 <strong>컨테이너 1개 + 데이터베이스 2개</strong>로 가볍게 간다. 서비스 코드는 똑같고, 나중에 DB 서버를 나누려면 <code>application.yml</code> 의 접속 주소만 바꾸면 된다.</p>
