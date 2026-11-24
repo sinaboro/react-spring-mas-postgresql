@@ -12,7 +12,7 @@ React 심화 과정에서 만든 **로그인 게시판(CRUD + JWT 로그인)** �
 
 **웹 교안: https://sinaboro.github.io/react-spring-mas-postgresql/** (PC·휴대폰에서 장별로 읽기, 코드 복사 단추)
 
-**교안 PDF: [docs/React_Spring_MSA_학습교안.pdf](docs/React_Spring_MSA_학습교안.pdf)** (60쪽, 권장 8시간)
+**교안 PDF: [docs/React_Spring_MSA_학습교안.pdf](docs/React_Spring_MSA_학습교안.pdf)** (62쪽, 권장 8시간)
 
 > 모놀리식 원본(서버 1개): https://github.com/sinaboro/react-spring-postgresql (`advanced/board`)
 > React 코드와 API 모양(JSON)은 원본과 같고, 서버만 MSA 로 나뉘었습니다.

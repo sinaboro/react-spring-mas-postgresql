@@ -372,6 +372,40 @@ Indexes:
 - 민수가 탈퇴해도, DB 가 민수의 글을 함께 지워 주지 않는다(<code>ON DELETE CASCADE</code> 를 쓸 수 없다).</p>
 <p>실제 서비스에서는 user-service 가 "닉네임이 바뀌었어요", "회원이 탈퇴했어요" 같은 <strong>소식(이벤트)</strong> 을 보내고, post-service 가 그 소식을 받아 자기 데이터를 고친다. 이 교안에는 닉네임 변경·탈퇴 기능이 없으므로 다루지 않는다(8장에서 더 나아가기로 소개).</p>
 </blockquote>
+<h3 id="정규화에-어긋나는-것-아닌가">정규화에 어긋나는 것 아닌가?</h3>
+<p>DB 수업에서 배운 정규화로 <code>posts</code> 를 따져 보자. 두 칸은 사정이 다르다.</p>
+<p><strong>user_id - 정규화 위반이 아니다.</strong> 모놀리식 판에도 있던 칸이다. 같은 정보를 두 번 저장하는 것이 아니라 "어느 회원인지" 가리키기만 한다. 달라진 것은 외래 키 <strong>제약</strong>이 없어졌다는 점이다. 그래서 잃은 것은 정규화가 아니라 <strong>참조 무결성</strong>이다. 이제 DB 는 없는 회원 번호(예: 999)가 들어와도 막아 주지 않는다. 대신 게이트웨이가 검사한 토큰 속 번호만 들어오게 해서 이 문제를 막는다.</p>
+<p><strong>writer - 제3정규형(3NF) 위반이다.</strong> 닉네임은 글이 아니라 회원에 딸린 정보다.</p>
+<pre><code class="language-text">id (글 번호) → user_id (글쓴이) → writer (그 회원의 닉네임)
+</code></pre>
+<p>기본 키(<code>id</code>)가 아닌 <code>user_id</code> 를 거쳐 <code>writer</code> 가 정해지므로 <strong>이행 종속</strong>이다. 그래서 정규화에서 말하는 <strong>갱신 이상</strong>이 그대로 나타난다. 위 상자의 "닉네임을 바꿔도 예전 글은 그대로" 가 바로 그것이다.</p>
+<p><strong>그런데도 이렇게 하는 이유</strong> - 정규화는 <strong>한 데이터베이스 안에서</strong> 중복을 없애는 규칙이다. MSA 는 서비스끼리 DB 를 섞지 않으려고 일부러 DB 를 나눴고, 그래서 JOIN 을 쓸 수 없다. 남은 방법은 둘이다.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>방법</th>
+<th>좋은 점</th>
+<th>대가</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 글 목록을 보여 줄 때마다 user-service 에 닉네임을 물어본다</td>
+<td>정규화를 지킨다</td>
+<td>요청마다 서비스끼리 통신한다. user-service 가 꺼지면 글 목록도 실패한다</td>
+</tr>
+<tr>
+<td>② 글을 쓸 때 닉네임을 복사해 둔다 (<strong>이 교안</strong>)</td>
+<td>빠르고, 서비스가 서로 독립한다</td>
+<td>3NF 위반. 닉네임이 바뀌면 복사본을 따로 맞춰야 한다</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote class="note">
+<p><strong>[MSA 개념] 알고 하는 비정규화</strong></p>
+<p>MSA 에서는 정규화보다 <strong>서비스의 독립</strong>을 먼저 두는 경우가 많다. 정규화를 몰라서 어긴 것이 아니라, 대가(갱신 이상)를 알고 <strong>일부러</strong> 고른 것이다. 그 대가는 이벤트로 복사본을 맞추는 방법으로 줄인다.</p>
+</blockquote>
+<p><strong>생각해 볼 거리 - writer 를 "글을 쓸 당시의 닉네임" 이라고 정하면?</strong> 주문서에 그때의 배송지·가격을 남겨 두는 것처럼, <code>writer</code> 를 <strong>글에 속한 기록</strong>으로 정할 수도 있다. 그러면 <code>writer</code> 는 <code>id</code> 에 바로 종속되므로 정규화 위반이 아니고, 닉네임을 바꿔도 예전 글의 이름이 그대로인 것이 오히려 <strong>원하는 동작</strong>이 된다. 어느 쪽인지는 "게시판이 무엇을 보여 줘야 하는가" 를 정하는 <strong>설계의 선택</strong>이다.</p>
 <h2 id="5-4-postrepository---join-이-사라졌다">5-4. PostRepository - JOIN 이 사라졌다</h2>
 <div class="file"><span>📄 backend/post-service/src/main/java/com/example/post/PostRepository.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/post-service/src/main/java/com/example/post/PostRepository.java" target="_blank">GitHub 에서 보기</a></div>
 
@@ -598,6 +632,7 @@ public class PostController {
 <li>모놀리식 판의 <code>PostRepository</code> 에 있던 <code>@EntityGraph</code> 가 post-service 에서 필요 없어진 이유는?</li>
 <li>민수가 닉네임을 바꿨는데 예전 글의 작성자가 그대로다. 버그일까? 어떻게 해결할 수 있을까?</li>
 <li>"남의 글 수정 → 403" 검사를 게이트웨이가 아니라 post-service 가 하는 이유는?</li>
+<li><code>posts</code> 의 <code>user_id</code> 와 <code>writer</code> 가운데 정규화에 어긋나는 칸은 어느 것이고, 어느 정규형을 어기는가? 그런데도 MSA 에서 이렇게 하는 이유는?</li>
 </ol>
 <nav class="pager"><a href="ch04.html"><small>← 이전</small>4장 user-service - 회원가입 · 로그인 · 토큰 발급</a><a class="next" href="ch06.html"><small>다음 →</small>6장 api-gateway - 라우팅과 인증을 정문에서</a></nav>
 </article></div>
