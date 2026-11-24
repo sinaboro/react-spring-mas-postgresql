@@ -10,6 +10,8 @@ React 심화 과정에서 만든 **로그인 게시판(CRUD + JWT 로그인)** �
 - **post-service (8082)** - 게시글 CRUD · 본인 글 검사 → `postdb`
 - **PostgreSQL 컨테이너 1개, 데이터베이스 2개** (Database per Service, FK · JOIN 없음)
 
+**웹 교안: https://sinaboro.github.io/react-spring-mas-postgresql/** (PC·휴대폰에서 장별로 읽기, 코드 복사 단추)
+
 **교안 PDF: [docs/React_Spring_MSA_학습교안.pdf](docs/React_Spring_MSA_학습교안.pdf)** (59쪽, 권장 8시간)
 
 > 모놀리식 원본(서버 1개): https://github.com/sinaboro/react-spring-postgresql (`advanced/board`)
@@ -40,12 +42,14 @@ backend/                     IntelliJ 로 이 폴더를 연다 (Gradle 멀티 �
   post-service/                게시글 (8082) - Post, PostController, PostService
 frontend/                    React + React Router + AuthContext (5173)
 docs/
-  guide/                     교안 원고 (Markdown, 0~8장 + 부록)
+  guide/                     교안 원고 (Markdown, 0~8장 + 부록) + 웹 교안 장별 화면(ch00.html …)
+  index.html                 웹 교안 첫 화면 (GitHub Pages: main 브랜치 /docs)
   images/                    개념 그림(fig_*)과 실행 화면(s*)
   React_Spring_MSA_학습교안.pdf
 tools/
   make_figures.py            개념 그림 만들기
   build_guide.py             원고 → PDF (코드 상자는 저장소의 실제 파일로 자동 채움)
+  build_site.py              원고 → 웹 교안 (docs/index.html, docs/guide/*.html)
 ```
 
 ## 실행 환경
@@ -82,9 +86,10 @@ npm run dev                        # http://localhost:5173
 ## 교안 다시 만들기
 
 ```powershell
-pip install reportlab matplotlib
+pip install reportlab matplotlib markdown
 python tools/make_figures.py       # 개념 그림
 python tools/build_guide.py        # docs/React_Spring_MSA_학습교안.pdf
+python tools/build_site.py         # 웹 교안 (README 의 첫 문단·비교 표·폴더 구성을 읽어 쓴다)
 ```
 
 강사 김대철

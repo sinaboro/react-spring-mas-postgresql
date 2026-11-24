@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3장. 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기 - React + Spring MSA</title>
+<meta name="description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 교안과 실습 코드입니다.">
+<meta property="og:title" content="3장. 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기 - React + Spring MSA"><meta property="og:description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 교안과 실습 코드입니다."><meta property="og:image" content="https://sinaboro.github.io/react-spring-mas-postgresql/images/fig_msa_overview.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='none' stroke='%2361dafb' stroke-width='1.6'%3E%3Cellipse rx='10' ry='4'/%3E%3Cellipse rx='10' ry='4' transform='rotate(60)'/%3E%3Cellipse rx='10' ry='4' transform='rotate(120)'/%3E%3C/g%3E%3Ccircle r='2' fill='%2361dafb'/%3E%3C/svg%3E">
+<script>
+if(/KAKAOTALK/i.test(navigator.userAgent)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(location.href);}
+</script>
+<style>
+:root{--ink:#1f2328;--sub:#59636e;--line:#e3e6ea;--bg:#f7f8fa;--card:#fff;--navy:#16202e;--acc:#61dafb;--acc2:#0b7fab;
+--note:#eef8fc;--noteline:#61dafb;--code:#f3f5f7;--link:#0969da}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6edf3;--sub:#9da7b3;--line:#30363d;--bg:#0f141a;
+--card:#161b22;--navy:#0b1017;--note:#10232b;--noteline:#2a8fb0;--code:#1b222b;--link:#58a6ff;--acc2:#61dafb}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all}
+a{color:var(--link)}img{max-width:100%;height:auto}
+header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5}
+header.top .in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center}
+header.top a{color:#fff;text-decoration:none}.logo{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.logo b{color:var(--acc)}
+header.top .sp{flex:1}header.top .btn{font-size:14px;border:1px solid #ffffff55;border-radius:8px;padding:4px 10px;white-space:nowrap}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.doc{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;padding:24px 16px 60px;max-width:1180px;margin:0 auto}
+.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;font-size:14px}
+.side .cap{font-weight:800;margin:4px 10px 6px;color:var(--sub)}
+.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink);text-decoration:none;line-height:1.45}
+.side a.on{background:var(--acc);color:#111;font-weight:700}.side a:hover:not(.on){background:var(--line)}
+.side .other{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+article{min-width:0}
+article h1{font-size:28px;line-height:1.35;margin:0 0 20px;padding-bottom:12px;border-bottom:4px solid var(--acc)}
+article h2{font-size:22px;margin:40px 0 12px;padding-left:10px;border-left:5px solid var(--acc2)}
+article h3{font-size:18px;margin:28px 0 8px}
+figure{margin:18px 0;text-align:center}figure img{border:1px solid var(--line);border-radius:8px;background:#fff}
+figcaption{font-size:13px;color:var(--sub);margin-top:6px}
+.tbl{overflow-x:auto;margin:14px 0}table{border-collapse:collapse;width:100%;font-size:15px}
+th{background:var(--navy);color:#fff;text-align:left}th,td{padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+blockquote.note{margin:16px 0;padding:10px 16px;background:var(--note);border-left:5px solid var(--noteline);border-radius:6px}
+blockquote.note p{margin:6px 0}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-family:Consolas,"D2Coding",monospace;font-size:.92em}
+.file{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:18px 0 -6px;padding:6px 12px;
+background:var(--navy);color:#dfe6ee;border-radius:8px 8px 0 0;font:13px Consolas,monospace}
+.file a{color:var(--acc);font-family:inherit;white-space:nowrap}.file span{overflow-wrap:anywhere}
+.file+pre{border-top-left-radius:0;border-top-right-radius:0;margin-top:6px}
+pre{position:relative;background:var(--code);padding:34px 14px 12px;border-radius:8px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0;font-size:14px;line-height:1.55}
+pre code.hljs{padding:0;background:none}
+.copy{position:absolute;top:6px;right:6px;font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);
+background:var(--card);color:var(--ink);cursor:pointer;opacity:.85}.copy:hover{opacity:1}.copy.ok{background:#2da44e;color:#fff;border-color:#2da44e}
+.pager{display:flex;gap:12px;justify-content:space-between;margin-top:48px;padding-top:20px;border-top:1px solid var(--line)}
+.pager a{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);background:var(--card)}
+.pager a small{display:block;color:var(--sub)}.pager .next{text-align:right}
+select.jump{display:none;width:100%;font-size:16px;padding:8px;margin-bottom:12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+@media (max-width:860px){.doc{display:block;padding-top:16px}.side{display:none}select.jump{display:block}article h1{font-size:23px}
+header.top .hide-s{display:none}}
+.hero{background:var(--navy);color:#fff;padding:44px 0 36px}
+.hero h1{font-size:38px;margin:0 0 10px;line-height:1.25}.hero h1 b{color:var(--acc)}
+.hero p{margin:6px 0;color:#c9d4e0;max-width:760px}.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.cta a{padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+.cta .main{background:var(--acc);color:#111}.cta .sub{border:1px solid #ffffff66;color:#fff}
+.hero .twin{margin-top:16px;font-size:14px}.hero .twin a{color:var(--acc)}
+section{padding:36px 0 8px}section h2{font-size:24px;margin:0 0 6px}section .lead{color:var(--sub);margin:0 0 18px}
+.course{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px}
+.course>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.course h3{margin:0 0 4px;font-size:21px}.course .pdf{font-size:14px}
+.course ol{list-style:none;padding:0;margin:12px 0 0}
+.course li a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.course li a:hover{background:var(--line)}
+.course li img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
+.course li .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.dl a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--ink)}
+.dl a:hover{border-color:var(--acc)}.dl b{font-family:Consolas,monospace}.dl small{display:block;color:var(--sub)}
+footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
+@media (max-width:600px){.hero h1{font-size:28px}.course{grid-template-columns:1fr}}
+
+.chlist{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:4px 18px}
+.chlist a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.chlist a:hover{background:var(--line)}
+.chlist img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
+.chlist .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
+.overview{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.overview img{border:none}
+</style></head><body>
+<header class="top"><div class="in">
+<a class="logo" href="../index.html">React + Spring <b>MSA</b></a><span class="sp"></span>
+<a class="btn hide-s" href="../guide/ch00.html">교안</a>
+<a class="btn" href="../index.html#pdf">PDF</a>
+<a class="btn" href="https://github.com/sinaboro/react-spring-mas-postgresql" target="_blank">GitHub</a>
+</div></header>
+<div class="doc">
+<nav class="side"><div class="cap">React + Spring MSA</div><a href="ch00.html">0장 과정 안내</a><a href="ch01.html">1장 MSA 란 무엇인가</a><a href="ch02.html">2장 DB 준비 - 컨테이너 하나에 DB 둘</a><a href="ch03.html" class=on>3장 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기</a><a href="ch04.html">4장 user-service - 회원가입 · 로그인 · 토큰 발급</a><a href="ch05.html">5장 post-service - FK 없이 게시글 저장하기</a><a href="ch06.html">6장 api-gateway - 라우팅과 인증을 정문에서</a><a href="ch07.html">7장 전체 실행, React 연결, 장애 실험</a><a href="ch08.html">8장 정리와 더 나아가기</a><a href="appA.html">부록 A 오류 해결</a><a href="appB.html">부록 B 확인 문제 풀이</a><div class="other"><a href="../index.html">← 첫 화면</a><a href="../React_Spring_MSA_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안</a></div></nav>
+<article>
+<select class="jump" onchange="location.href=this.value" aria-label="장 이동"><option value="ch00.html">0장 과정 안내</option><option value="ch01.html">1장 MSA 란 무엇인가</option><option value="ch02.html">2장 DB 준비 - 컨테이너 하나에 DB 둘</option><option value="ch03.html" selected>3장 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기</option><option value="ch04.html">4장 user-service - 회원가입 · 로그인 · 토큰 발급</option><option value="ch05.html">5장 post-service - FK 없이 게시글 저장하기</option><option value="ch06.html">6장 api-gateway - 라우팅과 인증을 정문에서</option><option value="ch07.html">7장 전체 실행, React 연결, 장애 실험</option><option value="ch08.html">8장 정리와 더 나아가기</option><option value="appA.html">부록 A 오류 해결</option><option value="appB.html">부록 B 확인 문제 풀이</option></select>
+<h1 id="3장-프로젝트-구조---서비스-3개를-intellij-로-열기">3장. 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기</h1>
+<h2 id="학습-목표">학습 목표</h2>
+<ul>
+<li>Gradle <strong>멀티 프로젝트</strong>(한 폴더에 여러 프로그램)의 구조를 안다.</li>
+<li>IntelliJ 에서 <code>backend</code> 폴더 하나를 열어 세 서비스를 모두 실행할 수 있다.</li>
+<li>서비스마다 필요한 라이브러리가 다르다는 것을 <code>build.gradle</code> 에서 확인한다.</li>
+</ul>
+<h2 id="3-1-backend-폴더-둘러보기">3-1. backend 폴더 둘러보기</h2>
+<pre><code class="language-text">backend/
+├─ settings.gradle            &quot;이 폴더에는 서비스 3개가 있다&quot;
+├─ build.gradle               세 서비스가 함께 쓰는 설정 (Spring Boot 버전, Java 21)
+├─ gradlew, gradlew.bat       Gradle 실행기 (Gradle 을 따로 설치하지 않아도 된다)
+├─ api-gateway/
+│   ├─ build.gradle             게이트웨이에 필요한 라이브러리
+│   └─ src/main/...             GatewayApplication, AuthFilter, JwtChecker, GatewayErrorHandler
+├─ user-service/
+│   ├─ build.gradle
+│   └─ src/main/...             UserServiceApplication, User, AuthController, AuthService, JwtProvider ...
+└─ post-service/
+    ├─ build.gradle
+    └─ src/main/...             PostServiceApplication, Post, PostController, PostService ...
+</code></pre>
+<p>세 서비스는 <strong>서로의 코드를 import 하지 않는다</strong>. <code>post-service</code> 는 <code>User</code> 클래스가 있는지도 모른다. 한 폴더에 둔 이유는 IntelliJ 에서 한 번에 열어 보기 편하게 하려는 것뿐이다.</p>
+<blockquote class="note">
+<p><strong>[MSA 개념] 코드도 나뉘어 있다.</strong> 실제 회사에서는 서비스마다 <strong>저장소(Git)</strong> 까지 따로 두는 경우가 많다. 그래도 이 교안의 구조와 생각은 같다. 서비스끼리는 코드를 공유하지 않고, <strong>API(HTTP)와 약속한 헤더</strong>로만 이야기한다.</p>
+</blockquote>
+<h2 id="3-2-settingsgradle---서비스-3개-묶기">3-2. settings.gradle - 서비스 3개 묶기</h2>
+<div class="file"><span>📄 backend/settings.gradle</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/settings.gradle" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-groovy">// settings.gradle - 이 폴더(backend)에 들어 있는 서비스 3개를 한 묶음으로 알려 준다
+//
+// [MSA 개념] 서비스 하나 = 따로 실행되는 Spring Boot 프로그램 하나
+//   api-gateway  (8080) : 모든 요청이 들어오는 정문. 로그인 토큰 검사 후 알맞은 서비스로 보낸다
+//   user-service (8081) : 회원가입 · 로그인 · 토큰 발급        (DB: userdb)
+//   post-service (8082) : 게시글 CRUD                        (DB: postdb)
+//
+// 세 서비스는 서로의 코드를 import 하지 않는다. 한 폴더에 둔 것은 IntelliJ 에서
+// backend 폴더 하나만 열면 세 서비스를 모두 볼 수 있게 하려는 것뿐이다.
+// (실제 회사에서는 서비스마다 저장소를 따로 두는 경우가 많다)
+
+rootProject.name = 'mas-board'
+
+include 'api-gateway'
+include 'user-service'
+include 'post-service'
+</code></pre>
+<p><code>include</code> 한 줄이 서비스 하나다. 나중에 댓글 서비스를 만든다면 <code>comment-service</code> 폴더를 만들고 <code>include 'comment-service'</code> 를 한 줄 더 적으면 된다.</p>
+<h2 id="3-3-backendbuildgradle---함께-쓰는-설정">3-3. backend/build.gradle - 함께 쓰는 설정</h2>
+<div class="file"><span>📄 backend/build.gradle</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/backend/build.gradle" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-groovy">// build.gradle (backend 폴더) - 세 서비스가 함께 쓰는 설정
+//
+// 여기서는 플러그인 &quot;버전&quot;만 정해 둔다 (apply false = 지금 이 폴더에는 적용하지 않음).
+// 실제 의존성(라이브러리)은 각 서비스 폴더의 build.gradle 에 따로 적는다.
+// → 서비스마다 필요한 라이브러리가 다르다. 게이트웨이는 DB 를 쓰지 않고, post-service 는 JWT 를 모른다.
+
+plugins {
+    id 'org.springframework.boot' version '4.1.2' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+}
+
+// 세 서비스(subprojects)에 똑같이 들어가는 설정
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.example'
+    version = '0.0.1-SNAPSHOT'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}
+</code></pre>
+<p><code>subprojects { ... }</code> 안의 내용은 세 서비스에 <strong>똑같이</strong> 들어간다. 그래서 서비스 폴더의 <code>build.gradle</code> 에는 <strong>dependencies(라이브러리)만</strong> 적으면 된다. 세 파일을 나란히 놓고 보면 서비스마다 하는 일이 보인다.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>라이브러리</th>
+<th>api-gateway</th>
+<th>user-service</th>
+<th>post-service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spring Cloud Gateway</td>
+<td>✔</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>webmvc (REST API)</td>
+<td></td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td>data-jpa + postgresql</td>
+<td></td>
+<td>✔ (userdb)</td>
+<td>✔ (postdb)</td>
+</tr>
+<tr>
+<td>validation (입력 검사)</td>
+<td></td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td>spring-security-crypto (BCrypt)</td>
+<td></td>
+<td>✔</td>
+<td></td>
+</tr>
+<tr>
+<td>jjwt (JWT)</td>
+<td>✔ 검사</td>
+<td>✔ 발급</td>
+<td></td>
+</tr>
+<tr>
+<td>springdoc (/docs)</td>
+<td></td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote class="note">
+<p><strong>post-service 는 가장 가볍다.</strong> 토큰도 비밀번호도 다루지 않는다. 서비스를 나누면 각 서비스는 <strong>자기 일에 필요한 것만</strong> 가진다.</p>
+</blockquote>
+<h2 id="3-4-intellij-로-열기">3-4. IntelliJ 로 열기</h2>
+<ol>
+<li>IntelliJ IDEA 실행 → <strong>File → Open</strong> → <code>react-spring-mas-postgresql\backend</code> 폴더 선택 → <strong>OK</strong></li>
+<li>"Trust Project?" 창이 뜨면 <strong>Trust Project</strong></li>
+<li>오른쪽 아래에 Gradle 진행 막대가 끝날 때까지 기다린다. (처음에는 라이브러리를 받느라 몇 분 걸린다)</li>
+<li>오른쪽 <strong>Gradle</strong> 창(코끼리 아이콘)을 열면 <code>mas-board</code> 아래에 <code>api-gateway</code>, <code>post-service</code>, <code>user-service</code> 가 보인다.</li>
+</ol>
+<blockquote class="note">
+<p><strong>JDK 설정</strong> - <strong>File → Project Structure → Project → SDK</strong> 가 21 인지 확인한다. 없으면 <strong>Add SDK → Download JDK → 21, Eclipse Temurin</strong> 을 고른다.</p>
+</blockquote>
+<h2 id="3-5-서비스-실행하는-법">3-5. 서비스 실행하는 법</h2>
+<p>각 서비스의 <code>...Application.java</code> 를 열고, class 이름 왼쪽의 <strong>초록색 ▶</strong> 를 눌러 <strong>Run</strong> 을 고른다.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>서비스</th>
+<th>실행할 파일</th>
+<th>포트</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user-service</td>
+<td><code>user-service/src/main/java/com/example/user/UserServiceApplication.java</code></td>
+<td>8081</td>
+</tr>
+<tr>
+<td>post-service</td>
+<td><code>post-service/src/main/java/com/example/post/PostServiceApplication.java</code></td>
+<td>8082</td>
+</tr>
+<tr>
+<td>api-gateway</td>
+<td><code>api-gateway/src/main/java/com/example/gateway/GatewayApplication.java</code></td>
+<td>8080</td>
+</tr>
+</tbody>
+</table></div>
+<p>세 개를 모두 켜면 아래쪽 <strong>Services</strong> 창(<strong>View → Tool Windows → Services</strong>, 단축키 <code>Alt + 8</code>)에서 한눈에 보고 켜고 끌 수 있다.</p>
+<p><strong>[PS]</strong> IntelliJ 대신 터미널로 켜려면 - <code>backend</code> 폴더에서 <strong>터미널 3개</strong>를 열어 하나씩</p>
+<pre><code class="language-powershell">.\gradlew.bat :user-service:bootRun
+.\gradlew.bat :post-service:bootRun
+.\gradlew.bat :api-gateway:bootRun
+</code></pre>
+<p><code>:서비스이름:bootRun</code> 은 "그 서비스만 실행" 이라는 뜻이다. 서비스마다 따로 켜지고 따로 꺼진다. <strong>이것이 MSA 다.</strong></p>
+<h2 id="정리">정리</h2>
+<ul>
+<li><code>backend</code> 는 Gradle 멀티 프로젝트다. <code>settings.gradle</code> 의 <code>include</code> 하나가 서비스 하나다.</li>
+<li>공통 설정은 <code>backend/build.gradle</code>, 서비스별 라이브러리는 각 서비스의 <code>build.gradle</code> 에 둔다.</li>
+<li>IntelliJ 에서 <code>backend</code> 를 열고, 서비스마다 <code>...Application</code> 의 ▶ 로 따로 켠다.</li>
+</ul>
+<h2 id="확인-문제">확인 문제</h2>
+<ol>
+<li><code>post-service</code> 의 <code>build.gradle</code> 에 jjwt 가 없는 이유는?</li>
+<li>터미널에서 게시글 서비스만 켜는 명령은?</li>
+<li>새 서비스 <code>comment-service</code> 를 추가하려면 <code>settings.gradle</code> 에 무엇을 적어야 하는가?</li>
+</ol>
+<nav class="pager"><a href="ch02.html"><small>← 이전</small>2장 DB 준비 - 컨테이너 하나에 DB 둘</a><a class="next" href="ch04.html"><small>다음 →</small>4장 user-service - 회원가입 · 로그인 · 토큰 발급</a></nav>
+</article></div>
+<footer>React + Spring Boot MSA + PostgreSQL · 강사 김대철 · <a href="https://github.com/sinaboro/react-spring-mas-postgresql">GitHub</a></footer>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+<script>
+document.querySelectorAll('pre code').forEach(function(el){
+  if(window.hljs && !/language-(text|plaintext)/.test(el.className)){ try{ hljs.highlightElement(el); }catch(e){} }
+  var b=document.createElement('button'); b.className='copy'; b.textContent='복사';
+  b.onclick=function(){                       // 코드 상자의 글자를 그대로 클립보드에 복사
+    navigator.clipboard.writeText(el.innerText).then(function(){
+      b.textContent='복사됨'; b.classList.add('ok');
+      setTimeout(function(){ b.textContent='복사'; b.classList.remove('ok'); },1500);
+    });
+  };
+  el.parentNode.appendChild(b);
+});
+</script>
+</body></html>

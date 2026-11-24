@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>React + Spring Boot MSA + PostgreSQL 학습 교안</title>
+<meta name="description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 교안과 실습 코드입니다.">
+<meta property="og:title" content="React + Spring Boot MSA + PostgreSQL 학습 교안"><meta property="og:description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 교안과 실습 코드입니다."><meta property="og:image" content="https://sinaboro.github.io/react-spring-mas-postgresql/images/fig_msa_overview.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='none' stroke='%2361dafb' stroke-width='1.6'%3E%3Cellipse rx='10' ry='4'/%3E%3Cellipse rx='10' ry='4' transform='rotate(60)'/%3E%3Cellipse rx='10' ry='4' transform='rotate(120)'/%3E%3C/g%3E%3Ccircle r='2' fill='%2361dafb'/%3E%3C/svg%3E">
+<script>
+if(/KAKAOTALK/i.test(navigator.userAgent)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(location.href);}
+</script>
+<style>
+:root{--ink:#1f2328;--sub:#59636e;--line:#e3e6ea;--bg:#f7f8fa;--card:#fff;--navy:#16202e;--acc:#61dafb;--acc2:#0b7fab;
+--note:#eef8fc;--noteline:#61dafb;--code:#f3f5f7;--link:#0969da}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6edf3;--sub:#9da7b3;--line:#30363d;--bg:#0f141a;
+--card:#161b22;--navy:#0b1017;--note:#10232b;--noteline:#2a8fb0;--code:#1b222b;--link:#58a6ff;--acc2:#61dafb}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all}
+a{color:var(--link)}img{max-width:100%;height:auto}
+header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5}
+header.top .in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center}
+header.top a{color:#fff;text-decoration:none}.logo{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.logo b{color:var(--acc)}
+header.top .sp{flex:1}header.top .btn{font-size:14px;border:1px solid #ffffff55;border-radius:8px;padding:4px 10px;white-space:nowrap}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.doc{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;padding:24px 16px 60px;max-width:1180px;margin:0 auto}
+.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;font-size:14px}
+.side .cap{font-weight:800;margin:4px 10px 6px;color:var(--sub)}
+.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink);text-decoration:none;line-height:1.45}
+.side a.on{background:var(--acc);color:#111;font-weight:700}.side a:hover:not(.on){background:var(--line)}
+.side .other{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+article{min-width:0}
+article h1{font-size:28px;line-height:1.35;margin:0 0 20px;padding-bottom:12px;border-bottom:4px solid var(--acc)}
+article h2{font-size:22px;margin:40px 0 12px;padding-left:10px;border-left:5px solid var(--acc2)}
+article h3{font-size:18px;margin:28px 0 8px}
+figure{margin:18px 0;text-align:center}figure img{border:1px solid var(--line);border-radius:8px;background:#fff}
+figcaption{font-size:13px;color:var(--sub);margin-top:6px}
+.tbl{overflow-x:auto;margin:14px 0}table{border-collapse:collapse;width:100%;font-size:15px}
+th{background:var(--navy);color:#fff;text-align:left}th,td{padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+blockquote.note{margin:16px 0;padding:10px 16px;background:var(--note);border-left:5px solid var(--noteline);border-radius:6px}
+blockquote.note p{margin:6px 0}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-family:Consolas,"D2Coding",monospace;font-size:.92em}
+.file{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:18px 0 -6px;padding:6px 12px;
+background:var(--navy);color:#dfe6ee;border-radius:8px 8px 0 0;font:13px Consolas,monospace}
+.file a{color:var(--acc);font-family:inherit;white-space:nowrap}.file span{overflow-wrap:anywhere}
+.file+pre{border-top-left-radius:0;border-top-right-radius:0;margin-top:6px}
+pre{position:relative;background:var(--code);padding:34px 14px 12px;border-radius:8px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0;font-size:14px;line-height:1.55}
+pre code.hljs{padding:0;background:none}
+.copy{position:absolute;top:6px;right:6px;font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);
+background:var(--card);color:var(--ink);cursor:pointer;opacity:.85}.copy:hover{opacity:1}.copy.ok{background:#2da44e;color:#fff;border-color:#2da44e}
+.pager{display:flex;gap:12px;justify-content:space-between;margin-top:48px;padding-top:20px;border-top:1px solid var(--line)}
+.pager a{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);background:var(--card)}
+.pager a small{display:block;color:var(--sub)}.pager .next{text-align:right}
+select.jump{display:none;width:100%;font-size:16px;padding:8px;margin-bottom:12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+@media (max-width:860px){.doc{display:block;padding-top:16px}.side{display:none}select.jump{display:block}article h1{font-size:23px}
+header.top .hide-s{display:none}}
+.hero{background:var(--navy);color:#fff;padding:44px 0 36px}
+.hero h1{font-size:38px;margin:0 0 10px;line-height:1.25}.hero h1 b{color:var(--acc)}
+.hero p{margin:6px 0;color:#c9d4e0;max-width:760px}.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.cta a{padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+.cta .main{background:var(--acc);color:#111}.cta .sub{border:1px solid #ffffff66;color:#fff}
+.hero .twin{margin-top:16px;font-size:14px}.hero .twin a{color:var(--acc)}
+section{padding:36px 0 8px}section h2{font-size:24px;margin:0 0 6px}section .lead{color:var(--sub);margin:0 0 18px}
+.course{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px}
+.course>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.course h3{margin:0 0 4px;font-size:21px}.course .pdf{font-size:14px}
+.course ol{list-style:none;padding:0;margin:12px 0 0}
+.course li a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.course li a:hover{background:var(--line)}
+.course li img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
+.course li .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.dl a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--ink)}
+.dl a:hover{border-color:var(--acc)}.dl b{font-family:Consolas,monospace}.dl small{display:block;color:var(--sub)}
+footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
+@media (max-width:600px){.hero h1{font-size:28px}.course{grid-template-columns:1fr}}
+
+.chlist{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:4px 18px}
+.chlist a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.chlist a:hover{background:var(--line)}
+.chlist img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
+.chlist .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
+.overview{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.overview img{border:none}
+</style></head><body>
+<header class="top"><div class="in">
+<a class="logo" href="index.html">React + Spring <b>MSA</b></a><span class="sp"></span>
+<a class="btn hide-s" href="guide/ch00.html">교안</a>
+<a class="btn" href="index.html#pdf">PDF</a>
+<a class="btn" href="https://github.com/sinaboro/react-spring-mas-postgresql" target="_blank">GitHub</a>
+</div></header>
+<div class="hero"><div class="wrap">
+<h1>React + Spring Boot <b>MSA</b> + PostgreSQL</h1>
+<p>React 심화 과정에서 만든 <strong>로그인 게시판(CRUD + JWT 로그인)</strong> 의 서버를
+<strong>MSA(마이크로서비스 아키텍처)</strong> 로 나눠 보는 교안과 실습 코드입니다.</p>
+<div class="cta">
+<a class="main" href="guide/ch00.html">0장부터 읽기 →</a>
+<a class="sub" href="React_Spring_MSA_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안</a>
+<a class="sub" href="https://github.com/sinaboro/react-spring-mas-postgresql/archive/refs/heads/main.zip">실습 코드 전체 받기 (ZIP)</a>
+</div>
+<p class="twin">서버 1개(모놀리식)로 만든 원본 과정 → <a href="https://sinaboro.github.io/react-spring-postgresql/">react-spring-postgresql</a> (심화 8·9장 로그인 게시판)</p>
+</div></div>
+<div class="wrap">
+<section><h2>MSA 한눈에 보기</h2><p class="lead">React 는 게이트웨이(8080) 하나만 알고, 서비스마다 자기 데이터베이스를 씁니다.</p>
+<figure class="overview"><a href="images/fig_msa_overview.png" target="_blank"><img src="images/fig_msa_overview.png" alt="MSA 로그인 게시판 한눈에 보기"></a></figure>
+</section>
+<section><h2>모놀리식 → MSA, 무엇이 바뀌나</h2><p class="lead">React 코드와 API(JSON)는 그대로이고, 서버 안쪽만 나뉩니다.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th></th>
+<th>모놀리식 (원본)</th>
+<th>MSA (이 저장소)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>서버</td>
+<td>Spring Boot 1개 (8080)</td>
+<td>게이트웨이(8080) + user-service(8081) + post-service(8082)</td>
+</tr>
+<tr>
+<td>DB</td>
+<td><code>authboard</code> 1개 (users, posts, FK)</td>
+<td><code>userdb</code>(users) + <code>postdb</code>(posts), 컨테이너 1개 (5435)</td>
+</tr>
+<tr>
+<td>작성자</td>
+<td><code>@ManyToOne User author</code> (FK, JOIN)</td>
+<td><code>user_id</code> + <code>writer</code>(닉네임 복사), FK 없음</td>
+</tr>
+<tr>
+<td>로그인 검사</td>
+<td>Spring Security + JWT 필터</td>
+<td>게이트웨이 <code>AuthFilter</code> 한 곳 → <code>X-User-Id</code>, <code>X-User-Nickname</code> 헤더</td>
+</tr>
+<tr>
+<td>토큰</td>
+<td>발급 · 검사 모두 서버 하나</td>
+<td>발급은 user-service, 검사는 게이트웨이 (같은 <code>jwt.secret</code>)</td>
+</tr>
+<tr>
+<td>401 / 403</td>
+<td>Security / PostService</td>
+<td>게이트웨이 / post-service</td>
+</tr>
+<tr>
+<td>서비스 하나가 꺼지면</td>
+<td>전체 멈춤</td>
+<td>그 기능만 멈춤 (게이트웨이가 503 으로 알림)</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="chapters"><h2>교안 목차</h2><p class="lead">장마다 개념 → 코드 읽기 → 실행해서 확인 → 확인 문제 순서입니다. 답은 부록 B 에 있습니다. (권장 8시간)</p>
+<ol class="chlist"><li><a href="guide/ch00.html"><img src="images/fig_msa_overview.png" alt="" loading="lazy"><span>0장 과정 안내</span></a></li><li><a href="guide/ch01.html"><img src="images/fig_monolith_vs_msa.png" alt="" loading="lazy"><span>1장 MSA 란 무엇인가</span></a></li><li><a href="guide/ch02.html"><span class="noimg"></span><span>2장 DB 준비 - 컨테이너 하나에 DB 둘</span></a></li><li><a href="guide/ch03.html"><span class="noimg"></span><span>3장 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기</span></a></li><li><a href="guide/ch04.html"><img src="images/s6_docs_user.png" alt="" loading="lazy"><span>4장 user-service - 회원가입 · 로그인 · 토큰 발급</span></a></li><li><a href="guide/ch05.html"><img src="images/fig_db_split.png" alt="" loading="lazy"><span>5장 post-service - FK 없이 게시글 저장하기</span></a></li><li><a href="guide/ch06.html"><img src="images/fig_request_flow.png" alt="" loading="lazy"><span>6장 api-gateway - 라우팅과 인증을 정문에서</span></a></li><li><a href="guide/ch07.html"><img src="images/s1_list_guest.png" alt="" loading="lazy"><span>7장 전체 실행, React 연결, 장애 실험</span></a></li><li><a href="guide/ch08.html"><img src="images/fig_msa_overview.png" alt="" loading="lazy"><span>8장 정리와 더 나아가기</span></a></li><li><a href="guide/appA.html"><span class="noimg"></span><span>부록 A 오류 해결</span></a></li><li><a href="guide/appB.html"><span class="noimg"></span><span>부록 B 확인 문제 풀이</span></a></li></ol></section>
+<section id="code"><h2>실습 코드</h2><p class="lead">IntelliJ 로 <b>backend</b> 폴더를 열면 서비스 3개가 함께 열립니다.
+한 번에 받으려면 <a href="https://github.com/sinaboro/react-spring-mas-postgresql/archive/refs/heads/main.zip">전체 ZIP</a> 이 편합니다.</p>
+<div class="dl"><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/docker-compose.yml" target="_blank"><b>docker-compose.yml</b><small>PostgreSQL 18 (localhost:5435, 컨테이너 mas-db)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/db/init.sql" target="_blank"><b>db/init.sql</b><small>userdb, postdb 만들기 (처음 켤 때 한 번 실행)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend" target="_blank"><b>backend/</b><small>IntelliJ 로 이 폴더를 연다 (Gradle 멀티 프로젝트)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/api-gateway" target="_blank"><b>backend/api-gateway/</b><small>Spring Cloud Gateway (8080) - AuthFilter, JwtChecker, GatewayErrorHandler</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/user-service" target="_blank"><b>backend/user-service/</b><small>회원 (8081) - User, AuthController, AuthService, JwtProvider</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/post-service" target="_blank"><b>backend/post-service/</b><small>게시글 (8082) - Post, PostController, PostService</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/frontend" target="_blank"><b>frontend/</b><small>React + React Router + AuthContext (5173)</small></a></div></section>
+<section id="pdf"><h2>PDF 교안</h2><p class="lead">웹 교안과 같은 내용입니다. 인쇄하거나 내려받아 볼 때 쓰세요.</p>
+<div class="dl"><a href="React_Spring_MSA_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank"><b>React_Spring_MSA_학습교안.pdf</b><small>전체 (인쇄용)</small></a></div></section>
+</div>
+<footer>강사 김대철 · <a href="https://github.com/sinaboro/react-spring-mas-postgresql">GitHub 저장소</a></footer>
+
+</body></html>
