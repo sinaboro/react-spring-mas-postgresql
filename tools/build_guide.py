@@ -1,11 +1,12 @@
-"""학습 교안 PDF 빌더 (React + Spring MSA 학습 교안 한 권).
+"""학습 교안 PDF 빌더 (React + Spring MSA 기초 · 심화 두 권).
 
-docs/guide/*.md 가 원고다. 파일 이름 순서(00, 01, ..., A, B, ...)대로 묶어
-docs/React_Spring_MSA_학습교안.pdf 를 만든다.
+docs/guide/*.md (기초), docs/advanced/*.md (심화) 가 원고다. 파일 이름 순서(00, 01, ..., A, B)대로 묶어
+docs/React_Spring_MSA_기초_학습교안.pdf, docs/React_Spring_MSA_심화_학습교안.pdf 를 만든다.
 
     pip install reportlab matplotlib
     python tools/make_figures.py         # 개념 그림 (docs/images/fig_*.png)
-    python tools/build_guide.py          # 교안 PDF
+    python tools/build_guide.py          # 두 권 모두
+    python tools/build_guide.py advanced # 심화만
     python tools/build_guide.py "C:\\Users\\M\\Desktop\\공부자료"   # 만든 뒤 그 폴더에도 복사
 
 필요한 글꼴: 맑은 고딕, Consolas (둘 다 Windows 기본). 코드 속 한글은 맑은 고딕으로 그린다.
@@ -56,20 +57,30 @@ IMG_DIR = ROOT / "docs" / "images"
 INSTRUCTOR = "김대철"
 REPO = "github.com/sinaboro/react-spring-mas-postgresql"
 
-# 교안 설정 (이 저장소는 한 권)
+# 교안별 설정 (기초 · 심화 두 권)
 GUIDES = {
-    "msa": dict(
+    "basic": dict(
         src=ROOT / "docs" / "guide",
-        out=ROOT / "docs" / "React_Spring_MSA_학습교안.pdf",
-        title="React + Spring MSA",
+        out=ROOT / "docs" / "React_Spring_MSA_기초_학습교안.pdf",
+        title="React + Spring MSA 기초",
         cover_sub=["로그인 게시판을 마이크로서비스로", "API Gateway · 서비스 분리 · Database per Service"],
         cover_tools="React 19 · Spring Boot 4 · Spring Cloud Gateway · JWT · PostgreSQL 18(Docker)",
         cover_course="React 심화(로그인 게시판) 다음 단계 · 9장 · 권장 8시간(1일)",
         cover_env="실습 환경  Windows + Node.js + JDK 21 + Docker Desktop + VS Code + IntelliJ IDEA",
         accent="#2ec4b6",
     ),
+    "advanced": dict(
+        src=ROOT / "docs" / "advanced",
+        out=ROOT / "docs" / "React_Spring_MSA_심화_학습교안.pdf",
+        title="React + Spring MSA 심화",
+        cover_sub=["Kafka 이벤트로 나뉜 데이터 맞추기", "이벤트 · 컨슈머 그룹 · 결과적 일관성 · Outbox"],
+        cover_tools="Spring Boot 4 · Spring for Apache Kafka · Kafka 4 (KRaft) · React 19 · PostgreSQL 18",
+        cover_course="MSA 기초 과정 다음 단계 · 8장 · 권장 8시간(1일)",
+        cover_env="실습 환경  기초 과정과 같음 + Kafka(Docker) · 실습 폴더 advanced/",
+        accent="#e8890c",
+    ),
 }
-CFG = GUIDES["msa"]  # build() 에서 바꾼다
+CFG = GUIDES["basic"]  # build() 에서 바꾼다
 
 
 # ---------------------------------------------------------------- 글꼴

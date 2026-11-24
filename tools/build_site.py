@@ -2,12 +2,13 @@ r"""build_site.py - GitHub Pages 용 웹 교안을 만든다 (강사용)
 
     python tools\build_site.py
 
-docs/guide/*.md (PDF 와 같은 원고)를 HTML 로 바꿔
-  docs/index.html                   첫 화면 (MSA 개념도, 비교 표, 목차, 코드 폴더, PDF)
-  docs/guide/ch00.html …            장별 읽기 화면
+docs/guide/*.md (기초), docs/advanced/*.md (심화) - PDF 와 같은 원고 - 를 HTML 로 바꿔
+  docs/index.html                   첫 화면 (MSA 개념도, 비교 표, 두 과정 목차, 코드 폴더, PDF)
+  docs/guide/ch00.html …            기초 장별 읽기 화면
+  docs/advanced/ch00.html …         심화 장별 읽기 화면
 를 만든다. GitHub Pages 는 main 브랜치의 /docs 폴더를 공개하도록 설정한다.
 
-react-spring-postgresql 의 build_site.py 를 한 권짜리 MSA 교안에 맞게 고친 것이다.
+react-spring-postgresql 의 build_site.py 를 MSA 기초·심화 두 권에 맞게 고친 것이다.
 저장소 이름(git remote), 과정 제목·첫 문단·비교 표·폴더 설명(README.md)을 읽어 쓴다.
 원고(.md)를 고친 뒤 build_guide.py(PDF)와 이 스크립트를 실행하고 push 하면 사이트가 바뀐다.
 """
@@ -33,9 +34,12 @@ ZIP = f"https://github.com/{REPO}/archive/refs/heads/main.zip"
 SERVER = "MSA"                                           # 제목에서 강조할 낱말
 ORIGIN = "react-spring-postgresql"                       # 모놀리식 원본 저장소 (첫 화면에서 안내)
 
-COURSE = "guide"                                         # 원고 폴더
-LABEL = "React + Spring MSA"                             # 과정 이름 (옆 메뉴·꼬리말)
-PDF = "React_Spring_MSA_학습교안.pdf"
+COURSES = {  # 원고 폴더 → (과정 이름, PDF 파일, 한 줄 소개)
+    "guide": ("MSA 기초", "React_Spring_MSA_기초_학습교안.pdf",
+              "게이트웨이 · 서비스 분리 · Database per Service (실습: 저장소 맨 위 폴더)"),
+    "advanced": ("MSA 심화", "React_Spring_MSA_심화_학습교안.pdf",
+                 "Kafka 이벤트로 나뉜 데이터 맞추기 · 결과적 일관성 · Outbox (실습: advanced/)"),
+}
 
 
 def web_name(md_file):
@@ -228,7 +232,8 @@ if(/KAKAOTALK/i.test(navigator.userAgent)){location.href='kakaotalk://web/openEx
 </script>"""
 
 
-HERO = "fig_msa_overview.png"                           # 첫 화면·공유 미리보기 그림 (서두 개념도)
+HERO = "fig_msa_overview.png"                           # 첫 화면·공유 미리보기 그림 (기초 서두 개념도)
+HERO2 = "fig_kafka_overview.png"                        # 심화 서두 개념도
 
 
 def page(title, body, rel="", code=False):
@@ -244,17 +249,14 @@ def page(title, body, rel="", code=False):
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='none' stroke='%2361dafb' stroke-width='1.6'%3E%3Cellipse rx='10' ry='4'/%3E%3Cellipse rx='10' ry='4' transform='rotate(60)'/%3E%3Cellipse rx='10' ry='4' transform='rotate(120)'/%3E%3C/g%3E%3Ccircle r='2' fill='%2361dafb'/%3E%3C/svg%3E">
 {KAKAO}
 <style>{CSS}
-.chlist{{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:4px 18px}}
-.chlist a{{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}}
-.chlist a:hover{{background:var(--line)}}
-.chlist img{{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}}
-.chlist .noimg{{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}}
 .overview{{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}}
 .overview img{{border:none}}
+.course .lead2{{color:var(--sub);font-size:14px;margin:2px 0 6px}}
 </style></head><body>
 <header class="top"><div class="in">
 <a class="logo" href="{rel}index.html">React + Spring <b>{SERVER}</b></a><span class="sp"></span>
-<a class="btn hide-s" href="{rel}{COURSE}/ch00.html">교안</a>
+<a class="btn hide-s" href="{rel}guide/ch00.html">기초</a>
+<a class="btn hide-s" href="{rel}advanced/ch00.html">심화</a>
 <a class="btn" href="{rel}index.html#pdf">PDF</a>
 <a class="btn" href="https://github.com/{REPO}" target="_blank">GitHub</a>
 </div></header>
@@ -264,12 +266,15 @@ def page(title, body, rel="", code=False):
 
 
 # ------------------------------------------------------------------ 장별 화면
-def build_course():
-    chs = chapters(COURSE)
+def build_course(course):
+    label, pdf, _lead = COURSES[course]
+    other = "advanced" if course == "guide" else "guide"
+    chs = chapters(course)
     for i, ch in enumerate(chs):
-        side = f'<div class="cap">{LABEL}</div>' + "".join(
+        side = f'<div class="cap">{label}</div>' + "".join(
             f'<a href="{c["name"]}.html"{" class=on" if c is ch else ""}>{html.escape(c["menu"])}</a>' for c in chs)
-        side += f'<div class="other"><a href="../index.html">← 첫 화면</a><a href="../{quote(PDF)}" target="_blank">PDF 교안</a></div>'
+        side += (f'<div class="other"><a href="../{other}/ch00.html">→ {COURSES[other][0]}</a>'
+                 f'<a href="../index.html">← 첫 화면</a><a href="../{quote(pdf)}" target="_blank">PDF 교안</a></div>')
         jump = "".join(f'<option value="{c["name"]}.html"{" selected" if c is ch else ""}>{html.escape(c["menu"])}</option>'
                        for c in chs)
         prev = chs[i - 1] if i > 0 else None
@@ -277,7 +282,7 @@ def build_course():
         pager = '<nav class="pager">'
         pager += f'<a href="{prev["name"]}.html"><small>← 이전</small>{html.escape(prev["menu"])}</a>' if prev else "<span></span>"
         pager += (f'<a class="next" href="{nxt["name"]}.html"><small>다음 →</small>{html.escape(nxt["menu"])}</a>' if nxt
-                  else '<a class="next" href="../index.html"><small>끝 →</small>첫 화면으로</a>')
+                  else f'<a class="next" href="../{other}/ch00.html"><small>다른 과정 →</small>{COURSES[other][0]}</a>')
         pager += "</nav>"
         body = f"""<div class="doc">
 <nav class="side">{side}</nav>
@@ -286,46 +291,55 @@ def build_course():
 {to_html(ch["md"])}
 {pager}
 </article></div>
-<footer>{html.escape(TITLE)} · 강사 김대철 · <a href="https://github.com/{REPO}">GitHub</a></footer>"""
-        (DOCS / COURSE / f"{ch['name']}.html").write_text(
-            page(f"{ch['title']} - {LABEL}", body, "../", code=True), encoding="utf-8")
-    print(f"  {COURSE}: {len(chs)}개 장")
+<footer>{html.escape(TITLE)} · {label} · 강사 김대철 · <a href="https://github.com/{REPO}">GitHub</a></footer>"""
+        (DOCS / course / f"{ch['name']}.html").write_text(
+            page(f"{ch['title']} - {label}", body, "../", code=True), encoding="utf-8")
+    print(f"  {course}: {len(chs)}개 장")
 
 
 # ------------------------------------------------------------------ 첫 화면
 def build_index():
-    items = ""
-    for c in chapters(COURSE):
-        img = (f'<img src="images/{quote(c["thumb"])}" alt="" loading="lazy">' if c["thumb"]
-               else '<span class="noimg"></span>')
-        items += f'<li><a href="{COURSE}/{c["name"]}.html">{img}<span>{html.escape(c["menu"])}</span></a></li>'
+    cols = ""
+    for course, (label, pdf, lead) in COURSES.items():
+        items = ""
+        for c in chapters(course):
+            img = (f'<img src="images/{quote(c["thumb"])}" alt="" loading="lazy">' if c["thumb"]
+                   else '<span class="noimg"></span>')
+            items += f'<li><a href="{course}/{c["name"]}.html">{img}<span>{html.escape(c["menu"])}</span></a></li>'
+        cols += (f'<div><h3>{label}</h3><p class="lead2">{html.escape(lead)}</p>'
+                 f'<a class="pdf" href="{quote(pdf)}" target="_blank">PDF 교안 열기</a><ol>{items}</ol></div>')
     folders = "".join(
         f'<a href="{TREE if is_dir else BLOB}{quote(p)}" target="_blank"><b>{html.escape(p)}{"/" if is_dir else ""}</b>'
         f'<small>{html.escape(d)}</small></a>' for p, d, is_dir in readme_folders())
+    pdfs = "".join(f'<a href="{quote(pdf)}" target="_blank"><b>{html.escape(pdf)}</b><small>{label} 전체 (인쇄용)</small></a>'
+                   for label, pdf, _ in COURSES.values())
     body = f"""<div class="hero"><div class="wrap">
 <h1>{html.escape(TITLE).replace(SERVER, f"<b>{SERVER}</b>")}</h1>
 {INTRO_HTML}
 <div class="cta">
-<a class="main" href="{COURSE}/ch00.html">0장부터 읽기 →</a>
-<a class="sub" href="{quote(PDF)}" target="_blank">PDF 교안</a>
+<a class="main" href="guide/ch00.html">기초 과정 시작 →</a>
+<a class="sub" href="advanced/ch00.html">심화 과정 (Kafka)</a>
 <a class="sub" href="{ZIP}">실습 코드 전체 받기 (ZIP)</a>
 </div>
 <p class="twin">서버 1개(모놀리식)로 만든 원본 과정 → <a href="https://{OWNER}.github.io/{ORIGIN}/">{ORIGIN}</a> (심화 8·9장 로그인 게시판)</p>
 </div></div>
 <div class="wrap">
-<section><h2>MSA 한눈에 보기</h2><p class="lead">React 는 게이트웨이(8080) 하나만 알고, 서비스마다 자기 데이터베이스를 씁니다.</p>
+<section><h2>MSA 한눈에 보기 (기초)</h2><p class="lead">React 는 게이트웨이(8080) 하나만 알고, 서비스마다 자기 데이터베이스를 씁니다.</p>
 <figure class="overview"><a href="images/{quote(HERO)}" target="_blank"><img src="images/{quote(HERO)}" alt="MSA 로그인 게시판 한눈에 보기"></a></figure>
 </section>
 <section><h2>모놀리식 → MSA, 무엇이 바뀌나</h2><p class="lead">React 코드와 API(JSON)는 그대로이고, 서버 안쪽만 나뉩니다.</p>
 {readme_table()}
 </section>
-<section id="chapters"><h2>교안 목차</h2><p class="lead">장마다 개념 → 코드 읽기 → 실행해서 확인 → 확인 문제 순서입니다. 답은 부록 B 에 있습니다. (권장 8시간)</p>
-<ol class="chlist">{items}</ol></section>
-<section id="code"><h2>실습 코드</h2><p class="lead">IntelliJ 로 <b>backend</b> 폴더를 열면 서비스 3개가 함께 열립니다.
+<section><h2>심화: Kafka 이벤트로 데이터 맞추기</h2><p class="lead">닉네임을 바꾸면 user-service 가 소식을 남기고, post-service 가 받아 글 작성자를 고칩니다.</p>
+<figure class="overview"><a href="images/{quote(HERO2)}" target="_blank"><img src="images/{quote(HERO2)}" alt="심화 과정 구조" loading="lazy"></a></figure>
+</section>
+<section id="chapters"><h2>교안 목차</h2><p class="lead">기초를 마친 뒤 심화로 이어집니다. 장마다 개념 → 코드 읽기 → 실행해서 확인 → 확인 문제 순서이고, 답은 각 교안의 부록 B 에 있습니다. (각 권장 8시간)</p>
+<div class="course">{cols}</div></section>
+<section id="code"><h2>실습 코드</h2><p class="lead">기초는 저장소 맨 위의 <b>backend</b>, 심화는 <b>advanced/backend</b> 를 IntelliJ 로 엽니다.
 한 번에 받으려면 <a href="{ZIP}">전체 ZIP</a> 이 편합니다.</p>
 <div class="dl">{folders}</div></section>
 <section id="pdf"><h2>PDF 교안</h2><p class="lead">웹 교안과 같은 내용입니다. 인쇄하거나 내려받아 볼 때 쓰세요.</p>
-<div class="dl"><a href="{quote(PDF)}" target="_blank"><b>{html.escape(PDF)}</b><small>전체 (인쇄용)</small></a></div></section>
+<div class="dl">{pdfs}</div></section>
 </div>
 <footer>강사 김대철 · <a href="https://github.com/{REPO}">GitHub 저장소</a></footer>"""
     (DOCS / "index.html").write_text(page(f"{TITLE} 학습 교안", body), encoding="utf-8")
@@ -333,6 +347,7 @@ def build_index():
 
 
 if __name__ == "__main__":
-    build_course()
+    for course in COURSES:
+        build_course(course)
     build_index()
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")    # Jekyll 변환 끄기 (파일을 있는 그대로 공개)

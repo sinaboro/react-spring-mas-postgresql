@@ -1,0 +1,46 @@
+# application.yml - 회원 서비스(user-service) 설정
+#   ${이름:기본값} → 환경 변수 "이름" 이 있으면 그 값, 없으면 기본값
+
+server:
+  port: 8081                     # 게이트웨이(8080)가 /api/auth/** 요청을 이 포트로 보내 준다
+
+spring:
+  servlet:
+    encoding:
+      force-response: true       # 응답에 "charset=UTF-8" 을 붙인다 → Windows PowerShell 5.1 에서도 한글이 깨지지 않는다
+  application:
+    name: user-service
+  datasource:
+    # [MSA 개념] 회원 서비스는 userdb 에만 접속한다. postdb(게시글)는 모른다.
+    url: ${DB_URL:jdbc:postgresql://localhost:5436/userdb}
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update           # User Entity 를 보고 users 테이블을 만든다
+    show-sql: true
+    open-in-view: false
+  kafka:                         # (심화) 이벤트를 보낼 Kafka 주소
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    producer:
+      properties:
+        max.block.ms: 3000       # Kafka 가 꺼져 있으면 3초만 기다리고 포기 (기본값 60초는 너무 길다)
+
+# 심화 스위치 - Kafka 로 이벤트를 보낼까?
+#   false : 보내지 않는다 (실험용: Kafka 없이 닉네임을 바꾸면 어떻게 되나)
+#   true  : 닉네임이 바뀌면 user-events 토픽으로 이벤트를 보낸다 (기본값)
+app:
+  kafka:
+    enabled: ${KAFKA_ENABLED:true}
+
+# JWT(로그인 토큰) 설정 - JwtProvider 가 읽어 간다
+jwt:
+  # 토큰 서명 열쇠. api-gateway 의 jwt.secret 과 "반드시 같은 값" 이어야 한다.
+  #   user-service 가 이 열쇠로 서명 → api-gateway 가 같은 열쇠로 진짜인지 확인
+  # 실제 서비스에서는 환경 변수 JWT_SECRET 으로 넣고 GitHub 에 올리지 않는다. (32글자 이상)
+  secret: ${JWT_SECRET:dev-only-secret-change-me-0123456789abcdef}
+  expiration-minutes: ${ACCESS_TOKEN_MINUTES:60}    # 토큰 유효 시간(분)
+
+springdoc:
+  swagger-ui:
+    path: /docs                  # http://localhost:8081/docs

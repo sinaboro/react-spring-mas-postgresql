@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>6장. 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면 - MSA 심화</title>
+<meta name="description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다.">
+<meta property="og:title" content="6장. 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면 - MSA 심화"><meta property="og:description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다."><meta property="og:image" content="https://sinaboro.github.io/react-spring-mas-postgresql/images/fig_msa_overview.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='none' stroke='%2361dafb' stroke-width='1.6'%3E%3Cellipse rx='10' ry='4'/%3E%3Cellipse rx='10' ry='4' transform='rotate(60)'/%3E%3Cellipse rx='10' ry='4' transform='rotate(120)'/%3E%3C/g%3E%3Ccircle r='2' fill='%2361dafb'/%3E%3C/svg%3E">
+<script>
+if(/KAKAOTALK/i.test(navigator.userAgent)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(location.href);}
+</script>
+<style>
+:root{--ink:#1f2328;--sub:#59636e;--line:#e3e6ea;--bg:#f7f8fa;--card:#fff;--navy:#16202e;--acc:#61dafb;--acc2:#0b7fab;
+--note:#eef8fc;--noteline:#61dafb;--code:#f3f5f7;--link:#0969da}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6edf3;--sub:#9da7b3;--line:#30363d;--bg:#0f141a;
+--card:#161b22;--navy:#0b1017;--note:#10232b;--noteline:#2a8fb0;--code:#1b222b;--link:#58a6ff;--acc2:#61dafb}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all}
+a{color:var(--link)}img{max-width:100%;height:auto}
+header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5}
+header.top .in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center}
+header.top a{color:#fff;text-decoration:none}.logo{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.logo b{color:var(--acc)}
+header.top .sp{flex:1}header.top .btn{font-size:14px;border:1px solid #ffffff55;border-radius:8px;padding:4px 10px;white-space:nowrap}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.doc{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;padding:24px 16px 60px;max-width:1180px;margin:0 auto}
+.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;font-size:14px}
+.side .cap{font-weight:800;margin:4px 10px 6px;color:var(--sub)}
+.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink);text-decoration:none;line-height:1.45}
+.side a.on{background:var(--acc);color:#111;font-weight:700}.side a:hover:not(.on){background:var(--line)}
+.side .other{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+article{min-width:0}
+article h1{font-size:28px;line-height:1.35;margin:0 0 20px;padding-bottom:12px;border-bottom:4px solid var(--acc)}
+article h2{font-size:22px;margin:40px 0 12px;padding-left:10px;border-left:5px solid var(--acc2)}
+article h3{font-size:18px;margin:28px 0 8px}
+figure{margin:18px 0;text-align:center}figure img{border:1px solid var(--line);border-radius:8px;background:#fff}
+figcaption{font-size:13px;color:var(--sub);margin-top:6px}
+.tbl{overflow-x:auto;margin:14px 0}table{border-collapse:collapse;width:100%;font-size:15px}
+th{background:var(--navy);color:#fff;text-align:left}th,td{padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+blockquote.note{margin:16px 0;padding:10px 16px;background:var(--note);border-left:5px solid var(--noteline);border-radius:6px}
+blockquote.note p{margin:6px 0}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-family:Consolas,"D2Coding",monospace;font-size:.92em}
+.file{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:18px 0 -6px;padding:6px 12px;
+background:var(--navy);color:#dfe6ee;border-radius:8px 8px 0 0;font:13px Consolas,monospace}
+.file a{color:var(--acc);font-family:inherit;white-space:nowrap}.file span{overflow-wrap:anywhere}
+.file+pre{border-top-left-radius:0;border-top-right-radius:0;margin-top:6px}
+pre{position:relative;background:var(--code);padding:34px 14px 12px;border-radius:8px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0;font-size:14px;line-height:1.55}
+pre code.hljs{padding:0;background:none}
+.copy{position:absolute;top:6px;right:6px;font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);
+background:var(--card);color:var(--ink);cursor:pointer;opacity:.85}.copy:hover{opacity:1}.copy.ok{background:#2da44e;color:#fff;border-color:#2da44e}
+.pager{display:flex;gap:12px;justify-content:space-between;margin-top:48px;padding-top:20px;border-top:1px solid var(--line)}
+.pager a{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);background:var(--card)}
+.pager a small{display:block;color:var(--sub)}.pager .next{text-align:right}
+select.jump{display:none;width:100%;font-size:16px;padding:8px;margin-bottom:12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+@media (max-width:860px){.doc{display:block;padding-top:16px}.side{display:none}select.jump{display:block}article h1{font-size:23px}
+header.top .hide-s{display:none}}
+.hero{background:var(--navy);color:#fff;padding:44px 0 36px}
+.hero h1{font-size:38px;margin:0 0 10px;line-height:1.25}.hero h1 b{color:var(--acc)}
+.hero p{margin:6px 0;color:#c9d4e0;max-width:760px}.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.cta a{padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+.cta .main{background:var(--acc);color:#111}.cta .sub{border:1px solid #ffffff66;color:#fff}
+.hero .twin{margin-top:16px;font-size:14px}.hero .twin a{color:var(--acc)}
+section{padding:36px 0 8px}section h2{font-size:24px;margin:0 0 6px}section .lead{color:var(--sub);margin:0 0 18px}
+.course{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px}
+.course>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.course h3{margin:0 0 4px;font-size:21px}.course .pdf{font-size:14px}
+.course ol{list-style:none;padding:0;margin:12px 0 0}
+.course li a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.course li a:hover{background:var(--line)}
+.course li img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
+.course li .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.dl a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--ink)}
+.dl a:hover{border-color:var(--acc)}.dl b{font-family:Consolas,monospace}.dl small{display:block;color:var(--sub)}
+footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
+@media (max-width:600px){.hero h1{font-size:28px}.course{grid-template-columns:1fr}}
+
+.overview{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.overview img{border:none}
+.course .lead2{color:var(--sub);font-size:14px;margin:2px 0 6px}
+</style></head><body>
+<header class="top"><div class="in">
+<a class="logo" href="../index.html">React + Spring <b>MSA</b></a><span class="sp"></span>
+<a class="btn hide-s" href="../guide/ch00.html">기초</a>
+<a class="btn hide-s" href="../advanced/ch00.html">심화</a>
+<a class="btn" href="../index.html#pdf">PDF</a>
+<a class="btn" href="https://github.com/sinaboro/react-spring-mas-postgresql" target="_blank">GitHub</a>
+</div></header>
+<div class="doc">
+<nav class="side"><div class="cap">MSA 심화</div><a href="ch00.html">0장 심화 과정 안내</a><a href="ch01.html">1장 이벤트와 Kafka - 왜 필요하고 무엇인가</a><a href="ch02.html">2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</a><a href="ch03.html">3장 user-service - 닉네임 바꾸기와 이벤트 보내기</a><a href="ch04.html">4장 post-service - 이벤트 받아 writer 고치기</a><a href="ch05.html">5장 React - 내 정보 화면</a><a href="ch06.html" class=on>6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</a><a href="ch07.html">7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</a><a href="appA.html">부록 A 오류 해결</a><a href="appB.html">부록 B 확인 문제 풀이</a><div class="other"><a href="../guide/ch00.html">→ MSA 기초</a><a href="../index.html">← 첫 화면</a><a href="../React_Spring_MSA_%EC%8B%AC%ED%99%94_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안</a></div></nav>
+<article>
+<select class="jump" onchange="location.href=this.value" aria-label="장 이동"><option value="ch00.html">0장 심화 과정 안내</option><option value="ch01.html">1장 이벤트와 Kafka - 왜 필요하고 무엇인가</option><option value="ch02.html">2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</option><option value="ch03.html">3장 user-service - 닉네임 바꾸기와 이벤트 보내기</option><option value="ch04.html">4장 post-service - 이벤트 받아 writer 고치기</option><option value="ch05.html">5장 React - 내 정보 화면</option><option value="ch06.html" selected>6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</option><option value="ch07.html">7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</option><option value="appA.html">부록 A 오류 해결</option><option value="appB.html">부록 B 확인 문제 풀이</option></select>
+<h1 id="6장-실험---따라잡기-옛-토큰-kafka-가-꺼지면">6장. 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</h1>
+<h2 id="학습-목표">학습 목표</h2>
+<ul>
+<li>전체를 켜고 닉네임을 바꿔 글 작성자가 따라 바뀌는 것을 확인한다.</li>
+<li>post-service 가 꺼져 있던 동안의 소식을 <strong>따라잡는</strong> 것을 확인한다.</li>
+<li>옛 토큰, Kafka 장애처럼 <strong>이벤트 방식의 약한 곳</strong>을 직접 겪어 본다.</li>
+</ul>
+<h2 id="6-1-켜는-순서">6-1. 켜는 순서</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>순서</th>
+<th>무엇을</th>
+<th>어떻게</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>DB + Kafka</td>
+<td><code>advanced</code> 폴더에서 <code>docker compose up -d</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>user-service, post-service, api-gateway</td>
+<td>IntelliJ (<code>advanced\backend</code>) 에서 각각 ▶</td>
+</tr>
+<tr>
+<td>3</td>
+<td>React</td>
+<td><code>advanced\frontend</code> 에서 <code>npm run dev</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>기초 과정과 같은 순서이고, <strong>Kafka 를 DB 와 함께 먼저</strong> 켠다는 것만 다르다.</p>
+<p><strong>[PS]</strong> 실험에 쓸 준비 - 기초 과정(4장·7장)에서 쓴 <code>Show-Error</code> 함수를 다시 만들고, 두 사람을 가입시킨다. (React 화면으로 가입해도 된다)</p>
+<pre><code class="language-powershell">function Show-Error($err) {
+  if ($err.ErrorDetails.Message) { $body = $err.ErrorDetails.Message }
+  else {
+    $reader = New-Object System.IO.StreamReader($err.Exception.Response.GetResponseStream(), [System.Text.Encoding]::UTF8)
+    $body = $reader.ReadToEnd()
+  }
+  &quot;$([int]$err.Exception.Response.StatusCode) $body&quot;
+}
+$api = &quot;http://localhost:8080/api&quot;
+$json = &quot;application/json; charset=utf-8&quot;
+try { Invoke-RestMethod -Method Post -Uri &quot;$api/auth/signup&quot; -ContentType $json -Body '{&quot;username&quot;:&quot;minsu&quot;,&quot;password&quot;:&quot;password123&quot;,&quot;nickname&quot;:&quot;민수&quot;}' } catch { Show-Error $_ }
+try { Invoke-RestMethod -Method Post -Uri &quot;$api/auth/signup&quot; -ContentType $json -Body '{&quot;username&quot;:&quot;jieun&quot;,&quot;password&quot;:&quot;password123&quot;,&quot;nickname&quot;:&quot;지은&quot;}' } catch { Show-Error $_ }
+</code></pre>
+<p>(3장에서 minsu 를 이미 만들었다면 <code>409 이미 사용 중인 아이디입니다</code> 가 나온다. 괜찮다)</p>
+<h2 id="6-2-실험-①-닉네임을-바꾸면-글-작성자도-바뀐다">6-2. 실험 ① 닉네임을 바꾸면 글 작성자도 바뀐다</h2>
+<p>React 에서 <strong>민수로 로그인</strong>해 글을 두 개, <strong>지은으로 로그인</strong>해 글을 하나 쓴다. 다시 민수로 로그인한다.</p>
+<figure><a href="../images/d1_list_before.png" target="_blank"><img src="../images/d1_list_before.png" alt="닉네임을 바꾸기 전 - 민수의 글 작성자는 &quot;민수&quot;" loading="lazy"></a><figcaption>닉네임을 바꾸기 전 - 민수의 글 작성자는 &quot;민수&quot;</figcaption></figure>
+<p>머리글의 <strong>민수</strong>를 눌러 내 정보 화면에서 닉네임을 <code>민수킹</code> 으로 바꾼다. 그리고 목록으로 간다.</p>
+<figure><a href="../images/d3_list_after.png" target="_blank"><img src="../images/d3_list_after.png" alt="닉네임을 바꾼 뒤 - 민수의 예전 글 작성자도 &quot;민수킹&quot;. 지은의 글은 그대로" loading="lazy"></a><figcaption>닉네임을 바꾼 뒤 - 민수의 예전 글 작성자도 &quot;민수킹&quot;. 지은의 글은 그대로</figcaption></figure>
+<p>이때 일어난 일을 콘솔에서 따라가 보자.</p>
+<pre><code class="language-text">[user-service] [이벤트 보냄] user-events → {&quot;type&quot;:&quot;NICKNAME_CHANGED&quot;,&quot;userId&quot;:1,&quot;nickname&quot;:&quot;민수킹&quot;}
+[post-service] [이벤트 받음] 1번 회원 닉네임 → 민수킹 (글 2개 고침)
+</code></pre>
+<p>user-service 는 post-service 를 부르지 않았고, post-service 는 userdb 를 보지 않았다. <strong>Kafka 에 남긴 소식 하나로</strong> 두 DB 가 같아졌다.</p>
+<blockquote class="note">
+<p><strong>목록에 아직 옛 이름이 보인다면?</strong> 소식이 도착하기 전(1초 남짓)에 목록을 불러온 것이다. 잠시 뒤 다시 열면 바뀌어 있다. 1장에서 배운 <strong>결과적 일관성</strong>이다.</p>
+</blockquote>
+<h2 id="6-3-실험-②-post-service-가-꺼져-있을-때-바꾸면">6-3. 실험 ② post-service 가 꺼져 있을 때 바꾸면</h2>
+<p>IntelliJ 의 Services 창에서 <strong>post-service 만 멈춘다</strong>(■). 그리고 닉네임을 <code>민수짱</code> 으로 바꾼다.</p>
+<p><strong>[PS]</strong></p>
+<pre><code class="language-powershell">$login = Invoke-RestMethod -Method Post -Uri &quot;$api/auth/login&quot; -ContentType $json -Body '{&quot;username&quot;:&quot;minsu&quot;,&quot;password&quot;:&quot;password123&quot;}'
+$headers = @{ Authorization = &quot;Bearer &quot; + $login.access_token }
+$res = Invoke-RestMethod -Method Put -Uri &quot;$api/auth/me&quot; -Headers $headers -ContentType $json -Body '{&quot;nickname&quot;:&quot;민수짱&quot;}'
+$res.user
+docker exec mas-adv-kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group post-service
+</code></pre>
+<pre><code class="language-text">id username nickname
+-- -------- --------
+ 1 minsu    민수짱
+
+GROUP         TOPIC        PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG  CONSUMER-ID
+post-service  user-events  0          2               3               1    -
+</code></pre>
+<ul>
+<li>닉네임 바꾸기는 <strong>성공</strong>했다. user-service 는 post-service 가 꺼진 것을 모르고, 알 필요도 없다.</li>
+<li><code>LAG</code> 이 <strong>1</strong> - post-service 그룹이 아직 읽지 않은 소식이 하나 쌓여 있다. <code>CONSUMER-ID</code> 가 <code>-</code> 인 것은 지금 붙어 있는 post-service 가 없다는 뜻이다.</li>
+<li>이 상태에서 글 목록은 503 이다(post-service 가 꺼져 있으므로).</li>
+</ul>
+<p>이제 post-service 를 다시 켠다(▶). 켜지자마자 콘솔에 이 줄이 나온다.</p>
+<pre><code class="language-text">[이벤트 받음] 1번 회원 닉네임 → 민수짱 (글 2개 고침)
+</code></pre>
+<p>다시 <code>kafka-consumer-groups.sh</code> 를 실행하면 <code>LAG</code> 이 0 이다. <strong>꺼져 있던 동안의 소식을 따라잡았다.</strong></p>
+<blockquote class="note">
+<p><strong>[MSA 개념] 이것이 이벤트 방식을 쓰는 가장 큰 이유</strong></p>
+<p>직접 부르기(1장 ①)였다면 post-service 가 꺼진 순간 그 요청은 실패했고, 소식은 사라졌다. Kafka 는 소식을 보관하고 "어디까지 읽었는지" 를 기억하므로, 받는 쪽이 잠깐 죽어도 <strong>나중에 맞춰진다</strong>. 보내는 쪽과 받는 쪽이 <strong>동시에 살아 있지 않아도</strong> 된다.</p>
+</blockquote>
+<h2 id="6-4-실험-③-옛-토큰으로-글을-쓰면">6-4. 실험 ③ 옛 토큰으로 글을 쓰면</h2>
+<p>닉네임을 바꾸기 <strong>전에</strong> 받은 토큰이 아직 남아 있다면? 실험 ②의 <code>$headers</code> 는 <code>민수</code> → <code>민수짱</code> 으로 바꾸기 <strong>전</strong>에 로그인해 받은 토큰이다. (토큰 안의 닉네임은 그 앞 단계의 <code>민수킹</code>)</p>
+<p><strong>[PS]</strong></p>
+<pre><code class="language-powershell">$old = Invoke-RestMethod -Method Post -Uri &quot;$api/posts&quot; -Headers $headers -ContentType $json -Body '{&quot;title&quot;:&quot;옛 토큰으로 쓴 글&quot;}'
+$old.writer
+$new = Invoke-RestMethod -Method Post -Uri &quot;$api/posts&quot; -Headers @{ Authorization = &quot;Bearer &quot; + $res.access_token } -ContentType $json -Body '{&quot;title&quot;:&quot;새 토큰으로 쓴 글&quot;}'
+$new.writer
+</code></pre>
+<pre><code class="language-text">민수킹
+민수짱
+</code></pre>
+<p>옛 토큰으로 쓴 글은 <strong>옛 닉네임</strong>으로 저장됐다. 게이트웨이는 토큰 안의 닉네임을 그대로 <code>X-User-Nickname</code> 으로 넘기기 때문이다. 그래서 3장에서 닉네임을 바꿀 때 <strong>새 토큰</strong>을 돌려주고, React 가 바꿔 끼우게 했다.</p>
+<blockquote class="note">
+<p><strong>그래도 옛 토큰이 남는 경우</strong> - 같은 계정으로 다른 브라우저(휴대폰)에서도 로그인해 있었다면 그쪽 토큰은 여전히 옛 닉네임이다. 이 과정은 다음 닉네임 변경 소식이 오면 다시 맞춰지는 정도로 둔다. 완전히 막으려면 토큰에 닉네임을 넣지 않고 post-service 가 닉네임을 따로 관리하거나(이벤트로 받아 둔 "회원 번호 → 닉네임" 표), 옛 토큰을 거부하는 방법(7장 Redis)이 필요하다.</p>
+</blockquote>
+<h2 id="6-5-실험-④-kafka-가-꺼지면">6-5. 실험 ④ Kafka 가 꺼지면</h2>
+<p><strong>[PS]</strong> <code>advanced</code> 폴더에서 Kafka 만 멈추고, 닉네임을 바꿔 본다</p>
+<pre><code class="language-powershell">docker compose stop kafka
+Measure-Command { $res2 = Invoke-RestMethod -Method Put -Uri &quot;$api/auth/me&quot; -Headers @{ Authorization = &quot;Bearer &quot; + $res.access_token } -ContentType $json -Body '{&quot;nickname&quot;:&quot;카프카없음&quot;}' } | Select-Object TotalSeconds
+$res2.user.nickname
+</code></pre>
+<pre><code class="language-text">TotalSeconds
+------------
+   3.4129381
+
+카프카없음
+</code></pre>
+<ul>
+<li>닉네임 바꾸기는 <strong>성공</strong>했지만 <strong>3초쯤</strong> 걸렸다. user-service 가 Kafka 를 3초(<code>max.block.ms</code>) 기다리다 포기했기 때문이다.</li>
+<li>user-service 콘솔: <code>[이벤트 실패] Kafka 에 연결할 수 없습니다: ...</code></li>
+<li>post-service 콘솔에도 Kafka 에 붙지 못한다는 경고가 계속 찍힌다. (Kafka 를 다시 켜면 멈춘다)</li>
+</ul>
+<p>이제 Kafka 를 다시 켜 보자.</p>
+<p><strong>[PS]</strong></p>
+<pre><code class="language-powershell">docker compose start kafka
+</code></pre>
+<p>post-service 가 Kafka 에 다시 붙지만, 글 작성자는 <strong>여전히 <code>민수짱</code></strong> 이다. <code>카프카없음</code> 소식은 Kafka 에 <strong>도착한 적이 없으므로</strong> 기다려도 오지 않는다. users 는 <code>카프카없음</code>, posts 는 <code>민수짱</code> - <strong>두 DB 가 영영 어긋났다.</strong></p>
+<blockquote class="note">
+<p><strong>[MSA 개념] Kafka 도 장애가 날 수 있다</strong></p>
+<p>실험 ②에서 받는 쪽이 꺼진 것은 Kafka 가 메워 줬다. 하지만 <strong>보내는 순간</strong> Kafka 에 닿지 못하면 소식은 사라진다. "DB 저장" 과 "Kafka 로 보내기" 는 서로 다른 시스템이라 하나의 트랜잭션으로 묶을 수 없기 때문이다. 이 문제를 푸는 대표적인 방법이 7장의 <strong>Outbox 패턴</strong>이다. 실제 운영에서는 Kafka 도 여러 대(브로커 3대 이상)로 띄워 한 대가 죽어도 멈추지 않게 한다.</p>
+</blockquote>
+<p>실험이 끝나면 닉네임을 원래대로 돌려 두자. 닉네임을 다시 바꾸면 새 소식이 나가 posts 도 다시 맞춰진다.</p>
+<blockquote class="note">
+<p><strong>스위치 <code>app.kafka.enabled</code> 로도 실험할 수 있다.</strong> user-service 의 <code>application.yml</code> 에서 <code>app.kafka.enabled</code> 를 <code>false</code> 로 바꾸고 다시 켜면, 소식을 아예 보내지 않는다(콘솔: <code>[이벤트 꺼짐]</code>). 기초 과정처럼 "닉네임을 바꿔도 글 작성자는 그대로" 인 상태를 다시 볼 수 있다. 실험 뒤에는 <code>true</code> 로 되돌린다.</p>
+</blockquote>
+<h2 id="정리">정리</h2>
+<ul>
+<li>닉네임을 바꾸면 Kafka 소식 하나로 posts 의 writer 까지 맞춰진다 (결과적 일관성).</li>
+<li>받는 쪽(post-service)이 꺼져 있어도 소식은 Kafka 에 남고, 다시 켜지면 <strong>따라잡는다</strong> (<code>LAG</code> 이 0 이 된다).</li>
+<li>옛 토큰에는 옛 닉네임이 있다 → 닉네임을 바꾸면 새 토큰으로 바꿔 끼운다.</li>
+<li>보내는 순간 Kafka 가 꺼져 있으면 소식이 사라진다 → Outbox 패턴(7장).</li>
+</ul>
+<h2 id="확인-문제">확인 문제</h2>
+<ol>
+<li>실험 ②에서 post-service 가 꺼져 있는 동안 <code>LAG</code> 이 1 이었다. 다시 켜면 왜 0 이 되는가?</li>
+<li>실험 ③에서 옛 토큰으로 쓴 글의 작성자가 옛 닉네임인 이유는?</li>
+<li>실험 ④에서 Kafka 를 다시 켰는데도 writer 가 맞춰지지 않은 이유는?</li>
+<li>실험 ②와 ④는 모두 "무언가가 꺼진" 상황이다. 결과가 다른 이유를 한 문장으로 설명해 보자.</li>
+</ol>
+<nav class="pager"><a href="ch05.html"><small>← 이전</small>5장 React - 내 정보 화면</a><a class="next" href="ch07.html"><small>다음 →</small>7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</a></nav>
+</article></div>
+<footer>React + Spring Boot MSA + PostgreSQL · MSA 심화 · 강사 김대철 · <a href="https://github.com/sinaboro/react-spring-mas-postgresql">GitHub</a></footer>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+<script>
+document.querySelectorAll('pre code').forEach(function(el){
+  if(window.hljs && !/language-(text|plaintext)/.test(el.className)){ try{ hljs.highlightElement(el); }catch(e){} }
+  var b=document.createElement('button'); b.className='copy'; b.textContent='복사';
+  b.onclick=function(){                       // 코드 상자의 글자를 그대로 클립보드에 복사
+    navigator.clipboard.writeText(el.innerText).then(function(){
+      b.textContent='복사됨'; b.classList.add('ok');
+      setTimeout(function(){ b.textContent='복사'; b.classList.remove('ok'); },1500);
+    });
+  };
+  el.parentNode.appendChild(b);
+});
+</script>
+</body></html>

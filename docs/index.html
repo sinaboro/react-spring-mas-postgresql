@@ -2,8 +2,8 @@
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>React + Spring Boot MSA + PostgreSQL 학습 교안</title>
-<meta name="description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 교안과 실습 코드입니다.">
-<meta property="og:title" content="React + Spring Boot MSA + PostgreSQL 학습 교안"><meta property="og:description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 교안과 실습 코드입니다."><meta property="og:image" content="https://sinaboro.github.io/react-spring-mas-postgresql/images/fig_msa_overview.png">
+<meta name="description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다.">
+<meta property="og:title" content="React + Spring Boot MSA + PostgreSQL 학습 교안"><meta property="og:description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다."><meta property="og:image" content="https://sinaboro.github.io/react-spring-mas-postgresql/images/fig_msa_overview.png">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='none' stroke='%2361dafb' stroke-width='1.6'%3E%3Cellipse rx='10' ry='4'/%3E%3Cellipse rx='10' ry='4' transform='rotate(60)'/%3E%3Cellipse rx='10' ry='4' transform='rotate(120)'/%3E%3C/g%3E%3Ccircle r='2' fill='%2361dafb'/%3E%3C/svg%3E">
 <script>
@@ -75,33 +75,30 @@ section{padding:36px 0 8px}section h2{font-size:24px;margin:0 0 6px}section .lea
 footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 @media (max-width:600px){.hero h1{font-size:28px}.course{grid-template-columns:1fr}}
 
-.chlist{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:4px 18px}
-.chlist a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
-.chlist a:hover{background:var(--line)}
-.chlist img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
-.chlist .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
 .overview{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
 .overview img{border:none}
+.course .lead2{color:var(--sub);font-size:14px;margin:2px 0 6px}
 </style></head><body>
 <header class="top"><div class="in">
 <a class="logo" href="index.html">React + Spring <b>MSA</b></a><span class="sp"></span>
-<a class="btn hide-s" href="guide/ch00.html">교안</a>
+<a class="btn hide-s" href="guide/ch00.html">기초</a>
+<a class="btn hide-s" href="advanced/ch00.html">심화</a>
 <a class="btn" href="index.html#pdf">PDF</a>
 <a class="btn" href="https://github.com/sinaboro/react-spring-mas-postgresql" target="_blank">GitHub</a>
 </div></header>
 <div class="hero"><div class="wrap">
 <h1>React + Spring Boot <b>MSA</b> + PostgreSQL</h1>
 <p>React 심화 과정에서 만든 <strong>로그인 게시판(CRUD + JWT 로그인)</strong> 의 서버를
-<strong>MSA(마이크로서비스 아키텍처)</strong> 로 나눠 보는 교안과 실습 코드입니다.</p>
+<strong>MSA(마이크로서비스 아키텍처)</strong> 로 나눠 보는 <strong>기초 · 심화</strong> 두 단계 교안과 실습 코드입니다.</p>
 <div class="cta">
-<a class="main" href="guide/ch00.html">0장부터 읽기 →</a>
-<a class="sub" href="React_Spring_MSA_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안</a>
+<a class="main" href="guide/ch00.html">기초 과정 시작 →</a>
+<a class="sub" href="advanced/ch00.html">심화 과정 (Kafka)</a>
 <a class="sub" href="https://github.com/sinaboro/react-spring-mas-postgresql/archive/refs/heads/main.zip">실습 코드 전체 받기 (ZIP)</a>
 </div>
 <p class="twin">서버 1개(모놀리식)로 만든 원본 과정 → <a href="https://sinaboro.github.io/react-spring-postgresql/">react-spring-postgresql</a> (심화 8·9장 로그인 게시판)</p>
 </div></div>
 <div class="wrap">
-<section><h2>MSA 한눈에 보기</h2><p class="lead">React 는 게이트웨이(8080) 하나만 알고, 서비스마다 자기 데이터베이스를 씁니다.</p>
+<section><h2>MSA 한눈에 보기 (기초)</h2><p class="lead">React 는 게이트웨이(8080) 하나만 알고, 서비스마다 자기 데이터베이스를 씁니다.</p>
 <figure class="overview"><a href="images/fig_msa_overview.png" target="_blank"><img src="images/fig_msa_overview.png" alt="MSA 로그인 게시판 한눈에 보기"></a></figure>
 </section>
 <section><h2>모놀리식 → MSA, 무엇이 바뀌나</h2><p class="lead">React 코드와 API(JSON)는 그대로이고, 서버 안쪽만 나뉩니다.</p>
@@ -152,13 +149,16 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 </tbody>
 </table></div>
 </section>
-<section id="chapters"><h2>교안 목차</h2><p class="lead">장마다 개념 → 코드 읽기 → 실행해서 확인 → 확인 문제 순서입니다. 답은 부록 B 에 있습니다. (권장 8시간)</p>
-<ol class="chlist"><li><a href="guide/ch00.html"><img src="images/fig_msa_overview.png" alt="" loading="lazy"><span>0장 과정 안내</span></a></li><li><a href="guide/ch01.html"><img src="images/fig_monolith_vs_msa.png" alt="" loading="lazy"><span>1장 MSA 란 무엇인가</span></a></li><li><a href="guide/ch02.html"><span class="noimg"></span><span>2장 DB 준비 - 컨테이너 하나에 DB 둘</span></a></li><li><a href="guide/ch03.html"><span class="noimg"></span><span>3장 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기</span></a></li><li><a href="guide/ch04.html"><img src="images/s6_docs_user.png" alt="" loading="lazy"><span>4장 user-service - 회원가입 · 로그인 · 토큰 발급</span></a></li><li><a href="guide/ch05.html"><img src="images/fig_db_split.png" alt="" loading="lazy"><span>5장 post-service - FK 없이 게시글 저장하기</span></a></li><li><a href="guide/ch06.html"><img src="images/fig_request_flow.png" alt="" loading="lazy"><span>6장 api-gateway - 라우팅과 인증을 정문에서</span></a></li><li><a href="guide/ch07.html"><img src="images/s1_list_guest.png" alt="" loading="lazy"><span>7장 전체 실행, React 연결, 장애 실험</span></a></li><li><a href="guide/ch08.html"><img src="images/fig_msa_overview.png" alt="" loading="lazy"><span>8장 정리와 더 나아가기</span></a></li><li><a href="guide/appA.html"><span class="noimg"></span><span>부록 A 오류 해결</span></a></li><li><a href="guide/appB.html"><span class="noimg"></span><span>부록 B 확인 문제 풀이</span></a></li></ol></section>
-<section id="code"><h2>실습 코드</h2><p class="lead">IntelliJ 로 <b>backend</b> 폴더를 열면 서비스 3개가 함께 열립니다.
+<section><h2>심화: Kafka 이벤트로 데이터 맞추기</h2><p class="lead">닉네임을 바꾸면 user-service 가 소식을 남기고, post-service 가 받아 글 작성자를 고칩니다.</p>
+<figure class="overview"><a href="images/fig_kafka_overview.png" target="_blank"><img src="images/fig_kafka_overview.png" alt="심화 과정 구조" loading="lazy"></a></figure>
+</section>
+<section id="chapters"><h2>교안 목차</h2><p class="lead">기초를 마친 뒤 심화로 이어집니다. 장마다 개념 → 코드 읽기 → 실행해서 확인 → 확인 문제 순서이고, 답은 각 교안의 부록 B 에 있습니다. (각 권장 8시간)</p>
+<div class="course"><div><h3>MSA 기초</h3><p class="lead2">게이트웨이 · 서비스 분리 · Database per Service (실습: 저장소 맨 위 폴더)</p><a class="pdf" href="React_Spring_MSA_%EA%B8%B0%EC%B4%88_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안 열기</a><ol><li><a href="guide/ch00.html"><img src="images/fig_msa_overview.png" alt="" loading="lazy"><span>0장 과정 안내</span></a></li><li><a href="guide/ch01.html"><img src="images/fig_monolith_vs_msa.png" alt="" loading="lazy"><span>1장 MSA 란 무엇인가</span></a></li><li><a href="guide/ch02.html"><span class="noimg"></span><span>2장 DB 준비 - 컨테이너 하나에 DB 둘</span></a></li><li><a href="guide/ch03.html"><span class="noimg"></span><span>3장 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기</span></a></li><li><a href="guide/ch04.html"><img src="images/s6_docs_user.png" alt="" loading="lazy"><span>4장 user-service - 회원가입 · 로그인 · 토큰 발급</span></a></li><li><a href="guide/ch05.html"><img src="images/fig_db_split.png" alt="" loading="lazy"><span>5장 post-service - FK 없이 게시글 저장하기</span></a></li><li><a href="guide/ch06.html"><img src="images/fig_request_flow.png" alt="" loading="lazy"><span>6장 api-gateway - 라우팅과 인증을 정문에서</span></a></li><li><a href="guide/ch07.html"><img src="images/s1_list_guest.png" alt="" loading="lazy"><span>7장 전체 실행, React 연결, 장애 실험</span></a></li><li><a href="guide/ch08.html"><img src="images/fig_msa_overview.png" alt="" loading="lazy"><span>8장 정리와 더 나아가기</span></a></li><li><a href="guide/appA.html"><span class="noimg"></span><span>부록 A 오류 해결</span></a></li><li><a href="guide/appB.html"><span class="noimg"></span><span>부록 B 확인 문제 풀이</span></a></li></ol></div><div><h3>MSA 심화</h3><p class="lead2">Kafka 이벤트로 나뉜 데이터 맞추기 · 결과적 일관성 · Outbox (실습: advanced/)</p><a class="pdf" href="React_Spring_MSA_%EC%8B%AC%ED%99%94_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안 열기</a><ol><li><a href="advanced/ch00.html"><img src="images/fig_kafka_overview.png" alt="" loading="lazy"><span>0장 심화 과정 안내</span></a></li><li><a href="advanced/ch01.html"><img src="images/fig_sync_vs_event.png" alt="" loading="lazy"><span>1장 이벤트와 Kafka - 왜 필요하고 무엇인가</span></a></li><li><a href="advanced/ch02.html"><span class="noimg"></span><span>2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</span></a></li><li><a href="advanced/ch03.html"><span class="noimg"></span><span>3장 user-service - 닉네임 바꾸기와 이벤트 보내기</span></a></li><li><a href="advanced/ch04.html"><span class="noimg"></span><span>4장 post-service - 이벤트 받아 writer 고치기</span></a></li><li><a href="advanced/ch05.html"><img src="images/d2_profile.png" alt="" loading="lazy"><span>5장 React - 내 정보 화면</span></a></li><li><a href="advanced/ch06.html"><img src="images/d1_list_before.png" alt="" loading="lazy"><span>6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</span></a></li><li><a href="advanced/ch07.html"><img src="images/fig_kafka_overview.png" alt="" loading="lazy"><span>7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</span></a></li><li><a href="advanced/appA.html"><span class="noimg"></span><span>부록 A 오류 해결</span></a></li><li><a href="advanced/appB.html"><span class="noimg"></span><span>부록 B 확인 문제 풀이</span></a></li></ol></div></div></section>
+<section id="code"><h2>실습 코드</h2><p class="lead">기초는 저장소 맨 위의 <b>backend</b>, 심화는 <b>advanced/backend</b> 를 IntelliJ 로 엽니다.
 한 번에 받으려면 <a href="https://github.com/sinaboro/react-spring-mas-postgresql/archive/refs/heads/main.zip">전체 ZIP</a> 이 편합니다.</p>
-<div class="dl"><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/docker-compose.yml" target="_blank"><b>docker-compose.yml</b><small>PostgreSQL 18 (localhost:5435, 컨테이너 mas-db)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/db/init.sql" target="_blank"><b>db/init.sql</b><small>userdb, postdb 만들기 (처음 켤 때 한 번 실행)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend" target="_blank"><b>backend/</b><small>IntelliJ 로 이 폴더를 연다 (Gradle 멀티 프로젝트)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/api-gateway" target="_blank"><b>backend/api-gateway/</b><small>Spring Cloud Gateway (8080) - AuthFilter, JwtChecker, GatewayErrorHandler</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/user-service" target="_blank"><b>backend/user-service/</b><small>회원 (8081) - User, AuthController, AuthService, JwtProvider</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/post-service" target="_blank"><b>backend/post-service/</b><small>게시글 (8082) - Post, PostController, PostService</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/frontend" target="_blank"><b>frontend/</b><small>React + React Router + AuthContext (5173)</small></a></div></section>
+<div class="dl"><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/docker-compose.yml" target="_blank"><b>docker-compose.yml</b><small>기초 - PostgreSQL 18 (localhost:5435, 컨테이너 mas-db)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/db/init.sql" target="_blank"><b>db/init.sql</b><small>userdb, postdb 만들기 (처음 켤 때 한 번 실행)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend" target="_blank"><b>backend/</b><small>IntelliJ 로 이 폴더를 연다 (Gradle 멀티 프로젝트)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/api-gateway" target="_blank"><b>backend/api-gateway/</b><small>Spring Cloud Gateway (8080) - AuthFilter, JwtChecker, GatewayErrorHandler</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/user-service" target="_blank"><b>backend/user-service/</b><small>회원 (8081) - User, AuthController, AuthService, JwtProvider</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/backend/post-service" target="_blank"><b>backend/post-service/</b><small>게시글 (8082) - Post, PostController, PostService</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/frontend" target="_blank"><b>frontend/</b><small>React + React Router + AuthContext (5173)</small></a><a href="https://github.com/sinaboro/react-spring-mas-postgresql/tree/main/advanced" target="_blank"><b>advanced/</b><small>심화 - 기초 코드에 Kafka 이벤트를 더한 완성본 (IntelliJ 로 advanced/backend 를 연다)</small></a></div></section>
 <section id="pdf"><h2>PDF 교안</h2><p class="lead">웹 교안과 같은 내용입니다. 인쇄하거나 내려받아 볼 때 쓰세요.</p>
-<div class="dl"><a href="React_Spring_MSA_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank"><b>React_Spring_MSA_학습교안.pdf</b><small>전체 (인쇄용)</small></a></div></section>
+<div class="dl"><a href="React_Spring_MSA_%EA%B8%B0%EC%B4%88_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank"><b>React_Spring_MSA_기초_학습교안.pdf</b><small>MSA 기초 전체 (인쇄용)</small></a><a href="React_Spring_MSA_%EC%8B%AC%ED%99%94_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank"><b>React_Spring_MSA_심화_학습교안.pdf</b><small>MSA 심화 전체 (인쇄용)</small></a></div></section>
 </div>
 <footer>강사 김대철 · <a href="https://github.com/sinaboro/react-spring-mas-postgresql">GitHub 저장소</a></footer>
 

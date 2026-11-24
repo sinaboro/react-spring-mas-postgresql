@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2장. 준비 - DB 와 Kafka 켜기, 프로젝트 열기 - MSA 심화</title>
+<meta name="description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다.">
+<meta property="og:title" content="2장. 준비 - DB 와 Kafka 켜기, 프로젝트 열기 - MSA 심화"><meta property="og:description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다."><meta property="og:image" content="https://sinaboro.github.io/react-spring-mas-postgresql/images/fig_msa_overview.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='none' stroke='%2361dafb' stroke-width='1.6'%3E%3Cellipse rx='10' ry='4'/%3E%3Cellipse rx='10' ry='4' transform='rotate(60)'/%3E%3Cellipse rx='10' ry='4' transform='rotate(120)'/%3E%3C/g%3E%3Ccircle r='2' fill='%2361dafb'/%3E%3C/svg%3E">
+<script>
+if(/KAKAOTALK/i.test(navigator.userAgent)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(location.href);}
+</script>
+<style>
+:root{--ink:#1f2328;--sub:#59636e;--line:#e3e6ea;--bg:#f7f8fa;--card:#fff;--navy:#16202e;--acc:#61dafb;--acc2:#0b7fab;
+--note:#eef8fc;--noteline:#61dafb;--code:#f3f5f7;--link:#0969da}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6edf3;--sub:#9da7b3;--line:#30363d;--bg:#0f141a;
+--card:#161b22;--navy:#0b1017;--note:#10232b;--noteline:#2a8fb0;--code:#1b222b;--link:#58a6ff;--acc2:#61dafb}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all}
+a{color:var(--link)}img{max-width:100%;height:auto}
+header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5}
+header.top .in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center}
+header.top a{color:#fff;text-decoration:none}.logo{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.logo b{color:var(--acc)}
+header.top .sp{flex:1}header.top .btn{font-size:14px;border:1px solid #ffffff55;border-radius:8px;padding:4px 10px;white-space:nowrap}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.doc{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;padding:24px 16px 60px;max-width:1180px;margin:0 auto}
+.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;font-size:14px}
+.side .cap{font-weight:800;margin:4px 10px 6px;color:var(--sub)}
+.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink);text-decoration:none;line-height:1.45}
+.side a.on{background:var(--acc);color:#111;font-weight:700}.side a:hover:not(.on){background:var(--line)}
+.side .other{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+article{min-width:0}
+article h1{font-size:28px;line-height:1.35;margin:0 0 20px;padding-bottom:12px;border-bottom:4px solid var(--acc)}
+article h2{font-size:22px;margin:40px 0 12px;padding-left:10px;border-left:5px solid var(--acc2)}
+article h3{font-size:18px;margin:28px 0 8px}
+figure{margin:18px 0;text-align:center}figure img{border:1px solid var(--line);border-radius:8px;background:#fff}
+figcaption{font-size:13px;color:var(--sub);margin-top:6px}
+.tbl{overflow-x:auto;margin:14px 0}table{border-collapse:collapse;width:100%;font-size:15px}
+th{background:var(--navy);color:#fff;text-align:left}th,td{padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+blockquote.note{margin:16px 0;padding:10px 16px;background:var(--note);border-left:5px solid var(--noteline);border-radius:6px}
+blockquote.note p{margin:6px 0}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-family:Consolas,"D2Coding",monospace;font-size:.92em}
+.file{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:18px 0 -6px;padding:6px 12px;
+background:var(--navy);color:#dfe6ee;border-radius:8px 8px 0 0;font:13px Consolas,monospace}
+.file a{color:var(--acc);font-family:inherit;white-space:nowrap}.file span{overflow-wrap:anywhere}
+.file+pre{border-top-left-radius:0;border-top-right-radius:0;margin-top:6px}
+pre{position:relative;background:var(--code);padding:34px 14px 12px;border-radius:8px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0;font-size:14px;line-height:1.55}
+pre code.hljs{padding:0;background:none}
+.copy{position:absolute;top:6px;right:6px;font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);
+background:var(--card);color:var(--ink);cursor:pointer;opacity:.85}.copy:hover{opacity:1}.copy.ok{background:#2da44e;color:#fff;border-color:#2da44e}
+.pager{display:flex;gap:12px;justify-content:space-between;margin-top:48px;padding-top:20px;border-top:1px solid var(--line)}
+.pager a{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);background:var(--card)}
+.pager a small{display:block;color:var(--sub)}.pager .next{text-align:right}
+select.jump{display:none;width:100%;font-size:16px;padding:8px;margin-bottom:12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+@media (max-width:860px){.doc{display:block;padding-top:16px}.side{display:none}select.jump{display:block}article h1{font-size:23px}
+header.top .hide-s{display:none}}
+.hero{background:var(--navy);color:#fff;padding:44px 0 36px}
+.hero h1{font-size:38px;margin:0 0 10px;line-height:1.25}.hero h1 b{color:var(--acc)}
+.hero p{margin:6px 0;color:#c9d4e0;max-width:760px}.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.cta a{padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+.cta .main{background:var(--acc);color:#111}.cta .sub{border:1px solid #ffffff66;color:#fff}
+.hero .twin{margin-top:16px;font-size:14px}.hero .twin a{color:var(--acc)}
+section{padding:36px 0 8px}section h2{font-size:24px;margin:0 0 6px}section .lead{color:var(--sub);margin:0 0 18px}
+.course{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px}
+.course>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.course h3{margin:0 0 4px;font-size:21px}.course .pdf{font-size:14px}
+.course ol{list-style:none;padding:0;margin:12px 0 0}
+.course li a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.course li a:hover{background:var(--line)}
+.course li img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
+.course li .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.dl a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--ink)}
+.dl a:hover{border-color:var(--acc)}.dl b{font-family:Consolas,monospace}.dl small{display:block;color:var(--sub)}
+footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
+@media (max-width:600px){.hero h1{font-size:28px}.course{grid-template-columns:1fr}}
+
+.overview{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.overview img{border:none}
+.course .lead2{color:var(--sub);font-size:14px;margin:2px 0 6px}
+</style></head><body>
+<header class="top"><div class="in">
+<a class="logo" href="../index.html">React + Spring <b>MSA</b></a><span class="sp"></span>
+<a class="btn hide-s" href="../guide/ch00.html">기초</a>
+<a class="btn hide-s" href="../advanced/ch00.html">심화</a>
+<a class="btn" href="../index.html#pdf">PDF</a>
+<a class="btn" href="https://github.com/sinaboro/react-spring-mas-postgresql" target="_blank">GitHub</a>
+</div></header>
+<div class="doc">
+<nav class="side"><div class="cap">MSA 심화</div><a href="ch00.html">0장 심화 과정 안내</a><a href="ch01.html">1장 이벤트와 Kafka - 왜 필요하고 무엇인가</a><a href="ch02.html" class=on>2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</a><a href="ch03.html">3장 user-service - 닉네임 바꾸기와 이벤트 보내기</a><a href="ch04.html">4장 post-service - 이벤트 받아 writer 고치기</a><a href="ch05.html">5장 React - 내 정보 화면</a><a href="ch06.html">6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</a><a href="ch07.html">7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</a><a href="appA.html">부록 A 오류 해결</a><a href="appB.html">부록 B 확인 문제 풀이</a><div class="other"><a href="../guide/ch00.html">→ MSA 기초</a><a href="../index.html">← 첫 화면</a><a href="../React_Spring_MSA_%EC%8B%AC%ED%99%94_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안</a></div></nav>
+<article>
+<select class="jump" onchange="location.href=this.value" aria-label="장 이동"><option value="ch00.html">0장 심화 과정 안내</option><option value="ch01.html">1장 이벤트와 Kafka - 왜 필요하고 무엇인가</option><option value="ch02.html" selected>2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</option><option value="ch03.html">3장 user-service - 닉네임 바꾸기와 이벤트 보내기</option><option value="ch04.html">4장 post-service - 이벤트 받아 writer 고치기</option><option value="ch05.html">5장 React - 내 정보 화면</option><option value="ch06.html">6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</option><option value="ch07.html">7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</option><option value="appA.html">부록 A 오류 해결</option><option value="appB.html">부록 B 확인 문제 풀이</option></select>
+<h1 id="2장-준비---db-와-kafka-켜기-프로젝트-열기">2장. 준비 - DB 와 Kafka 켜기, 프로젝트 열기</h1>
+<h2 id="학습-목표">학습 목표</h2>
+<ul>
+<li><code>advanced/docker-compose.yml</code> 로 PostgreSQL 과 Kafka 를 함께 켠다.</li>
+<li>Kafka 컨테이너 안의 명령어로 토픽을 살펴본다.</li>
+<li>기초 과정에서 무엇이 바뀌었는지 파일 목록으로 확인한다.</li>
+</ul>
+<h2 id="2-1-docker-composeyml---db-에-kafka-를-더하다">2-1. docker-compose.yml - DB 에 Kafka 를 더하다</h2>
+<div class="file"><span>📄 advanced/docker-compose.yml</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/advanced/docker-compose.yml" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-yaml"># =====================================================================
+# MSA 심화 - 데이터베이스(PostgreSQL 18) + Kafka
+#
+#   시작        : docker compose up -d        (이 파일이 있는 advanced 폴더에서)
+#   상태 확인   : docker compose ps           (db 가 healthy, kafka 가 Up 이면 준비 완료)
+#   멈추기      : docker compose stop         (데이터는 남는다)
+#   완전히 지우기: docker compose down -v      (컨테이너 + 데이터 볼륨 삭제, 되돌릴 수 없음)
+#
+# 접속 정보
+#   PostgreSQL : localhost:5436 / postgres / postgres / DB 2개 userdb, postdb
+#   Kafka      : localhost:9092
+#
+# 기초 과정(저장소 맨 위 폴더)의 DB(mas-db, 5435)와 이름·포트를 다르게 해서
+# 두 과정의 데이터가 섞이지 않게 했다. 둘을 동시에 켜 두어도 괜찮다.
+# =====================================================================
+
+name: react-spring-mas-advanced
+
+services:
+  db:
+    image: postgres:18
+    container_name: mas-adv-db
+    restart: unless-stopped
+    ports:
+      - &quot;5436:5432&quot;                   # 내 PC 5436 → 컨테이너 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres     # 실습용 비밀번호
+      TZ: Asia/Seoul
+    command: [&quot;postgres&quot;, &quot;-c&quot;, &quot;timezone=Asia/Seoul&quot;]
+    volumes:
+      - mas_adv_data:/var/lib/postgresql
+      # 처음 켤 때 한 번 실행 → userdb, postdb 생성 (기초 과정과 같은 init.sql)
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U postgres -d postdb&quot;]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # -------------------------------------------------------------------
+  # Kafka - 서비스끼리 &quot;소식(이벤트)&quot; 을 전하는 우체국
+  #
+  #   apache/kafka 이미지는 설정을 하나도 주지 않으면 &quot;혼자서 도는 Kafka 1대(KRaft 방식)&quot; 로
+  #   켜진다 (주소 localhost:9092). 공부용으로는 그것으로 충분하므로 메모리 크기만 정해 준다.
+  #   토픽(user-events)은 따로 만들지 않는다. 처음 쓰일 때 Kafka 가 자동으로 만든다.
+  # -------------------------------------------------------------------
+  kafka:
+    image: apache/kafka:4.3.2
+    container_name: mas-adv-kafka
+    restart: unless-stopped
+    ports:
+      - &quot;9092:9092&quot;                   # 내 PC 9092 → 컨테이너 9092
+    environment:
+      KAFKA_HEAP_OPTS: &quot;-Xmx384m -Xms384m&quot;   # 메모리를 384MB 로 줄여 실습 PC 부담을 덜어 준다
+
+volumes:
+  mas_adv_data:
+</code></pre>
+<p>Kafka 컨테이너에는 설정이 거의 없다. <code>apache/kafka</code> 이미지는 아무 설정도 주지 않으면 <strong>혼자서 도는 Kafka 1대</strong>로 켜지고, <code>localhost:9092</code> 로 접속하게 되어 있다. 메모리 크기(<code>KAFKA_HEAP_OPTS</code>)만 줄여 실습 PC 부담을 덜었다.</p>
+<blockquote class="note">
+<p><strong>KRaft 가 뭔가요?</strong> 예전 Kafka 는 ZooKeeper 라는 프로그램을 하나 더 켜야 했다. Kafka 4 부터는 Kafka 가 스스로 관리하는 <strong>KRaft</strong> 방식만 쓴다. 그래서 컨테이너 하나면 된다.</p>
+</blockquote>
+<h2 id="2-2-켜고-확인하기">2-2. 켜고 확인하기</h2>
+<p><strong>[PS]</strong> <code>advanced</code> 폴더에서 (기초 과정의 DB 와 따로 켜진다)</p>
+<pre><code class="language-powershell">docker compose up -d
+docker compose ps
+</code></pre>
+<pre><code class="language-text">NAME            IMAGE                STATUS                   PORTS
+mas-adv-db      postgres:18          Up 6 seconds (healthy)   0.0.0.0:5436-&gt;5432/tcp
+mas-adv-kafka   apache/kafka:4.3.2   Up 6 seconds             0.0.0.0:9092-&gt;9092/tcp
+</code></pre>
+<p>Kafka 는 켜지는 데 10초쯤 걸린다. 준비됐는지는 로그로 본다.</p>
+<p><strong>[PS]</strong></p>
+<pre><code class="language-powershell">docker logs mas-adv-kafka | Select-String &quot;Kafka Server started&quot;
+</code></pre>
+<pre><code class="language-text">[2026-11-24 05:33:12,314] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)
+</code></pre>
+<p><strong>토픽 목록 보기</strong> - Kafka 이미지 안에 들어 있는 명령어(<code>/opt/kafka/bin/...</code>)를 <code>docker exec</code> 로 실행한다.</p>
+<p><strong>[PS]</strong></p>
+<pre><code class="language-powershell">docker exec mas-adv-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+</code></pre>
+<p>처음에는 아무것도 나오지 않는다. <code>user-events</code> 토픽은 <strong>서비스가 처음 쓸 때 Kafka 가 자동으로 만든다</strong>(자동 생성이 기본으로 켜져 있다). 4장에서 post-service 를 켠 뒤 다시 보면 <code>user-events</code> 가 생겨 있다.</p>
+<h2 id="2-3-intellij-로-열기">2-3. IntelliJ 로 열기</h2>
+<p>기초 과정과 같다. 다만 <strong><code>advanced\backend</code></strong> 폴더를 연다.</p>
+<ol>
+<li><strong>File → Open</strong> → <code>react-spring-mas-postgresql\advanced\backend</code> → <strong>OK</strong> → <strong>Trust Project</strong></li>
+<li>Gradle sync 가 끝나면 <code>mas-board-advanced</code> 아래에 서비스 3개가 보인다. (처음에는 Kafka 라이브러리를 받느라 조금 더 걸린다)</li>
+</ol>
+<blockquote class="note">
+<p><strong>기초 과정 서비스가 켜져 있다면 먼저 끈다.</strong> 두 과정 모두 8080~8082 포트를 쓴다. IntelliJ 창이 두 개 열려 있으면 헷갈리기 쉬우니, 기초 과정 창은 닫아 두자.</p>
+</blockquote>
+<h2 id="2-4-기초-과정에서-바뀐-파일">2-4. 기초 과정에서 바뀐 파일</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>서비스</th>
+<th>파일</th>
+<th>무엇을</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user-service</td>
+<td><code>build.gradle</code></td>
+<td><code>spring-boot-starter-kafka</code> 추가</td>
+</tr>
+<tr>
+<td></td>
+<td><code>application.yml</code></td>
+<td>Kafka 주소, DB 포트 5436, <code>app.kafka.enabled</code> 스위치</td>
+</tr>
+<tr>
+<td></td>
+<td><code>User.java</code></td>
+<td><code>changeNickname()</code> 추가</td>
+</tr>
+<tr>
+<td></td>
+<td><code>AuthService.java</code></td>
+<td><code>changeNickname()</code> - 저장 + <strong>새 토큰</strong> 발급</td>
+</tr>
+<tr>
+<td></td>
+<td><code>AuthController.java</code></td>
+<td><code>PUT /api/auth/me</code> - 저장 뒤 이벤트 보내기</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>새</strong> <code>NicknameRequest.java</code></td>
+<td><code>{ "nickname": "..." }</code> 요청</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>새</strong> <code>UserEvent.java</code></td>
+<td>소식 JSON 모양</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>새</strong> <code>UserEventPublisher.java</code></td>
+<td>Kafka 로 소식 보내기</td>
+</tr>
+<tr>
+<td>post-service</td>
+<td><code>build.gradle</code></td>
+<td><code>spring-boot-starter-kafka</code> 추가</td>
+</tr>
+<tr>
+<td></td>
+<td><code>application.yml</code></td>
+<td>Kafka 주소, 컨슈머 그룹, DB 포트 5436, 스위치</td>
+</tr>
+<tr>
+<td></td>
+<td><code>Post.java</code></td>
+<td><code>writer</code> 를 바꿀 수 있게 (<code>updatable = false</code> 뺌)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>PostRepository.java</code></td>
+<td><code>updateWriter()</code> - 한 회원 글의 writer 한꺼번에 바꾸기</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>새</strong> <code>UserEvent.java</code></td>
+<td>소식 JSON 모양 (user-service 것과 따로)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>새</strong> <code>UserEventListener.java</code></td>
+<td>Kafka 에서 소식 받기</td>
+</tr>
+<tr>
+<td>React</td>
+<td><code>api.js</code>, <code>AuthContext.jsx</code></td>
+<td><code>updateMe()</code>, <code>changeNickname()</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>App.jsx</code>, <code>Layout.jsx</code>, <code>App.css</code></td>
+<td><code>/me</code> 화면 연결, 머리글 닉네임을 링크로</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>새</strong> <code>pages/ProfilePage.jsx</code></td>
+<td>내 정보 · 닉네임 바꾸기 화면</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>api-gateway 는 하나도 바뀌지 않았다.</strong> <code>PUT /api/auth/me</code> 는 이미 <code>/api/auth/**</code> 규칙으로 user-service 에 가고, 로그인이 필요한 주소로 검사된다. 새 기능을 넣어도 정문은 그대로다.</p>
+<h2 id="정리">정리</h2>
+<ul>
+<li><code>advanced</code> 폴더에서 <code>docker compose up -d</code> 하면 PostgreSQL(5436)과 Kafka(9092)가 함께 켜진다.</li>
+<li>Kafka 명령어는 <code>docker exec mas-adv-kafka /opt/kafka/bin/...</code> 로 실행한다.</li>
+<li>토픽 <code>user-events</code> 는 처음 쓰일 때 자동으로 생긴다.</li>
+<li>IntelliJ 로 <code>advanced\backend</code> 를 연다. 게이트웨이는 기초와 같다.</li>
+</ul>
+<h2 id="확인-문제">확인 문제</h2>
+<ol>
+<li>Kafka 4 에서는 ZooKeeper 를 따로 켜지 않아도 되는 이유는?</li>
+<li><code>user-events</code> 토픽을 만드는 명령을 따로 실행하지 않았는데도 토픽이 생기는 이유는?</li>
+<li>닉네임 바꾸기 API 를 더했는데 게이트웨이를 고치지 않아도 되는 이유는?</li>
+</ol>
+<nav class="pager"><a href="ch01.html"><small>← 이전</small>1장 이벤트와 Kafka - 왜 필요하고 무엇인가</a><a class="next" href="ch03.html"><small>다음 →</small>3장 user-service - 닉네임 바꾸기와 이벤트 보내기</a></nav>
+</article></div>
+<footer>React + Spring Boot MSA + PostgreSQL · MSA 심화 · 강사 김대철 · <a href="https://github.com/sinaboro/react-spring-mas-postgresql">GitHub</a></footer>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+<script>
+document.querySelectorAll('pre code').forEach(function(el){
+  if(window.hljs && !/language-(text|plaintext)/.test(el.className)){ try{ hljs.highlightElement(el); }catch(e){} }
+  var b=document.createElement('button'); b.className='copy'; b.textContent='복사';
+  b.onclick=function(){                       // 코드 상자의 글자를 그대로 클립보드에 복사
+    navigator.clipboard.writeText(el.innerText).then(function(){
+      b.textContent='복사됨'; b.classList.add('ok');
+      setTimeout(function(){ b.textContent='복사'; b.classList.remove('ok'); },1500);
+    });
+  };
+  el.parentNode.appendChild(b);
+});
+</script>
+</body></html>

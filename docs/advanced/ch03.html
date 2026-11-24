@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3장. user-service - 닉네임 바꾸기와 이벤트 보내기 - MSA 심화</title>
+<meta name="description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다.">
+<meta property="og:title" content="3장. user-service - 닉네임 바꾸기와 이벤트 보내기 - MSA 심화"><meta property="og:description" content="React 심화 과정에서 만든 로그인 게시판(CRUD + JWT 로그인) 의 서버를 MSA(마이크로서비스 아키텍처) 로 나눠 보는 기초 · 심화 두 단계 교안과 실습 코드입니다."><meta property="og:image" content="https://sinaboro.github.io/react-spring-mas-postgresql/images/fig_msa_overview.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='none' stroke='%2361dafb' stroke-width='1.6'%3E%3Cellipse rx='10' ry='4'/%3E%3Cellipse rx='10' ry='4' transform='rotate(60)'/%3E%3Cellipse rx='10' ry='4' transform='rotate(120)'/%3E%3C/g%3E%3Ccircle r='2' fill='%2361dafb'/%3E%3C/svg%3E">
+<script>
+if(/KAKAOTALK/i.test(navigator.userAgent)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(location.href);}
+</script>
+<style>
+:root{--ink:#1f2328;--sub:#59636e;--line:#e3e6ea;--bg:#f7f8fa;--card:#fff;--navy:#16202e;--acc:#61dafb;--acc2:#0b7fab;
+--note:#eef8fc;--noteline:#61dafb;--code:#f3f5f7;--link:#0969da}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6edf3;--sub:#9da7b3;--line:#30363d;--bg:#0f141a;
+--card:#161b22;--navy:#0b1017;--note:#10232b;--noteline:#2a8fb0;--code:#1b222b;--link:#58a6ff;--acc2:#61dafb}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all}
+a{color:var(--link)}img{max-width:100%;height:auto}
+header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5}
+header.top .in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center}
+header.top a{color:#fff;text-decoration:none}.logo{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.logo b{color:var(--acc)}
+header.top .sp{flex:1}header.top .btn{font-size:14px;border:1px solid #ffffff55;border-radius:8px;padding:4px 10px;white-space:nowrap}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.doc{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;padding:24px 16px 60px;max-width:1180px;margin:0 auto}
+.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;font-size:14px}
+.side .cap{font-weight:800;margin:4px 10px 6px;color:var(--sub)}
+.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink);text-decoration:none;line-height:1.45}
+.side a.on{background:var(--acc);color:#111;font-weight:700}.side a:hover:not(.on){background:var(--line)}
+.side .other{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+article{min-width:0}
+article h1{font-size:28px;line-height:1.35;margin:0 0 20px;padding-bottom:12px;border-bottom:4px solid var(--acc)}
+article h2{font-size:22px;margin:40px 0 12px;padding-left:10px;border-left:5px solid var(--acc2)}
+article h3{font-size:18px;margin:28px 0 8px}
+figure{margin:18px 0;text-align:center}figure img{border:1px solid var(--line);border-radius:8px;background:#fff}
+figcaption{font-size:13px;color:var(--sub);margin-top:6px}
+.tbl{overflow-x:auto;margin:14px 0}table{border-collapse:collapse;width:100%;font-size:15px}
+th{background:var(--navy);color:#fff;text-align:left}th,td{padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+blockquote.note{margin:16px 0;padding:10px 16px;background:var(--note);border-left:5px solid var(--noteline);border-radius:6px}
+blockquote.note p{margin:6px 0}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-family:Consolas,"D2Coding",monospace;font-size:.92em}
+.file{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:18px 0 -6px;padding:6px 12px;
+background:var(--navy);color:#dfe6ee;border-radius:8px 8px 0 0;font:13px Consolas,monospace}
+.file a{color:var(--acc);font-family:inherit;white-space:nowrap}.file span{overflow-wrap:anywhere}
+.file+pre{border-top-left-radius:0;border-top-right-radius:0;margin-top:6px}
+pre{position:relative;background:var(--code);padding:34px 14px 12px;border-radius:8px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0;font-size:14px;line-height:1.55}
+pre code.hljs{padding:0;background:none}
+.copy{position:absolute;top:6px;right:6px;font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);
+background:var(--card);color:var(--ink);cursor:pointer;opacity:.85}.copy:hover{opacity:1}.copy.ok{background:#2da44e;color:#fff;border-color:#2da44e}
+.pager{display:flex;gap:12px;justify-content:space-between;margin-top:48px;padding-top:20px;border-top:1px solid var(--line)}
+.pager a{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);background:var(--card)}
+.pager a small{display:block;color:var(--sub)}.pager .next{text-align:right}
+select.jump{display:none;width:100%;font-size:16px;padding:8px;margin-bottom:12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+@media (max-width:860px){.doc{display:block;padding-top:16px}.side{display:none}select.jump{display:block}article h1{font-size:23px}
+header.top .hide-s{display:none}}
+.hero{background:var(--navy);color:#fff;padding:44px 0 36px}
+.hero h1{font-size:38px;margin:0 0 10px;line-height:1.25}.hero h1 b{color:var(--acc)}
+.hero p{margin:6px 0;color:#c9d4e0;max-width:760px}.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.cta a{padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+.cta .main{background:var(--acc);color:#111}.cta .sub{border:1px solid #ffffff66;color:#fff}
+.hero .twin{margin-top:16px;font-size:14px}.hero .twin a{color:var(--acc)}
+section{padding:36px 0 8px}section h2{font-size:24px;margin:0 0 6px}section .lead{color:var(--sub);margin:0 0 18px}
+.course{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px}
+.course>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.course h3{margin:0 0 4px;font-size:21px}.course .pdf{font-size:14px}
+.course ol{list-style:none;padding:0;margin:12px 0 0}
+.course li a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.course li a:hover{background:var(--line)}
+.course li img{width:72px;height:44px;object-fit:cover;object-position:left top;border:1px solid var(--line);border-radius:5px;background:#fff;flex:none}
+.course li .noimg{width:72px;height:44px;border-radius:5px;background:var(--code);flex:none}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.dl a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--ink)}
+.dl a:hover{border-color:var(--acc)}.dl b{font-family:Consolas,monospace}.dl small{display:block;color:var(--sub)}
+footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
+@media (max-width:600px){.hero h1{font-size:28px}.course{grid-template-columns:1fr}}
+
+.overview{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.overview img{border:none}
+.course .lead2{color:var(--sub);font-size:14px;margin:2px 0 6px}
+</style></head><body>
+<header class="top"><div class="in">
+<a class="logo" href="../index.html">React + Spring <b>MSA</b></a><span class="sp"></span>
+<a class="btn hide-s" href="../guide/ch00.html">기초</a>
+<a class="btn hide-s" href="../advanced/ch00.html">심화</a>
+<a class="btn" href="../index.html#pdf">PDF</a>
+<a class="btn" href="https://github.com/sinaboro/react-spring-mas-postgresql" target="_blank">GitHub</a>
+</div></header>
+<div class="doc">
+<nav class="side"><div class="cap">MSA 심화</div><a href="ch00.html">0장 심화 과정 안내</a><a href="ch01.html">1장 이벤트와 Kafka - 왜 필요하고 무엇인가</a><a href="ch02.html">2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</a><a href="ch03.html" class=on>3장 user-service - 닉네임 바꾸기와 이벤트 보내기</a><a href="ch04.html">4장 post-service - 이벤트 받아 writer 고치기</a><a href="ch05.html">5장 React - 내 정보 화면</a><a href="ch06.html">6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</a><a href="ch07.html">7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</a><a href="appA.html">부록 A 오류 해결</a><a href="appB.html">부록 B 확인 문제 풀이</a><div class="other"><a href="../guide/ch00.html">→ MSA 기초</a><a href="../index.html">← 첫 화면</a><a href="../React_Spring_MSA_%EC%8B%AC%ED%99%94_%ED%95%99%EC%8A%B5%EA%B5%90%EC%95%88.pdf" target="_blank">PDF 교안</a></div></nav>
+<article>
+<select class="jump" onchange="location.href=this.value" aria-label="장 이동"><option value="ch00.html">0장 심화 과정 안내</option><option value="ch01.html">1장 이벤트와 Kafka - 왜 필요하고 무엇인가</option><option value="ch02.html">2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</option><option value="ch03.html" selected>3장 user-service - 닉네임 바꾸기와 이벤트 보내기</option><option value="ch04.html">4장 post-service - 이벤트 받아 writer 고치기</option><option value="ch05.html">5장 React - 내 정보 화면</option><option value="ch06.html">6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</option><option value="ch07.html">7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</option><option value="appA.html">부록 A 오류 해결</option><option value="appB.html">부록 B 확인 문제 풀이</option></select>
+<h1 id="3장-user-service---닉네임-바꾸기와-이벤트-보내기">3장. user-service - 닉네임 바꾸기와 이벤트 보내기</h1>
+<h2 id="학습-목표">학습 목표</h2>
+<ul>
+<li><code>PUT /api/auth/me</code> 로 닉네임을 바꾸고, <strong>새 토큰</strong>을 돌려주는 이유를 안다.</li>
+<li><code>KafkaTemplate</code> 으로 <code>user-events</code> 토픽에 소식(JSON)을 보낸다.</li>
+<li>"DB 저장이 끝난 <strong>다음에</strong> 소식을 보낸다" 는 순서의 의미를 안다.</li>
+</ul>
+<h2 id="3-1-라이브러리와-설정">3-1. 라이브러리와 설정</h2>
+<div class="file"><span>📄 advanced/backend/user-service/build.gradle</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/advanced/backend/user-service/build.gradle" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-groovy">// build.gradle (user-service) - 회원 서비스에 필요한 라이브러리
+//
+//   webmvc               : REST API 만들기 (@RestController)
+//   data-jpa + postgresql : userdb 의 users 테이블 쓰기
+//   validation           : 가입 입력 검사 (@NotBlank, @Pattern ...)
+//   spring-security-crypto : BCrypt 비밀번호 해시 &quot;도구만&quot; 쓴다.
+//                          Spring Security 전체(로그인 필터, 주소 규칙)는 쓰지 않는다.
+//                          → 로그인 검사는 api-gateway 가 맡기 때문이다 (MSA 개념: 인증은 정문에서 한 번)
+//   jjwt                 : 로그인에 성공하면 JWT 토큰을 &quot;만든다&quot; (검사는 게이트웨이가 한다)
+//   springdoc            : http://localhost:8081/docs 에서 API 를 바로 시험해 보기
+//   kafka                : (심화) 닉네임이 바뀌면 &quot;바뀌었어요&quot; 소식(이벤트)을 Kafka 로 보낸다
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-kafka'      // ← 심화: 이벤트 보내기
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+    runtimeOnly 'org.postgresql:postgresql'
+}
+</code></pre>
+<p><code>spring-boot-starter-kafka</code> 하나면 Spring Boot 가 Kafka 접속 설정과 <code>KafkaTemplate</code>(보내는 도구)을 만들어 준다.</p>
+<div class="file"><span>📄 advanced/backend/user-service/src/main/resources/application.yml</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/advanced/backend/user-service/src/main/resources/application.yml" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-yaml"># application.yml - 회원 서비스(user-service) 설정
+#   ${이름:기본값} → 환경 변수 &quot;이름&quot; 이 있으면 그 값, 없으면 기본값
+
+server:
+  port: 8081                     # 게이트웨이(8080)가 /api/auth/** 요청을 이 포트로 보내 준다
+
+spring:
+  servlet:
+    encoding:
+      force-response: true       # 응답에 &quot;charset=UTF-8&quot; 을 붙인다 → Windows PowerShell 5.1 에서도 한글이 깨지지 않는다
+  application:
+    name: user-service
+  datasource:
+    # [MSA 개념] 회원 서비스는 userdb 에만 접속한다. postdb(게시글)는 모른다.
+    url: ${DB_URL:jdbc:postgresql://localhost:5436/userdb}
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update           # User Entity 를 보고 users 테이블을 만든다
+    show-sql: true
+    open-in-view: false
+  kafka:                         # (심화) 이벤트를 보낼 Kafka 주소
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    producer:
+      properties:
+        max.block.ms: 3000       # Kafka 가 꺼져 있으면 3초만 기다리고 포기 (기본값 60초는 너무 길다)
+
+# 심화 스위치 - Kafka 로 이벤트를 보낼까?
+#   false : 보내지 않는다 (실험용: Kafka 없이 닉네임을 바꾸면 어떻게 되나)
+#   true  : 닉네임이 바뀌면 user-events 토픽으로 이벤트를 보낸다 (기본값)
+app:
+  kafka:
+    enabled: ${KAFKA_ENABLED:true}
+
+# JWT(로그인 토큰) 설정 - JwtProvider 가 읽어 간다
+jwt:
+  # 토큰 서명 열쇠. api-gateway 의 jwt.secret 과 &quot;반드시 같은 값&quot; 이어야 한다.
+  #   user-service 가 이 열쇠로 서명 → api-gateway 가 같은 열쇠로 진짜인지 확인
+  # 실제 서비스에서는 환경 변수 JWT_SECRET 으로 넣고 GitHub 에 올리지 않는다. (32글자 이상)
+  secret: ${JWT_SECRET:dev-only-secret-change-me-0123456789abcdef}
+  expiration-minutes: ${ACCESS_TOKEN_MINUTES:60}    # 토큰 유효 시간(분)
+
+springdoc:
+  swagger-ui:
+    path: /docs                  # http://localhost:8081/docs
+</code></pre>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>설정</th>
+<th>뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>spring.kafka.bootstrap-servers</code></td>
+<td>처음 접속할 Kafka 주소. <code>localhost:9092</code></td>
+</tr>
+<tr>
+<td><code>producer.properties.max.block.ms: 3000</code></td>
+<td>Kafka 가 꺼져 있을 때 <strong>3초만</strong> 기다리고 포기한다. 기본값(60초)이면 닉네임 바꾸기가 1분 동안 멈춘다</td>
+</tr>
+<tr>
+<td><code>app.kafka.enabled</code></td>
+<td>우리가 만든 스위치. <code>false</code> 면 소식을 보내지 않는다 (6장 실험용)</td>
+</tr>
+</tbody>
+</table></div>
+<p>보내는 값은 <strong>글자(String)</strong> 다. Spring Boot 는 따로 정하지 않으면 키와 값을 글자로 보낸다. 객체를 JSON 글자로 바꾸는 일은 우리 코드(<code>UserEventPublisher</code>)가 한다.</p>
+<h2 id="3-2-닉네임-바꾸기---user-nicknamerequest-authservice">3-2. 닉네임 바꾸기 - User, NicknameRequest, AuthService</h2>
+<div class="file"><span>📄 advanced/backend/user-service/src/main/java/com/example/user/NicknameRequest.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/advanced/backend/user-service/src/main/java/com/example/user/NicknameRequest.java" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-java">package com.example.user;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+/**
+ * NicknameRequest - (심화) 닉네임 바꾸기 요청 JSON  { &quot;nickname&quot;: &quot;민수킹&quot; }
+ * 규칙은 회원가입(SignupRequest)의 닉네임 규칙과 같다.
+ */
+public record NicknameRequest(
+        @NotBlank(message = &quot;닉네임을 입력하세요&quot;)
+        @Size(max = 30, message = &quot;닉네임은 30자까지 쓸 수 있습니다&quot;)
+        String nickname
+) {
+}
+</code></pre>
+<p><code>User</code> 에는 한 메서드만 더했다.</p>
+<pre><code class="language-java">/** (심화) 닉네임 바꾸기. 트랜잭션이 끝날 때 JPA 가 UPDATE 를 실행한다 (변경 감지) */
+public void changeNickname(String nickname) {
+    this.nickname = nickname;
+}
+</code></pre>
+<p><code>AuthService</code> 에 더한 메서드다.</p>
+<pre><code class="language-java">@Transactional
+public TokenResponse changeNickname(Long userId, String nickname) {
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -&gt; new ApiException(HttpStatus.UNAUTHORIZED, &quot;로그인이 만료되었습니다. 다시 로그인하세요&quot;));
+    user.changeNickname(nickname.strip()); // 메서드가 끝나면(커밋) JPA 가 UPDATE users 를 실행한다
+    return TokenResponse.bearer(jwtProvider.createToken(user), UserResponse.from(user));
+}
+</code></pre>
+<blockquote class="note">
+<p><strong>왜 새 토큰을 돌려줄까?</strong></p>
+<p>기초 4장에서 토큰 안에 <strong>닉네임</strong>을 넣었다. 게이트웨이는 그 닉네임을 <code>X-User-Nickname</code> 헤더로 post-service 에 넘기고, post-service 는 그것을 새 글의 <code>writer</code> 로 저장한다.</p>
+<p>닉네임을 바꿔도 <strong>이미 발급한 토큰 안의 닉네임은 바뀌지 않는다</strong>(토큰은 서명된 글자라 고칠 수 없다). 옛 토큰을 계속 쓰면 앞으로 쓰는 글이 옛 닉네임으로 저장된다. 그래서 새 닉네임을 담은 토큰을 다시 발급하고, React 가 그것으로 바꿔 끼운다(5장). 옛 토큰으로 쓰면 어떻게 되는지는 6장에서 실험한다.</p>
+</blockquote>
+<h2 id="3-3-userevent---소식의-모양">3-3. UserEvent - 소식의 모양</h2>
+<div class="file"><span>📄 advanced/backend/user-service/src/main/java/com/example/user/UserEvent.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/advanced/backend/user-service/src/main/java/com/example/user/UserEvent.java" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-java">package com.example.user;
+
+/**
+ * UserEvent - (심화) 다른 서비스에 알리는 &quot;회원 소식(이벤트)&quot;
+ *
+ * Kafka 의 user-events 토픽에 아래 JSON 글자로 실려 간다.
+ *   { &quot;type&quot;: &quot;NICKNAME_CHANGED&quot;, &quot;userId&quot;: 1, &quot;nickname&quot;: &quot;민수킹&quot; }
+ *
+ * [MSA 개념] 서비스끼리 코드는 나눠 쓰지 않는다
+ *   post-service 에도 똑같은 모양의 UserEvent 가 &quot;따로&quot; 있다. 이 클래스를 import 하지 않는다.
+ *   두 서비스가 지키는 약속은 클래스가 아니라 &quot;JSON 모양&quot; 이다.
+ *   (그래서 칸 이름을 바꿀 때는 받는 쪽과 함께 바꿔야 한다)
+ */
+public record UserEvent(String type, Long userId, String nickname) {
+
+    public static final String NICKNAME_CHANGED = &quot;NICKNAME_CHANGED&quot;;
+
+    public static UserEvent nicknameChanged(UserResponse user) {
+        return new UserEvent(NICKNAME_CHANGED, user.id(), user.nickname());
+    }
+}
+</code></pre>
+<p>Kafka 로 나가는 실제 글자는 이렇다.</p>
+<pre><code class="language-json">{&quot;type&quot;:&quot;NICKNAME_CHANGED&quot;,&quot;userId&quot;:1,&quot;nickname&quot;:&quot;민수킹&quot;}
+</code></pre>
+<p><code>type</code> 칸을 둔 이유: 나중에 "회원 탈퇴(USER_DELETED)" 같은 다른 소식도 <strong>같은 토픽</strong>으로 보낼 수 있게 하려는 것이다. 받는 쪽은 <code>type</code> 을 보고 무엇을 할지 고른다.</p>
+<h2 id="3-4-usereventpublisher---kafka-로-보내기">3-4. UserEventPublisher - Kafka 로 보내기</h2>
+<div class="file"><span>📄 advanced/backend/user-service/src/main/java/com/example/user/UserEventPublisher.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/advanced/backend/user-service/src/main/java/com/example/user/UserEventPublisher.java" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-java">package com.example.user;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+import tools.jackson.databind.json.JsonMapper;
+
+/**
+ * UserEventPublisher - (심화) 회원 소식을 Kafka 로 &quot;보내는&quot; 곳
+ *
+ * [MSA 개념] 이벤트 = &quot;이런 일이 있었어요&quot; 라는 소식
+ *   user-service 는 post-service 를 직접 부르지 않는다. 누가 들을지도 모른다.
+ *   그저 Kafka 의 user-events 토픽(게시판 같은 곳)에 소식을 올려 둘 뿐이다.
+ *   듣고 싶은 서비스(post-service, 나중에 생길 comment-service ...)가 각자 가져가 읽는다.
+ *   → 보내는 쪽과 받는 쪽이 서로를 몰라도 된다 (느슨한 연결)
+ *
+ *   KafkaTemplate.send(토픽, 키, 값)
+ *     토픽 : user-events
+ *     키   : 회원 번호 &quot;1&quot; - 같은 키의 소식은 같은 칸(파티션)에 들어가 보낸 순서대로 읽힌다
+ *     값   : 소식 JSON 글자
+ *
+ * app.kafka.enabled 가 false 면 보내지 않고 로그만 남긴다.
+ */
+@Component
+public class UserEventPublisher {
+
+    private static final Logger log = LoggerFactory.getLogger(UserEventPublisher.class);
+    private static final String TOPIC = &quot;user-events&quot;;
+
+    private final KafkaTemplate&lt;String, String&gt; kafkaTemplate;
+    private final JsonMapper jsonMapper; // 객체 ↔ JSON 글자 바꾸기 (Spring Boot 가 만들어 둔 것)
+    private final boolean enabled;
+
+    public UserEventPublisher(KafkaTemplate&lt;String, String&gt; kafkaTemplate, JsonMapper jsonMapper,
+            @Value(&quot;${app.kafka.enabled}&quot;) boolean enabled) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.jsonMapper = jsonMapper;
+        this.enabled = enabled;
+    }
+
+    public void publish(UserEvent event) {
+        if (!enabled) {
+            log.info(&quot;[이벤트 꺼짐] app.kafka.enabled=false 라서 보내지 않음: {}&quot;, event);
+            return;
+        }
+        String json = jsonMapper.writeValueAsString(event); // UserEvent → {&quot;type&quot;:...} 글자
+        try {
+            kafkaTemplate.send(TOPIC, String.valueOf(event.userId()), json)
+                    // send 는 기다리지 않고 바로 돌아온다. 결과는 나중에 이 안에서 알 수 있다
+                    .whenComplete((result, ex) -&gt; {
+                        if (ex == null) {
+                            log.info(&quot;[이벤트 보냄] {} → {}&quot;, TOPIC, json);
+                        } else {
+                            log.warn(&quot;[이벤트 실패] Kafka 가 켜져 있나요? {}&quot;, ex.getMessage());
+                        }
+                    });
+        } catch (Exception e) {
+            // Kafka 에 아예 닿지 못하면 send 가 3초(max.block.ms) 기다린 뒤 바로 예외를 던진다.
+            // 닉네임은 이미 userdb 에 저장됐으므로 요청은 실패시키지 않고 로그만 남긴다.
+            // → 이 소식은 사라진다! posts.writer 는 옛 닉네임으로 남는다 (교안의 &quot;Outbox 패턴&quot; 참고)
+            log.warn(&quot;[이벤트 실패] Kafka 에 연결할 수 없습니다: {}&quot;, e.getMessage());
+        }
+    }
+}
+</code></pre>
+<p>핵심은 한 줄이다.</p>
+<pre><code class="language-java">kafkaTemplate.send(&quot;user-events&quot;, &quot;1&quot;, &quot;{\&quot;type\&quot;:\&quot;NICKNAME_CHANGED\&quot;,...}&quot;);
+//                  토픽           키(회원 번호)  값(소식 JSON)
+</code></pre>
+<ul>
+<li><strong><code>send</code> 는 기다리지 않는다.</strong> 소식을 보낼 준비만 하고 바로 돌아온다. 실제로 Kafka 에 도착했는지는 <code>whenComplete</code> 안에서 나중에 알 수 있다. 그래서 닉네임 바꾸기 응답이 Kafka 때문에 느려지지 않는다.</li>
+<li><strong>Kafka 에 아예 닿지 못하면</strong> <code>send</code> 가 3초(<code>max.block.ms</code>) 기다린 뒤 예외를 던진다. 닉네임은 이미 저장됐으므로 요청을 실패시키지 않고 로그만 남긴다. 이때 <strong>소식은 사라진다</strong>. 이 약점은 6장에서 직접 보고, 7장의 Outbox 패턴으로 해결 방법을 알아본다.</li>
+</ul>
+<h2 id="3-5-authcontroller---저장-다음에-보낸다">3-5. AuthController - 저장 다음에 보낸다</h2>
+<div class="file"><span>📄 advanced/backend/user-service/src/main/java/com/example/user/AuthController.java</span><a href="https://github.com/sinaboro/react-spring-mas-postgresql/blob/main/advanced/backend/user-service/src/main/java/com/example/user/AuthController.java" target="_blank">GitHub 에서 보기</a></div>
+
+<pre><code class="language-java">package com.example.user;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * AuthController - 회원가입·로그인·내 정보 API (회원 서비스, 포트 8081)
+ *
+ *   주소                 방식   로그인   하는 일                       성공
+ *   /api/auth/signup     POST   -        회원가입                       201
+ *   /api/auth/login      POST   -        로그인 → 토큰 발급              200
+ *   /api/auth/me         GET    필요     토큰 주인의 정보                200
+ *   /api/auth/me         PUT    필요     (심화) 닉네임 바꾸기 → 새 토큰    200
+ *
+ * [MSA 개념] &quot;로그인 필요&quot; 검사는 이 서비스가 하지 않는다
+ *   React 는 항상 게이트웨이(8080)로 요청한다. 게이트웨이가 토큰을 검사하고,
+ *   통과하면 요청 헤더에 &quot;X-User-Id: 3&quot; 을 붙여서 이 서비스로 넘겨 준다.
+ *   그래서 이 서비스는 토큰을 볼 필요 없이 @RequestHeader(&quot;X-User-Id&quot;) 로 번호만 꺼내 쓰면 된다.
+ *   (X-User-Id 헤더 없이 8081 로 직접 부르면 GlobalExceptionHandler 가 401 로 응답한다)
+ */
+@RestController
+@RequestMapping(&quot;/api/auth&quot;)
+public class AuthController {
+
+    private final AuthService authService;
+    private final UserEventPublisher eventPublisher;
+
+    public AuthController(AuthService authService, UserEventPublisher eventPublisher) {
+        this.authService = authService;
+        this.eventPublisher = eventPublisher;
+    }
+
+    @PostMapping(&quot;/signup&quot;)
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse signup(@Valid @RequestBody SignupRequest request) {
+        return authService.signup(request);
+    }
+
+    @PostMapping(&quot;/login&quot;)
+    public TokenResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
+
+    @GetMapping(&quot;/me&quot;)
+    public UserResponse me(@RequestHeader(&quot;X-User-Id&quot;) Long userId) { // 게이트웨이가 붙여 준 사용자 번호
+        return authService.me(userId);
+    }
+
+    /**
+     * (심화) 닉네임 바꾸기  PUT /api/auth/me  { &quot;nickname&quot;: &quot;민수킹&quot; }
+     *
+     *   1. authService.changeNickname : userdb 에 저장한다. 메서드가 끝나면 트랜잭션이 커밋된다.
+     *   2. eventPublisher.publish     : 저장이 끝난 &quot;다음에&quot; 소식을 보낸다.
+     *      (순서가 반대면, 저장이 실패했는데 소식만 나가는 일이 생길 수 있다)
+     */
+    @PutMapping(&quot;/me&quot;)
+    public TokenResponse changeNickname(@RequestHeader(&quot;X-User-Id&quot;) Long userId,
+            @Valid @RequestBody NicknameRequest request) {
+        TokenResponse response = authService.changeNickname(userId, request.nickname()); // 1. 저장 (커밋)
+        eventPublisher.publish(UserEvent.nicknameChanged(response.user())); //            2. 소식 보내기
+        return response; // 새 토큰 + 바뀐 회원 정보
+    }
+}
+</code></pre>
+<p><code>changeNickname</code> 은 두 줄이다. <strong>순서가 중요하다.</strong></p>
+<ol>
+<li><code>authService.changeNickname(...)</code> - <code>@Transactional</code> 메서드라서, 이 줄이 끝나면 <strong>DB 저장(커밋)이 끝난 상태</strong>다.</li>
+<li><code>eventPublisher.publish(...)</code> - 그다음에 소식을 보낸다.</li>
+</ol>
+<p>순서를 바꿔 소식을 먼저 보내고 저장에 실패하면? post-service 는 "민수킹으로 바뀌었다" 고 writer 를 고쳤는데, 정작 users 에는 "민수" 가 남는다. <strong>없었던 일을 알린 셈</strong>이다. 그래서 "확실히 일어난 일" 만 알리도록 저장 뒤에 보낸다.</p>
+<blockquote class="note">
+<p><strong>[MSA 개념] 이벤트는 "이미 일어난 일"</strong></p>
+<p>이벤트 이름을 <code>NICKNAME_CHANGED</code>(바뀌었다)처럼 <strong>과거형</strong>으로 짓는 것도 같은 뜻이다. "바꿔라(CHANGE_NICKNAME)" 는 명령이고, "바뀌었다" 는 사실이다.</p>
+</blockquote>
+<h2 id="3-6-켜서-시험하기">3-6. 켜서 시험하기</h2>
+<p><code>UserServiceApplication</code> 을 ▶ 로 실행하고 http://localhost:8081/docs 를 연다. <code>PUT /api/auth/me</code> 가 새로 보인다.</p>
+<ol>
+<li><code>POST /api/auth/signup</code> 으로 <code>{"username":"minsu","password":"password123","nickname":"민수"}</code> 가입</li>
+<li><code>PUT /api/auth/me</code> → <code>X-User-Id</code> 에 <code>1</code>, 본문 <code>{"nickname":"민수킹"}</code> → <strong>Execute</strong></li>
+</ol>
+<pre><code class="language-json">{
+  &quot;access_token&quot;: &quot;eyJhbGciOiJIUzI1NiJ9...&quot;,
+  &quot;token_type&quot;: &quot;bearer&quot;,
+  &quot;user&quot;: { &quot;id&quot;: 1, &quot;username&quot;: &quot;minsu&quot;, &quot;nickname&quot;: &quot;민수킹&quot; }
+}
+</code></pre>
+<p>IntelliJ 콘솔에 이런 줄이 보이면 소식이 Kafka 에 도착한 것이다.</p>
+<pre><code class="language-text">[이벤트 보냄] user-events → {&quot;type&quot;:&quot;NICKNAME_CHANGED&quot;,&quot;userId&quot;:1,&quot;nickname&quot;:&quot;민수킹&quot;}
+</code></pre>
+<p><strong>[PS]</strong> Kafka 에 정말 쌓였는지 직접 꺼내 보자 (5초 동안 읽고 끝난다)</p>
+<pre><code class="language-powershell">docker exec mas-adv-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic user-events --from-beginning --formatter-property print.key=true --timeout-ms 5000
+</code></pre>
+<pre><code class="language-text">1   {&quot;type&quot;:&quot;NICKNAME_CHANGED&quot;,&quot;userId&quot;:1,&quot;nickname&quot;:&quot;민수킹&quot;}
+Processed a total of 1 messages
+</code></pre>
+<p>맨 앞의 <code>1</code> 이 키(회원 번호)다. 이 명령은 <strong>구경만</strong> 하는 것이라(따로 만든 임시 그룹으로 읽는다) post-service 가 읽을 위치에는 영향을 주지 않는다. (<code>timeout</code> 관련 오류 줄이 몇 줄 함께 보일 수 있는데, 5초가 지나 읽기를 끝냈다는 뜻이니 괜찮다)</p>
+<blockquote class="note">
+<p><strong>post-service 를 아직 켜지 않았는데 소식은 어디에?</strong> Kafka 에 남아 있다. 4장에서 post-service 를 켜면, 켜기 전에 쌓인 이 소식부터 읽어 간다. 이것이 이벤트 방식의 힘이다.</p>
+</blockquote>
+<h2 id="정리">정리</h2>
+<ul>
+<li><code>PUT /api/auth/me</code> 는 닉네임을 저장하고 <strong>새 토큰</strong>을 돌려준다 (토큰 안 닉네임이 바뀌어야 하므로).</li>
+<li><code>KafkaTemplate.send(토픽, 키, 값)</code> 으로 소식을 보낸다. 키는 회원 번호, 값은 JSON 글자.</li>
+<li><strong>저장(커밋) 뒤에</strong> 보낸다. 이벤트는 이미 일어난 사실만 알린다.</li>
+<li>Kafka 에 닿지 못하면 3초 뒤 포기하고 로그만 남긴다 → 그 소식은 사라진다 (7장 Outbox).</li>
+</ul>
+<h2 id="확인-문제">확인 문제</h2>
+<ol>
+<li>닉네임을 바꾼 뒤 새 토큰을 돌려주지 않으면 어떤 일이 생기는가?</li>
+<li>소식을 먼저 보내고 DB 에 저장하면 어떤 문제가 생길 수 있는가?</li>
+<li>이벤트 이름을 <code>CHANGE_NICKNAME</code> 이 아니라 <code>NICKNAME_CHANGED</code> 로 지은 이유는?</li>
+<li><code>max.block.ms</code> 를 3000 으로 줄인 이유는?</li>
+</ol>
+<nav class="pager"><a href="ch02.html"><small>← 이전</small>2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</a><a class="next" href="ch04.html"><small>다음 →</small>4장 post-service - 이벤트 받아 writer 고치기</a></nav>
+</article></div>
+<footer>React + Spring Boot MSA + PostgreSQL · MSA 심화 · 강사 김대철 · <a href="https://github.com/sinaboro/react-spring-mas-postgresql">GitHub</a></footer>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+<script>
+document.querySelectorAll('pre code').forEach(function(el){
+  if(window.hljs && !/language-(text|plaintext)/.test(el.className)){ try{ hljs.highlightElement(el); }catch(e){} }
+  var b=document.createElement('button'); b.className='copy'; b.textContent='복사';
+  b.onclick=function(){                       // 코드 상자의 글자를 그대로 클립보드에 복사
+    navigator.clipboard.writeText(el.innerText).then(function(){
+      b.textContent='복사됨'; b.classList.add('ok');
+      setTimeout(function(){ b.textContent='복사'; b.classList.remove('ok'); },1500);
+    });
+  };
+  el.parentNode.appendChild(b);
+});
+</script>
+</body></html>

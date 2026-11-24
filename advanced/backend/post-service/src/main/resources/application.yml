@@ -1,0 +1,41 @@
+# application.yml - 게시글 서비스(post-service) 설정
+#   ${이름:기본값} → 환경 변수 "이름" 이 있으면 그 값, 없으면 기본값
+
+server:
+  port: 8082                     # 게이트웨이(8080)가 /api/posts/** 요청을 이 포트로 보내 준다
+
+spring:
+  servlet:
+    encoding:
+      force-response: true       # 응답에 "charset=UTF-8" 을 붙인다 → Windows PowerShell 5.1 에서도 한글이 깨지지 않는다
+  application:
+    name: post-service
+  datasource:
+    # [MSA 개념] 게시글 서비스는 postdb 에만 접속한다. userdb(회원)는 모른다.
+    #   그래서 posts.user_id 에서 users 로 외래 키(FK)를 걸 수 없고, JOIN 도 할 수 없다.
+    url: ${DB_URL:jdbc:postgresql://localhost:5436/postdb}
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update           # Post Entity 를 보고 posts 테이블을 만든다
+    show-sql: true
+    open-in-view: false
+  kafka:                         # (심화) 이벤트를 받을 Kafka 주소
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    consumer:
+      group-id: post-service     # "나는 post-service 다" - Kafka 가 어디까지 읽었는지 이 이름으로 기억한다
+      auto-offset-reset: earliest  # 처음 붙을 때는 토픽의 맨 처음 이벤트부터 읽는다 (놓친 이벤트가 없게)
+
+# JWT 설정이 없다 - 게시글 서비스는 토큰을 다루지 않는다 (게이트웨이가 검사한다)
+
+# 심화 스위치 - Kafka 에서 이벤트를 받을까?
+#   false : 받지 않는다 (실험용)
+#   true  : user-events 토픽을 듣고, 닉네임이 바뀌면 그 사람 글의 writer 를 고친다 (기본값)
+app:
+  kafka:
+    enabled: ${KAFKA_ENABLED:true}
+
+springdoc:
+  swagger-ui:
+    path: /docs                  # http://localhost:8082/docs

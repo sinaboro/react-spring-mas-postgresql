@@ -240,7 +240,97 @@ def failure():
     save(fig, "fig_failure.png")
 
 
+# ================================================================ 심화 교안 (Kafka)
+# ---------------------------------------------------------------- K1. 심화 서두 개념도
+def kafka_overview():
+    fig, ax = canvas(10.4, 6.6)
+    title(ax, "심화: 닉네임이 바뀌면 글 작성자도 따라 바뀐다 (Kafka 이벤트)")
+    box(ax, 1, 40, 14, 12, "React\n(내 정보 화면)", "cyan", 9.5)
+    box(ax, 21, 38, 16, 16, "API Gateway\n:8080\n토큰 검사", "orange", 9.5)
+    box(ax, 44, 40, 20, 14, "user-service  :8081\n① 닉네임 저장\n② 소식 보내기", "navy", 9.2)
+    box(ax, 44, 8, 20, 14, "post-service  :8082\n④ 소식 받고\nwriter 고치기", "green", 9.2)
+    box(ax, 72, 24, 30, 12, "Kafka  (localhost:9092)\n토픽 user-events\n③ 소식을 쌓아 둔다", "teal", 9.2)
+    box(ax, 82, 44, 18, 9, "userdb.users\nnickname = 민수킹", "navy", 8.5)
+    box(ax, 82, 6, 18, 9, "postdb.posts\nwriter = 민수킹", "green", 8.5)
+    arrow(ax, 15.4, 46, 20.6, 46, "", NAVY)
+    note(ax, 18, 49, "PUT", NAVY, 7.6)
+    note(ax, 8, 37.5, "PUT /api/auth/me\n{ nickname: 민수킹 }", NAVY, 7.6)
+    arrow(ax, 37.4, 47, 43.6, 47, "", NAVY)
+    arrow(ax, 64.4, 50, 81.6, 49, "UPDATE users", NAVY, size=8)
+    arrow(ax, 60, 39.6, 76, 36.4, "NICKNAME_CHANGED", "#1f9e93", size=8, ly=2.5, lx=-3)
+    arrow(ax, 76, 23.6, 60, 22.4, "", "#1f9e93")
+    note(ax, 72, 18.6, "듣고 있다가 가져감", "#1f9e93", 8)
+    arrow(ax, 64.4, 11.5, 81.6, 10.5, "UPDATE posts", GREEN, size=8, ly=-2.4)
+    note(ax, 54, 31, "× 서로 직접 부르지 않는다", RED, 8.5, bold=True)
+    note(ax, 52, 0.5, "user-service 는 누가 들을지 모르고, post-service 는 userdb 를 보지 않는다 → 소식(이벤트)으로만 이어진다",
+         NAVY, 9, bold=True)
+    save(fig, "fig_kafka_overview.png")
+
+
+# ---------------------------------------------------------------- K2. 직접 호출 vs 이벤트
+def sync_vs_event():
+    fig, ax = canvas(10.4, 4.8)
+    note(ax, 24, 45, "① 직접 부르기 (동기 HTTP)", NAVY, 10.5, bold=True)
+    box(ax, 3, 24, 16, 11, "user-service", "navy", 9)
+    box(ax, 29, 24, 16, 11, "post-service", "green", 9)
+    arrow(ax, 19.4, 31.5, 28.6, 31.5, "writer 고쳐줘!", NAVY, size=8, ly=2.4)
+    arrow(ax, 28.6, 27, 19.4, 27, "", NAVY, dashed=True)
+    note(ax, 24, 23.5, "대답 기다림", GREY, 7.8)
+    note(ax, 24, 14, "post-service 가 꺼져 있으면?\n→ 닉네임 바꾸기도 실패하거나, 소식이 사라진다\n→ 보내는 쪽이 받는 쪽을 알아야 한다",
+         RED, 8.5)
+    ax.plot([50, 50], [3, 48], color="#d1d5db", lw=1.2)
+    note(ax, 77, 45, "② 소식 남기기 (이벤트, 비동기)", "#1f9e93", 10.5, bold=True)
+    box(ax, 54, 24, 14, 11, "user-service", "navy", 9)
+    box(ax, 72, 24, 13, 11, "Kafka\nuser-events", "teal", 9)
+    box(ax, 89, 24, 13, 11, "post-service", "green", 9)
+    arrow(ax, 68.4, 29.5, 71.6, 29.5, "", "#1f9e93")
+    arrow(ax, 85.4, 29.5, 88.6, 29.5, "", "#1f9e93")
+    note(ax, 70, 37.5, "올려 두고 끝", "#1f9e93", 8)
+    note(ax, 87, 37.5, "가져가 읽음", "#1f9e93", 8)
+    note(ax, 78, 14, "post-service 가 꺼져 있어도 소식은 Kafka 에 남는다\n→ 다시 켜지면 이어서 읽는다\n→ 보내는 쪽은 누가 듣는지 몰라도 된다",
+         GREEN, 8.5)
+    save(fig, "fig_sync_vs_event.png")
+
+
+# ---------------------------------------------------------------- K3. Kafka 낱말
+def kafka_terms():
+    fig, ax = canvas(10.4, 4.6)
+    title(ax, "Kafka 낱말: 토픽 · 파티션 · 오프셋 · 컨슈머 그룹")
+    box(ax, 2, 16, 14, 12, "프로듀서\n(보내는 쪽)\nuser-service", "navy", 8.6)
+    box(ax, 22, 6, 50, 30, "", "teal", dashed=True)
+    note(ax, 47, 33, "토픽 user-events  (파티션 0)", "#1f9e93", 9.5, bold=True)
+    for i, nick in enumerate(["민수킹", "민수짱", "민수최고", "…"]):
+        x = 25 + i * 11
+        box(ax, x, 14, 9.5, 12, f"오프셋 {i}\n{nick}" if nick != "…" else "새 소식\n여기에", "white", 8)
+    note(ax, 47, 9, "소식은 지우지 않고 차례대로 쌓인다 (번호 = 오프셋)", GREY, 8)
+    arrow(ax, 16.4, 22, 24.6, 20, "", NAVY)
+    box(ax, 80, 16, 22, 12, "컨슈머 그룹\npost-service\n\"오프셋 2 까지 읽음\"", "green", 8.4)
+    arrow(ax, 71.6, 20, 79.6, 22, "", GREEN)
+    note(ax, 91, 9, "그룹마다 읽은 위치를 Kafka 가 기억\n→ 꺼졌다 켜지면 3번부터", GREY, 7.8)
+    save(fig, "fig_kafka_terms.png")
+
+
+# ---------------------------------------------------------------- K4. Outbox 패턴
+def outbox():
+    fig, ax = canvas(10.4, 4.4)
+    title(ax, "Outbox 패턴: 소식을 DB 에 먼저 적어 두면 Kafka 가 꺼져도 잃지 않는다")
+    box(ax, 2, 12, 22, 18, "user-service\n\n한 트랜잭션으로\nusers 수정 +\noutbox 에 소식 적기", "navy", 8.6)
+    box(ax, 32, 10, 22, 22, "userdb\n─────\nusers\noutbox\n(보낼 소식 목록)", "grey", 8.8)
+    box(ax, 62, 12, 16, 18, "보내는 일꾼\n(몇 초마다)\noutbox → Kafka\n보냈으면 표시", "orange", 8.4)
+    box(ax, 86, 15, 16, 12, "Kafka\nuser-events", "teal", 9)
+    arrow(ax, 24.4, 21, 31.6, 21, "", NAVY)
+    arrow(ax, 54.4, 21, 61.6, 21, "", ORANGE)
+    arrow(ax, 78.4, 21, 85.6, 21, "", "#1f9e93")
+    note(ax, 52, 3, "지금 코드(UserEventPublisher)는 저장 뒤 바로 Kafka 로 보낸다 → Kafka 가 꺼져 있으면 그 소식은 사라진다",
+         RED, 8.3)
+    save(fig, "fig_outbox.png")
+
+
 if __name__ == "__main__":
+    kafka_overview()
+    sync_vs_event()
+    kafka_terms()
+    outbox()
     msa_overview()
     monolith_vs_msa()
     db_split()
