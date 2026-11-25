@@ -6,6 +6,7 @@
 
 | 증상 | 원인 | 해결 |
 |---|---|---|
+| `$api = ...`, `function Show-Error` 가 "내부 또는 외부 명령... 이 아닙니다" | VS Code 터미널이 PowerShell 이 아니라 **cmd** 다 (프롬프트에 `PS` 가 없다) | 터미널 오른쪽 위 **+ ∨ → PowerShell** (기초 0장). 늘 PowerShell 로: **Select Default Profile** → PowerShell |
 | `git pull` 이 `Your local changes ... would be overwritten` 으로 멈춘다 | 기초 과정에서 고친 파일이 남아 있다 | 고친 것을 버려도 되면 `git stash` 후 다시 `git pull`. 남기고 싶으면 저장소를 다른 폴더에 새로 `git clone` 한다 |
 | `advanced` 폴더가 없다 | 심화 과정이 생기기 전에 받은 저장소다 | `git pull` 로 최신을 받는다 |
 | 5173 이 이미 쓰는 중이라며 React 가 5174 로 켜진다 | 기초 과정의 React(`npm run dev`)가 아직 켜져 있다 | 기초 쪽 터미널에서 Ctrl+C 로 끄고 다시 켠다 |

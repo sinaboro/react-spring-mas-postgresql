@@ -256,6 +256,15 @@ cd react-spring-mas-postgresql   # 이후 [PS] 명령의 기준 폴더
 <li>한 상자씩 붙여 넣고, 결과가 교안과 비슷한지 본 뒤 다음으로 넘어간다. 오류가 나면 <strong>부록 A</strong> 에서 증상을 찾는다.</li>
 <li>PowerShell 에서 <strong>마우스 오른쪽 클릭</strong>이 붙여넣기다. 여러 줄을 붙여 넣으면 한 줄씩 차례로 실행된다.</li>
 </ul>
+<p><strong>터미널이 PowerShell 인지 확인하기</strong></p>
+<p>VS Code 에서는 메뉴 <strong>보기(View) → 터미널(Terminal)</strong> (단축키 <code>Ctrl+`</code>)로 터미널을 연다. (화면은 VS Code 영어판이다)</p>
+<figure><a href="../images/vs_view_menu.jpg" target="_blank"><img src="../images/vs_view_menu.jpg" alt="VS Code 보기(View) 메뉴 - 터미널(Terminal)" loading="lazy"></a><figcaption>VS Code 보기(View) 메뉴 - 터미널(Terminal)</figcaption></figure>
+<p>이 교안의 <code>function Show-Error</code>, <code>Invoke-RestMethod</code>, <code>$api = ...</code> 같은 명령은 <strong>PowerShell 에서만</strong> 동작한다. 프롬프트가 <code>PS C:\...&gt;</code> 로 시작하고 오른쪽 목록에 <code>powershell</code> 이 보이면 된다.</p>
+<figure><a href="../images/vs_terminal_ps.jpg" target="_blank"><img src="../images/vs_terminal_ps.jpg" alt="PowerShell 터미널 - 프롬프트가 PS 로 시작한다" loading="lazy"></a><figcaption>PowerShell 터미널 - 프롬프트가 PS 로 시작한다</figcaption></figure>
+<p>프롬프트에 <code>PS</code> 가 없고 오른쪽에 <code>cmd</code> 라고 나오면 <strong>명령 프롬프트(cmd)</strong> 다. 교안을 만든 PC 도 VS Code 기본 터미널이 cmd 로 되어 있었다. cmd 에서는 위 명령이 "내부 또는 외부 명령... 이 아닙니다" 로 실패한다.</p>
+<figure><a href="../images/vs_terminal_cmd.jpg" target="_blank"><img src="../images/vs_terminal_cmd.jpg" alt="cmd 터미널 - PS 가 없다. 이대로 쓰지 않는다" loading="lazy"></a><figcaption>cmd 터미널 - PS 가 없다. 이대로 쓰지 않는다</figcaption></figure>
+<p>그럴 때는 터미널 오른쪽 위 <strong>+</strong> 옆의 <strong>∨</strong> → <strong>PowerShell</strong>. 늘 PowerShell 로 열리게 하려면 같은 목록의 <strong>Select Default Profile</strong>(기본 프로필 선택) → <strong>PowerShell</strong>. (IntelliJ 의 터미널은 처음부터 PowerShell 로 열린다. Windows 시작 메뉴의 <strong>Windows PowerShell</strong> 창을 써도 된다)</p>
+<figure><a href="../images/vs_terminal_profiles.jpg" target="_blank"><img src="../images/vs_terminal_profiles.jpg" alt="+ 옆 ∨ 목록 - PowerShell 을 고른다" loading="lazy"></a><figcaption>+ 옆 ∨ 목록 - PowerShell 을 고른다</figcaption></figure>
 <h2 id="정리">정리</h2>
 <ul>
 <li>이 교안은 로그인 게시판 서버를 <strong>게이트웨이 + 회원 서비스 + 게시글 서비스</strong>로 나눈다.</li>

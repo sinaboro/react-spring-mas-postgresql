@@ -4,6 +4,7 @@
 
 | 증상 | 원인 | 해결 |
 |---|---|---|
+| `$api = ...`, `function Show-Error` 가 "내부 또는 외부 명령... 이 아닙니다" | VS Code 터미널이 PowerShell 이 아니라 **cmd** 다 (프롬프트에 `PS` 가 없다) | 터미널 오른쪽 위 **+ ∨ → PowerShell** (기초 0장). 늘 PowerShell 로: **Select Default Profile** → PowerShell |
 | `docker`, `git`, `node`, `npm` 이 "인식되지 않습니다" | 설치하지 않았거나, 설치 전에 연 PowerShell 창이다 | 설치한 뒤 PowerShell 창을 **새로** 연다. Docker 는 Docker Desktop 을 실행해 둔다 |
 | `docker compose up` 에서 `failed to connect to the docker API` | Docker Desktop 이 꺼져 있다 | Docker Desktop 을 실행하고 고래 아이콘이 멈출 때까지 기다린다 |
 | `no configuration file provided: not found` | `docker-compose.yml` 이 없는 폴더에서 쳤다 | `cd C:\study\react-spring-mas-postgresql` 후 다시 |
