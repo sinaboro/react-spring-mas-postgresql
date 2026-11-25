@@ -186,10 +186,12 @@ docker exec mas-adv-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server loca
 </code></pre>
 <p>처음에는 아무것도 나오지 않는다. <code>user-events</code> 토픽은 <strong>서비스가 처음 쓸 때 Kafka 가 자동으로 만든다</strong>(자동 생성이 기본으로 켜져 있다). 3장에서 user-service 가 소식을 처음 보내면(또는 post-service 가 처음 듣기 시작하면) 생긴다. 그 뒤에 이 명령을 다시 실행해 보자.</p>
 <h2 id="2-3-intellij-로-열기">2-3. IntelliJ 로 열기</h2>
-<p>기초 과정과 같다. 다만 <strong><code>advanced\backend</code></strong> 폴더를 연다.</p>
+<p>기초 과정 3장 3-4 와 같다(그림도 그곳에 있다). 다만 <strong><code>advanced\backend</code></strong> 폴더를 연다.</p>
 <ol>
-<li><strong>File → Open</strong> → <code>react-spring-mas-postgresql\advanced\backend</code> → <strong>OK</strong> → <strong>Trust Project</strong></li>
-<li>Gradle sync 가 끝나면 <code>mas-board-advanced</code> 아래에 서비스 3개가 보인다. (처음에는 Kafka 라이브러리를 받느라 조금 더 걸린다)</li>
+<li>기초 과정 프로젝트가 열려 있으면 ☰ → <strong>파일(File) → 프로젝트 닫기</strong>(Close Project) 로 닫는다.</li>
+<li>첫 화면에서 <strong>파일 열기</strong>(Open) → <code>C:\study\react-spring-mas-postgresql\advanced</code> 안의 <strong><code>backend</code></strong> 를 한 번 클릭 → <strong>폴더 선택</strong> → <strong>프로젝트 신뢰</strong>(Defender 칸은 해제)</li>
+<li>오른쪽 아래 Gradle 진행 막대가 끝날 때까지 기다린다. Gradle 창(코끼리)에서 <code>mas-board-advanced</code> 아래에 서비스 3개가 보이면 된다. (처음에는 Kafka 라이브러리를 받느라 기초보다 조금 더 걸린다)</li>
+<li>서비스는 기초 3장 3-5 처럼 <code>UserServiceApplication</code> 을 ▶ 로 한 번 켠 뒤, 나머지 둘은 아래쪽 <strong>서비스</strong> 창에서 켠다.</li>
 </ol>
 <blockquote class="note">
 <p><strong>기초 과정 서비스가 켜져 있다면 먼저 끈다.</strong> 두 과정 모두 8080~8082 포트를 쓴다. IntelliJ 창이 두 개 열려 있으면 헷갈리기 쉬우니, 기초 과정 창은 닫아 두자.</p>

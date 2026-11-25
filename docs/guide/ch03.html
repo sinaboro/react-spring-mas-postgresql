@@ -233,18 +233,29 @@ subprojects {
 <blockquote class="note">
 <p><strong>post-service 는 가장 가볍다.</strong> 토큰도 비밀번호도 다루지 않는다. 서비스를 나누면 각 서비스는 <strong>자기 일에 필요한 것만</strong> 가진다.</p>
 </blockquote>
-<h2 id="3-4-intellij-로-열기">3-4. IntelliJ 로 열기</h2>
-<ol>
-<li>IntelliJ IDEA 실행 → <strong>File → Open</strong> → <code>react-spring-mas-postgresql\backend</code> 폴더 선택 → <strong>OK</strong></li>
-<li>"Trust Project?" 창이 뜨면 <strong>Trust Project</strong></li>
-<li>오른쪽 아래에 Gradle 진행 막대가 끝날 때까지 기다린다. (처음에는 라이브러리를 받느라 몇 분 걸린다)</li>
-<li>오른쪽 <strong>Gradle</strong> 창(코끼리 아이콘)을 열면 <code>mas-board</code> 아래에 <code>api-gateway</code>, <code>post-service</code>, <code>user-service</code> 가 보인다.</li>
-</ol>
+<h2 id="3-4-intellij-로-열기-화면-따라-하기">3-4. IntelliJ 로 열기 (화면 따라 하기)</h2>
+<p>화면은 IntelliJ IDEA 2026.3 (한국어, 어두운 테마) 기준이다. 버전에 따라 단추 위치가 조금 다를 수 있지만 순서는 같다. 메뉴가 영어로 보이면 괄호 안의 영어 이름을 찾는다.</p>
+<p><strong>① 프로젝트 열기</strong> - IntelliJ 를 실행하면 첫 화면(Home)이 나온다. 가운데 <strong>파일 열기</strong>(Open) 를 누른다. 이미 다른 프로젝트가 열려 있으면 왼쪽 위 ☰ → <strong>파일(File) → 열기(Open)</strong>.</p>
+<figure><a href="../images/j01_idea_home.png" target="_blank"><img src="../images/j01_idea_home.png" alt="IntelliJ 첫 화면 - 가운데 &quot;파일 열기&quot;" loading="lazy"></a><figcaption>IntelliJ 첫 화면 - 가운데 &quot;파일 열기&quot;</figcaption></figure>
+<p><strong>② backend 폴더 고르기</strong> - <code>C:\study\react-spring-mas-postgresql</code> 로 들어가서 <strong><code>backend</code> 를 한 번 클릭</strong>하고 <strong>폴더 선택</strong>. 저장소 맨 위 폴더(<code>react-spring-mas-postgresql</code>)가 아니라 그 안의 <code>backend</code> 를 연다. 그래야 IntelliJ 가 Gradle 멀티 프로젝트(서비스 3개)로 알아본다.</p>
+<figure><a href="../images/j02_open_dialog.png" target="_blank"><img src="../images/j02_open_dialog.png" alt="파일 열기 - react-spring-mas-postgresql 안의 backend 를 고르고 &quot;폴더 선택&quot;" loading="lazy"></a><figcaption>파일 열기 - react-spring-mas-postgresql 안의 backend 를 고르고 &quot;폴더 선택&quot;</figcaption></figure>
+<p><strong>③ 프로젝트 신뢰</strong> - "프로젝트 'backend'을(를) 신뢰하고 여시겠어요?" 가 나오면 <strong>프로젝트 신뢰</strong>(Trust Project). 내가 받은 강사 저장소이므로 믿어도 된다. 아래의 <strong>Microsoft Defender 제외 목록에 추가</strong> 칸은 체크를 <strong>해제</strong>한다. 켜 두면 관리자 권한을 묻고 백신 검사에서 이 폴더를 빼 버린다. (조금 빨라질 뿐, 실습에는 필요 없다)</p>
+<figure><a href="../images/j03_trust.png" target="_blank"><img src="../images/j03_trust.png" alt="프로젝트 신뢰 - Defender 칸은 해제하고 &quot;프로젝트 신뢰&quot;" loading="lazy"></a><figcaption>프로젝트 신뢰 - Defender 칸은 해제하고 &quot;프로젝트 신뢰&quot;</figcaption></figure>
+<p><strong>④ Gradle 가져오기 기다리기</strong> - 오른쪽 아래에 "'backend' Gradle 프로젝트 가져오는 중" 막대가 돈다. 처음에는 라이브러리를 받느라 <strong>1~5분</strong> 걸린다. 막대가 사라질 때까지 아무것도 누르지 않고 기다린다. 끝나면 왼쪽 <strong>프로젝트</strong> 창에 서비스 폴더 3개가 <strong>굵은 글씨</strong>로 보인다.</p>
+<figure><a href="../images/j04_project_tree.png" target="_blank"><img src="../images/j04_project_tree.png" alt="프로젝트 창 - api-gateway, post-service, user-service 가 굵게(= Gradle 모듈로 인식됨)" loading="lazy"></a><figcaption>프로젝트 창 - api-gateway, post-service, user-service 가 굵게(= Gradle 모듈로 인식됨)</figcaption></figure>
+<p><strong>⑤ Gradle 창 확인</strong> - 오른쪽 세로 막대의 <strong>코끼리 아이콘</strong>(Gradle)을 누른다. <code>mas-board</code> 아래에 <code>api-gateway</code>, <code>post-service</code>, <code>user-service</code> 가 보이면 성공이다. (<code>mas-board</code> 는 <code>settings.gradle</code> 의 <code>rootProject.name</code>)</p>
+<figure><a href="../images/j05_gradle_panel.png" target="_blank"><img src="../images/j05_gradle_panel.png" alt="Gradle 창 - mas-board 아래 서비스 3개" loading="lazy"></a><figcaption>Gradle 창 - mas-board 아래 서비스 3개</figcaption></figure>
 <blockquote class="note">
-<p><strong>JDK 설정</strong> - <strong>File → Project Structure → Project → SDK</strong> 가 21 인지 확인한다. 없으면 <strong>Add SDK → Download JDK → 21, Eclipse Temurin</strong> 을 고른다.</p>
+<p>서비스 3개가 안 보이거나 빨간 오류가 있으면 Gradle 창 맨 왼쪽의 🔄(모든 Gradle 프로젝트 다시 로드)를 누른다. 그래도 안 되면 아래 ⑥ 의 JDK 를 확인한다.</p>
 </blockquote>
+<p><strong>⑥ JDK 21 확인</strong> - 왼쪽 위 ☰ → <strong>파일(File) → 프로젝트 구조(Project Structure)</strong> (단축키 <code>Ctrl + Alt + Shift + S</code>).</p>
+<figure><a href="../images/j06_file_menu.png" target="_blank"><img src="../images/j06_file_menu.png" alt="파일 메뉴 - &quot;프로젝트 구조...&quot;" loading="lazy"></a><figcaption>파일 메뉴 - &quot;프로젝트 구조...&quot;</figcaption></figure>
+<p><strong>프로젝트</strong> 화면의 <strong>SDK</strong> 가 <code>21</code> 이면 그대로 <strong>취소</strong>한다.</p>
+<figure><a href="../images/j07_project_structure.png" target="_blank"><img src="../images/j07_project_structure.png" alt="프로젝트 구조 - SDK 21, 언어 수준 21" loading="lazy"></a><figcaption>프로젝트 구조 - SDK 21, 언어 수준 21</figcaption></figure>
+<p>SDK 가 <code>&lt;SDK 없음&gt;</code> 이거나 17 같은 다른 버전이면, SDK 칸을 눌러 <strong>JDK 다운로드...</strong> → 버전 <strong>21</strong>, 공급업체 <strong>Eclipse Temurin</strong> → 다운로드. 다 받으면 <strong>확인</strong>.</p>
+<figure><a href="../images/j08_sdk_dropdown.png" target="_blank"><img src="../images/j08_sdk_dropdown.png" alt="SDK 목록 - 21 이 없으면 &quot;JDK 다운로드...&quot;" loading="lazy"></a><figcaption>SDK 목록 - 21 이 없으면 &quot;JDK 다운로드...&quot;</figcaption></figure>
 <h2 id="3-5-서비스-실행하는-법">3-5. 서비스 실행하는 법</h2>
-<p>각 서비스의 <code>...Application.java</code> 를 열고, class 이름 왼쪽의 <strong>초록색 ▶</strong> 를 눌러 <strong>Run</strong> 을 고른다. user-service 와 post-service 는 켜지면서 DB 에 접속하므로, <strong>2장의 DB 를 먼저 켜 둔다.</strong> (지금 다 켜 볼 필요는 없다. 4장부터 하나씩 켠다)</p>
+<p>user-service 와 post-service 는 켜지면서 DB 에 접속하므로, <strong>2장의 DB 를 먼저 켜 둔다.</strong> (지금 다 켜 볼 필요는 없다. 4장부터 하나씩 켠다)</p>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -271,7 +282,21 @@ subprojects {
 </tr>
 </tbody>
 </table></div>
-<p>세 개를 모두 켜면 아래쪽 <strong>Services</strong> 창(<strong>View → Tool Windows → Services</strong>, 단축키 <code>Alt + 8</code>)에서 한눈에 보고 켜고 끌 수 있다.</p>
+<p><strong>① 실행할 파일 열기</strong> - 프로젝트 창에서 <code>user-service</code> → <code>src</code> → <code>main</code> → <code>java</code> → <code>com.example.user</code> 의 화살표(▸)를 차례로 눌러 펼치고, <strong>UserServiceApplication</strong> 을 <strong>두 번 클릭</strong>한다.</p>
+<figure><a href="../images/j09_app_class.png" target="_blank"><img src="../images/j09_app_class.png" alt="UserServiceApplication.java - class 이름 왼쪽(20번째 줄)의 초록색 ▶" loading="lazy"></a><figcaption>UserServiceApplication.java - class 이름 왼쪽(20번째 줄)의 초록색 ▶</figcaption></figure>
+<p><strong>② ▶ 로 실행</strong> - <code>public class UserServiceApplication</code> 줄 왼쪽의 <strong>초록색 ▶</strong> 를 누르고 맨 위의 <strong>'UserServiceApplication.main()' 실행</strong> 을 고른다.</p>
+<figure><a href="../images/j10_run_menu.png" target="_blank"><img src="../images/j10_run_menu.png" alt="▶ 를 누르면 나오는 메뉴 - 맨 위 &quot;실행&quot;" loading="lazy"></a><figcaption>▶ 를 누르면 나오는 메뉴 - 맨 위 &quot;실행&quot;</figcaption></figure>
+<p><strong>③ 켜졌는지 확인</strong> - 아래쪽에 <strong>서비스</strong>(Services) 창이 열리고 콘솔에 로그가 올라간다. 마지막 즈음에 <code>Started UserServiceApplication in ... seconds</code> 가 보이면 켜진 것이다.</p>
+<p><strong>④ 나머지 두 개는 서비스 창에서</strong> - 한 번 실행하면 IntelliJ 가 같은 프로젝트의 Spring Boot 프로그램을 모두 찾아 <strong>서비스</strong> 창의 <strong>Spring Boot</strong> 아래에 보여 준다. 목록에서 <code>PostServiceApplication</code> 을 고르고 위쪽 ▶(실행)를 누르고, <code>GatewayApplication</code> 도 같은 방법으로 켠다. 켜진 서비스 옆에는 포트(<code>:8080/</code>, <code>:8081/</code>, <code>:8082/</code>)가 붙는다.</p>
+<figure><a href="../images/j11_services_running.png" target="_blank"><img src="../images/j11_services_running.png" alt="서비스 창 - 세 서비스가 모두 켜져 포트가 보인다. 오른쪽 콘솔 마지막 줄 &quot;Started GatewayApplication&quot;" loading="lazy"></a><figcaption>서비스 창 - 세 서비스가 모두 켜져 포트가 보인다. 오른쪽 콘솔 마지막 줄 &quot;Started GatewayApplication&quot;</figcaption></figure>
+<ul>
+<li>끄기: 서비스 창에서 고르고 위쪽 ■(빨간 네모). 다시 켜기: ▶ 또는 ↻.</li>
+<li>서비스 창이 안 보이면 <strong>보기(View) → 도구 창(Tool Windows) → 서비스(Services)</strong> (<code>Alt + 8</code>).</li>
+<li>오른쪽 위의 <strong>실행 구성</strong> 목록(초록 ▶ 옆)에서 서비스를 골라 켜도 된다.</li>
+</ul>
+<blockquote class="note">
+<p>목록에 서비스가 없거나 ▶ 가 회색이면 3-4 의 ④(Gradle 가져오기)가 아직 끝나지 않은 것이다. 오른쪽 아래 진행 막대가 사라질 때까지 기다린다.</p>
+</blockquote>
 <p><strong>[PS]</strong> IntelliJ 대신 터미널로 켜려면 - <code>backend</code> 폴더에서 <strong>터미널 3개</strong>를 열어 하나씩</p>
 <pre><code class="language-powershell">cd C:\study\react-spring-mas-postgresql\backend   # 세 터미널 모두 backend 폴더에서
 .\gradlew.bat :user-service:bootRun   # 터미널 1: 회원 서비스 (8081)
