@@ -12,24 +12,24 @@ import { Link } from "react-router";
 import { useAuth } from "../context/AuthContext";
 
 function ProfilePage() {
-  const { user, changeNickname } = useAuth();
+  const { user, changeNickname } = useAuth(); // 로그인한 사람과 닉네임 바꾸기 함수 (AuthContext 가 서버 요청·새 토큰 저장까지 맡는다)
   const [nickname, setNickname] = useState(user.nickname); // ProtectedRoute 안이라 user 는 항상 있다
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
-  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState(null); // 성공 안내 문구
+  const [error, setError] = useState(null); // 실패 이유
+  const [busy, setBusy] = useState(false); // 요청 중이면 true → 단추를 막아 두 번 누르기 방지
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // 페이지 새로 고침 막기
     setBusy(true);
-    setError(null);
+    setError(null); // 지난번 문구는 지우고 시작
     setMessage(null);
     try {
-      await changeNickname(nickname.trim());
+      await changeNickname(nickname.trim()); // PUT /api/auth/me → 게이트웨이 → user-service. 앞뒤 빈칸은 빼고 보낸다
       setMessage("닉네임을 바꿨습니다. 목록에서 예전 글의 작성자도 바뀌었는지 확인해 보세요.");
     } catch (err) {
       setError(err.message); // "닉네임을 입력하세요" 등
     } finally {
-      setBusy(false);
+      setBusy(false); // 성공이든 실패든 끝나면 단추를 다시 풀어 준다
     }
   };
 
@@ -40,16 +40,19 @@ function ProfilePage() {
       {error && <p className="error">⚠️ {error}</p>}
       <label>
         아이디
+        {/* 아이디는 바꿀 수 없다 (disabled: 보이기만 하고 입력은 막는다) */}
         <input value={user.username} disabled />
       </label>
       <label>
         닉네임
         <input value={nickname} onChange={(e) => setNickname(e.target.value)} maxLength={30} />
       </label>
+      {/* 요청 중이거나, 비었거나, 지금 닉네임과 같으면 단추를 막는다 (보낼 필요가 없으니까) */}
       <button type="submit" className="primary wide" disabled={busy || !nickname.trim() || nickname === user.nickname}>
         {busy ? "바꾸는 중..." : "닉네임 바꾸기"}
       </button>
       <p className="hint">
+        {/* ?mine=1 : 목록 화면의 "내 글" 탭으로 바로 간다 → 작성자가 새 닉네임으로 바뀌었는지 확인 */}
         <Link to="/?mine=1">내 글 목록 보기</Link>
       </p>
     </form>

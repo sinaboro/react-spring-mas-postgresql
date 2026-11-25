@@ -158,24 +158,24 @@ import { Link } from &quot;react-router&quot;;
 import { useAuth } from &quot;../context/AuthContext&quot;;
 
 function ProfilePage() {
-  const { user, changeNickname } = useAuth();
+  const { user, changeNickname } = useAuth(); // 로그인한 사람과 닉네임 바꾸기 함수 (AuthContext 가 서버 요청·새 토큰 저장까지 맡는다)
   const [nickname, setNickname] = useState(user.nickname); // ProtectedRoute 안이라 user 는 항상 있다
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
-  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState(null); // 성공 안내 문구
+  const [error, setError] = useState(null); // 실패 이유
+  const [busy, setBusy] = useState(false); // 요청 중이면 true → 단추를 막아 두 번 누르기 방지
 
   const handleSubmit = async (e) =&gt; {
-    e.preventDefault();
+    e.preventDefault(); // 페이지 새로 고침 막기
     setBusy(true);
-    setError(null);
+    setError(null); // 지난번 문구는 지우고 시작
     setMessage(null);
     try {
-      await changeNickname(nickname.trim());
+      await changeNickname(nickname.trim()); // PUT /api/auth/me → 게이트웨이 → user-service. 앞뒤 빈칸은 빼고 보낸다
       setMessage(&quot;닉네임을 바꿨습니다. 목록에서 예전 글의 작성자도 바뀌었는지 확인해 보세요.&quot;);
     } catch (err) {
       setError(err.message); // &quot;닉네임을 입력하세요&quot; 등
     } finally {
-      setBusy(false);
+      setBusy(false); // 성공이든 실패든 끝나면 단추를 다시 풀어 준다
     }
   };
 
@@ -186,16 +186,19 @@ function ProfilePage() {
       {error &amp;&amp; &lt;p className=&quot;error&quot;&gt;⚠️ {error}&lt;/p&gt;}
       &lt;label&gt;
         아이디
+        {/* 아이디는 바꿀 수 없다 (disabled: 보이기만 하고 입력은 막는다) */}
         &lt;input value={user.username} disabled /&gt;
       &lt;/label&gt;
       &lt;label&gt;
         닉네임
         &lt;input value={nickname} onChange={(e) =&gt; setNickname(e.target.value)} maxLength={30} /&gt;
       &lt;/label&gt;
+      {/* 요청 중이거나, 비었거나, 지금 닉네임과 같으면 단추를 막는다 (보낼 필요가 없으니까) */}
       &lt;button type=&quot;submit&quot; className=&quot;primary wide&quot; disabled={busy || !nickname.trim() || nickname === user.nickname}&gt;
         {busy ? &quot;바꾸는 중...&quot; : &quot;닉네임 바꾸기&quot;}
       &lt;/button&gt;
       &lt;p className=&quot;hint&quot;&gt;
+        {/* ?mine=1 : 목록 화면의 &quot;내 글&quot; 탭으로 바로 간다 → 작성자가 새 닉네임으로 바뀌었는지 확인 */}
         &lt;Link to=&quot;/?mine=1&quot;&gt;내 글 목록 보기&lt;/Link&gt;
       &lt;/p&gt;
     &lt;/form&gt;

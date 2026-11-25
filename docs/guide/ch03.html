@@ -299,6 +299,9 @@ subprojects {
 </blockquote>
 <p><strong>[PS]</strong> IntelliJ 대신 터미널로 켜려면 - <code>backend</code> 폴더에서 <strong>터미널 3개</strong>를 열어 하나씩</p>
 <pre><code class="language-powershell">cd C:\study\react-spring-mas-postgresql\backend   # 세 터미널 모두 backend 폴더에서
+# .\gradlew.bat : 저장소에 들어 있는 Gradle 실행기 (.\ = &quot;지금 폴더의&quot;. Gradle 을 따로 설치하지 않아도 된다)
+# :user-service:bootRun : user-service 프로젝트만 골라서(:이름:) Spring Boot 로 실행(bootRun)한다. 처음에는 라이브러리를 받느라 몇 분
+# 서버는 끄기 전까지 계속 돌기 때문에 그 터미널은 프롬프트가 돌아오지 않는다 → 서비스마다 터미널을 따로 연다
 .\gradlew.bat :user-service:bootRun   # 터미널 1: 회원 서비스 (8081)
 .\gradlew.bat :post-service:bootRun   # 터미널 2: 게시글 서비스 (8082)
 .\gradlew.bat :api-gateway:bootRun    # 터미널 3: 게이트웨이 (8080)  - 끌 때는 그 터미널에서 Ctrl+C

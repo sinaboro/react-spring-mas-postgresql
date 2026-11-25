@@ -229,7 +229,8 @@ post-service: partitions assigned: [user-events-0]
 **[PS]** Kafka 가 기억하는 post-service 그룹의 읽은 위치
 
 ```powershell
-# post-service 그룹이 어디까지 읽었는지 보기: CURRENT-OFFSET(읽은 위치), LOG-END-OFFSET(마지막 위치), LAG(밀린 개수)
+# kafka-consumer-groups.sh --describe --group post-service : 컨슈머 그룹 post-service 가 어디까지 읽었는지 보기
+#   CURRENT-OFFSET = 이 그룹이 읽은 위치,  LOG-END-OFFSET = 토픽의 마지막 위치,  LAG = 둘의 차이 = 아직 안 읽은 메시지 수
 docker exec mas-adv-kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group post-service
 ```
 

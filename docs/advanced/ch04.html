@@ -308,7 +308,8 @@ public class UserEventListener {
 <p>켜자마자 <code>NotCoordinatorException</code> 같은 INFO 줄이 몇 번 보일 수 있다. Kafka 가 처음으로 "그룹별 읽은 위치" 를 저장할 곳을 만드는 중이라는 뜻이고, 1~2초 뒤 <code>partitions assigned</code> 가 나오면 정상이다.</p>
 </blockquote>
 <p><strong>[PS]</strong> Kafka 가 기억하는 post-service 그룹의 읽은 위치</p>
-<pre><code class="language-powershell"># post-service 그룹이 어디까지 읽었는지 보기: CURRENT-OFFSET(읽은 위치), LOG-END-OFFSET(마지막 위치), LAG(밀린 개수)
+<pre><code class="language-powershell"># kafka-consumer-groups.sh --describe --group post-service : 컨슈머 그룹 post-service 가 어디까지 읽었는지 보기
+#   CURRENT-OFFSET = 이 그룹이 읽은 위치,  LOG-END-OFFSET = 토픽의 마지막 위치,  LAG = 둘의 차이 = 아직 안 읽은 메시지 수
 docker exec mas-adv-kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group post-service
 </code></pre>
 <pre><code class="language-text">GROUP         TOPIC        PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG  (오른쪽 CONSUMER-ID 등은 생략)

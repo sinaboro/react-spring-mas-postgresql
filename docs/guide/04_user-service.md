@@ -447,6 +447,7 @@ Started UserServiceApplication in 12.965 seconds
 **[PS]**
 
 ```powershell
+# -d userdb : 접속할 데이터베이스를 고른다 (DB 가 2개라 어느 쪽인지 꼭 적는다)
 docker exec mas-db psql -U postgres -d userdb -c "select id, username, nickname from users"   # userdb 의 회원 목록
 docker exec mas-db psql -U postgres -d postdb -c "\dt"   # postdb 의 테이블 목록 (\dt) - users 가 없어야 정상
 ```
@@ -481,9 +482,13 @@ function Show-Error($err) {                     # $err: catch 에서 받은 오�
   }
   "$([int]$err.Exception.Response.StatusCode) $body"   # 예: 401 {"detail":"로그인이 필요합니다"}
 }
-# ① 헤더 없이 내 정보 요청 → 401 이 나와야 한다 (try 로 감싸서 오류를 Show-Error 로 보기 좋게 찍는다)
+# Invoke-RestMethod <주소> : PowerShell 로 HTTP 요청을 보내고, 응답 JSON 을 표 모양으로 보여 준다 (브라우저 주소창과 비슷)
+# try { ... } catch { ... } : 응답이 401·403 같은 오류면 PowerShell 이 빨간 오류를 내며 멈추는데,
+#                              그 오류를 catch 가 받아 Show-Error 로 "상태코드 + 메시지" 만 깔끔하게 보여 준다 ($_ = 받은 오류)
+# ① 헤더 없이 내 정보 요청 → 401 이 나와야 한다
 try { Invoke-RestMethod http://localhost:8081/api/auth/me } catch { Show-Error $_ }
 # ② 게이트웨이인 척 X-User-Id 헤더를 직접 붙여 요청 → 1번 회원 정보가 나온다 (8081 에 바로 보냈기 때문)
+# -Headers @{ 이름 = 값 } : 요청 헤더를 붙인다. @{ } 는 PowerShell 의 "이름 = 값" 묶음(해시테이블)
 Invoke-RestMethod http://localhost:8081/api/auth/me -Headers @{ "X-User-Id" = "1" }
 ```
 

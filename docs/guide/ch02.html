@@ -209,15 +209,21 @@ CREATE DATABASE postdb;
 <h2 id="2-4-켜고-확인하기">2-4. 켜고 확인하기</h2>
 <p><strong>[PS]</strong> 저장소 폴더에서</p>
 <pre><code class="language-powershell">cd C:\study\react-spring-mas-postgresql   # docker-compose.yml 이 있는 저장소 맨 위 폴더
-docker compose up -d      # PostgreSQL 컨테이너(mas-db)를 뒤에서(-d) 켠다. 처음에는 이미지를 받느라 1~2분
-docker compose ps         # STATUS 가 healthy 가 될 때까지 몇 번 다시 쳐 본다
+# up : docker-compose.yml 에 적힌 컨테이너(mas-db)를 만들고 켠다. 처음에는 postgres:18 이미지를 받느라 1~2분
+# -d : 뒤에서(detached) 켜고 프롬프트를 바로 돌려준다. 없으면 DB 로그가 화면을 차지하고, 창을 닫으면 DB 도 꺼진다
+docker compose up -d
+# ps : 이 compose 파일로 켠 컨테이너의 상태. STATUS 가 (health: starting) → (healthy) 로 바뀔 때까지 몇 번 다시 쳐 본다
+docker compose ps
 </code></pre>
 <pre><code class="language-text">NAME      IMAGE         COMMAND                   SERVICE   STATUS                    PORTS
 mas-db    postgres:18   &quot;docker-entrypoint.s…&quot;   db        Up 11 minutes (healthy)   0.0.0.0:5435-&gt;5432/tcp
 </code></pre>
 <p><code>STATUS</code> 가 <code>healthy</code> 이면 준비가 끝났다. 데이터베이스 목록을 보자.</p>
 <p><strong>[PS]</strong></p>
-<pre><code class="language-powershell">docker exec mas-db psql -U postgres -c &quot;\l&quot;     # 컨테이너 안의 psql 로 데이터베이스 목록(\l) 보기 → userdb, postdb 가 있어야 한다
+<pre><code class="language-powershell"># docker exec &lt;컨테이너&gt; &lt;명령&gt; : 이미 켜져 있는 컨테이너 안에서 명령 하나를 실행한다 (내 PC 에 psql 을 설치하지 않아도 된다)
+# psql : PostgreSQL 명령줄 도구.  -U postgres = postgres 사용자로,  -c &quot;...&quot; = 이 명령 하나만 실행하고 끝
+# \l    : psql 의 &quot;데이터베이스 목록(list)&quot; 명령 → userdb, postdb 가 있어야 한다
+docker exec mas-db psql -U postgres -c &quot;\l&quot;
 </code></pre>
 <pre><code class="language-text">   Name    |  Owner   | Encoding | ...
 -----------+----------+----------+----

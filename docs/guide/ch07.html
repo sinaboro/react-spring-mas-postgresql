@@ -143,8 +143,10 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <p>2·3·4 는 순서가 바뀌어도 괜찮다. 서비스끼리 켜질 때 서로를 부르지 않기 때문이다. 다만 <strong>DB 는 먼저</strong> 켜야 한다. user-service 와 post-service 가 켜지면서 DB 에 접속하기 때문이다.</p>
 <p><strong>[PS]</strong> React - 처음 한 번만 <code>npm install</code></p>
 <pre><code class="language-powershell">cd C:\study\react-spring-mas-postgresql\frontend   # React 폴더 (backend 가 아니다)
-npm install       # 처음 한 번만: package.json 의 라이브러리를 node_modules 로 받는다 (1~2분)
-npm run dev       # 개발 서버 켜기 → http://localhost:5173 (끌 때는 Ctrl+C)
+npm install       # 처음 한 번만: package.json 에 적힌 라이브러리(React 등)를 node_modules 폴더로 받는다 (1~2분)
+# npm run dev : package.json 의 scripts 에 적힌 &quot;dev&quot; 명령(vite)을 실행 → 개발 서버 http://localhost:5173
+#               코드를 고쳐 저장하면 브라우저가 저절로 바뀐다. 끌 때는 Ctrl+C
+npm run dev
 </code></pre>
 <blockquote class="note">
 <p><strong>[MSA 개념] React 코드는 React 심화 과정과 같다.</strong> <code>frontend/src/api.js</code> 의 <code>API_URL</code> 은 여전히 <code>http://localhost:8080/api</code> 다. 그 뒤에 서버가 몇 개로 나뉘었는지 React 는 모른다. 바뀐 것은 주석 몇 줄뿐이다.</p>
@@ -216,7 +218,9 @@ function Show-Error($err) {                     # $err: catch 에서 받은 오�
 $api = &quot;http://localhost:8080/api&quot;      # 모든 요청은 게이트웨이(8080)로 보낸다
 </code></pre>
 <p><strong>[PS]</strong> ① 로그인해서 토큰 받기 (7-2 에서 만든 minsu 계정)</p>
-<pre><code class="language-powershell"># 로그인 요청 → 응답(access_token, user)을 $login 에 담는다. charset=utf-8 을 붙여야 한글이 깨지지 않는다
+<pre><code class="language-powershell"># -Method Post : 요청 방식 (생략하면 Get). -Uri : 주소. -Body : 보낼 JSON 글. -ContentType : &quot;보내는 글은 JSON 이다&quot; 라는 표시
+#   charset=utf-8 까지 적어야 Windows PowerShell 에서 한글이 깨지지 않는다
+# $login = ... : 응답(access_token, user)을 변수 $login 에 담아 두고 아래에서 꺼내 쓴다
 $login = Invoke-RestMethod -Method Post -Uri &quot;$api/auth/login&quot; -ContentType &quot;application/json; charset=utf-8&quot; -Body '{&quot;username&quot;:&quot;minsu&quot;,&quot;password&quot;:&quot;password123&quot;}'
 $login.user                                                   # 로그인한 사람 정보 (id, username, nickname)
 # 다음 요청마다 붙일 헤더: Authorization: Bearer &lt;토큰&gt;
@@ -247,6 +251,8 @@ try { Invoke-RestMethod -Method Post -Uri &quot;$api/posts&quot; -ContentType &q
 <p>게이트웨이가 손님이 보낸 <code>X-User-Id</code> 를 지우고, 토큰이 없으니 401 로 돌려보냈다. (6장 <code>AuthFilter</code> ①, ③)</p>
 <p><strong>[PS]</strong> ④ 남의 글 삭제 - 목록에서 민수가 쓰지 않은 글(지은의 글)을 하나 골라 지워 본다</p>
 <pre><code class="language-powershell"># 글 목록에서 user_id 가 내 번호가 아닌 글 하나 고르기
+#   | Where-Object { 조건 } : 앞의 결과 중 조건이 맞는 것만 남긴다 ($_ = 글 하나, -ne = 같지 않다)
+#   | Select-Object -First 1 : 그중 첫 번째 하나만
 $other = (Invoke-RestMethod &quot;$api/posts&quot;) | Where-Object { $_.user_id -ne $login.user.id } | Select-Object -First 1
 $other.id, $other.writer                                       # 고른 글의 번호와 작성자 (지은)
 # 민수의 토큰으로 지은의 글 삭제 → post-service 가 403 으로 막아야 한다
@@ -258,7 +264,7 @@ try { Invoke-RestMethod -Method Delete -Uri &quot;$api/posts/$($other.id)&quot; 
 <p>이번에는 토큰이 올바르니 게이트웨이를 통과했고, <strong>post-service</strong> 가 글 주인을 비교해 403 을 돌려줬다.</p>
 <p><strong>[PS]</strong> ⑤ 내 글 삭제</p>
 <pre><code class="language-powershell">Invoke-RestMethod -Method Delete -Uri &quot;$api/posts/$($post.id)&quot; -Headers $headers    # ②에서 쓴 내 글 삭제 → 성공 (아무것도 안 찍히면 정상)
-Invoke-RestMethod -Uri &quot;$api/posts&quot; | Format-Table id, user_id, writer, title      # 남은 글 목록을 표로
+Invoke-RestMethod -Uri &quot;$api/posts&quot; | Format-Table id, user_id, writer, title      # | Format-Table 칸이름... : 적은 칸만 표로 보여 준다
 </code></pre>
 <blockquote class="note">
 <p><strong>PowerShell 에서 한글이 깨진다면</strong> - Windows PowerShell 5.1 은 응답에 글자 코드(charset)가 없으면 한글을 잘못 읽는다. 그래서 두 서비스의 <code>application.yml</code> 에 <code>spring.servlet.encoding.force-response: true</code> 를 넣어 <code>application/json;charset=UTF-8</code> 로 응답하게 했다. 요청 본문은 <code>-ContentType "application/json; charset=utf-8"</code> 로 보낸다.</p>
