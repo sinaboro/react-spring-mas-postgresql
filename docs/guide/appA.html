@@ -91,6 +91,48 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <article>
 <select class="jump" onchange="location.href=this.value" aria-label="장 이동"><option value="ch00.html">0장 과정 안내</option><option value="ch01.html">1장 MSA 란 무엇인가</option><option value="ch02.html">2장 DB 준비 - 컨테이너 하나에 DB 둘</option><option value="ch03.html">3장 프로젝트 구조 - 서비스 3개를 IntelliJ 로 열기</option><option value="ch04.html">4장 user-service - 회원가입 · 로그인 · 토큰 발급</option><option value="ch05.html">5장 post-service - FK 없이 게시글 저장하기</option><option value="ch06.html">6장 api-gateway - 라우팅과 인증을 정문에서</option><option value="ch07.html">7장 전체 실행, React 연결, 장애 실험</option><option value="ch08.html">8장 정리와 더 나아가기</option><option value="appA.html" selected>부록 A 오류 해결</option><option value="appB.html">부록 B 확인 문제 풀이</option></select>
 <h1 id="부록-a-오류-해결">부록 A. 오류 해결</h1>
+<h2 id="a-0-준비-폴더">A-0. 준비 · 폴더</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>증상</th>
+<th>원인</th>
+<th>해결</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker</code>, <code>git</code>, <code>node</code>, <code>npm</code> 이 "인식되지 않습니다"</td>
+<td>설치하지 않았거나, 설치 전에 연 PowerShell 창이다</td>
+<td>설치한 뒤 PowerShell 창을 <strong>새로</strong> 연다. Docker 는 Docker Desktop 을 실행해 둔다</td>
+</tr>
+<tr>
+<td><code>docker compose up</code> 에서 <code>failed to connect to the docker API</code></td>
+<td>Docker Desktop 이 꺼져 있다</td>
+<td>Docker Desktop 을 실행하고 고래 아이콘이 멈출 때까지 기다린다</td>
+</tr>
+<tr>
+<td><code>no configuration file provided: not found</code></td>
+<td><code>docker-compose.yml</code> 이 없는 폴더에서 쳤다</td>
+<td><code>cd C:\study\react-spring-mas-postgresql</code> 후 다시</td>
+</tr>
+<tr>
+<td><code>.\gradlew.bat</code> 이 "인식되지 않습니다"</td>
+<td><code>backend</code> 폴더가 아닌 곳에서 쳤다</td>
+<td><code>cd C:\study\react-spring-mas-postgresql\backend</code> 후 다시</td>
+</tr>
+<tr>
+<td><code>npm run dev</code> 가 <code>Could not read package.json</code></td>
+<td><code>frontend</code> 폴더가 아닌 곳에서 쳤다</td>
+<td><code>cd C:\study\react-spring-mas-postgresql\frontend</code> 후 다시</td>
+</tr>
+<tr>
+<td>붙여 넣은 명령이 <code>&gt;&gt;</code> 를 보이며 멈춘다</td>
+<td>따옴표나 <code>{ }</code> 가 덜 닫힌 채 붙여 넣어졌다</td>
+<td>Ctrl+C 로 멈추고 상자 전체를 다시 복사해 붙여 넣는다</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="a-1-db">A-1. DB</h2>
 <div class="tbl"><table>
 <thead>

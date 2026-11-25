@@ -165,8 +165,9 @@ volumes:
 </blockquote>
 <h2 id="2-2-켜고-확인하기">2-2. 켜고 확인하기</h2>
 <p><strong>[PS]</strong> <code>advanced</code> 폴더에서 (기초 과정의 DB 와 따로 켜진다)</p>
-<pre><code class="language-powershell">docker compose up -d
-docker compose ps
+<pre><code class="language-powershell">cd C:\study\react-spring-mas-postgresql\advanced   # 심화용 docker-compose.yml 이 있는 폴더
+docker compose up -d      # PostgreSQL(mas-adv-db) + Kafka(mas-adv-kafka) 켜기. 처음에는 이미지를 받느라 몇 분
+docker compose ps         # 둘 다 Up, db 는 healthy 인지 확인
 </code></pre>
 <pre><code class="language-text">NAME            IMAGE                STATUS                   PORTS
 mas-adv-db      postgres:18          Up 6 seconds (healthy)   0.0.0.0:5436-&gt;5432/tcp
@@ -174,13 +175,14 @@ mas-adv-kafka   apache/kafka:4.3.2   Up 6 seconds             0.0.0.0:9092-&gt;9
 </code></pre>
 <p>Kafka 는 켜지는 데 10초쯤 걸린다. 준비됐는지는 로그로 본다.</p>
 <p><strong>[PS]</strong></p>
-<pre><code class="language-powershell">docker logs mas-adv-kafka | Select-String &quot;Kafka Server started&quot;
+<pre><code class="language-powershell">docker logs mas-adv-kafka | Select-String &quot;Kafka Server started&quot;   # Kafka 로그에서 &quot;다 켜졌다&quot; 줄만 골라 보기 (안 보이면 10초 뒤 다시)
 </code></pre>
 <pre><code class="language-text">[2026-11-24 05:33:12,314] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)
 </code></pre>
 <p><strong>토픽 목록 보기</strong> - Kafka 이미지 안에 들어 있는 명령어(<code>/opt/kafka/bin/...</code>)를 <code>docker exec</code> 로 실행한다.</p>
 <p><strong>[PS]</strong></p>
-<pre><code class="language-powershell">docker exec mas-adv-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+<pre><code class="language-powershell"># 컨테이너 안의 Kafka 도구로 토픽 목록 보기 (처음에는 비어 있거나 내부 토픽만 보인다)
+docker exec mas-adv-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 </code></pre>
 <p>처음에는 아무것도 나오지 않는다. <code>user-events</code> 토픽은 <strong>서비스가 처음 쓸 때 Kafka 가 자동으로 만든다</strong>(자동 생성이 기본으로 켜져 있다). 3장에서 user-service 가 소식을 처음 보내면(또는 post-service 가 처음 듣기 시작하면) 생긴다. 그 뒤에 이 명령을 다시 실행해 보자.</p>
 <h2 id="2-3-intellij-로-열기">2-3. IntelliJ 로 열기</h2>

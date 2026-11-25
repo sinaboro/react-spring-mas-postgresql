@@ -447,8 +447,8 @@ Started UserServiceApplication in 12.965 seconds
 **[PS]**
 
 ```powershell
-docker exec mas-db psql -U postgres -d userdb -c "select id, username, nickname from users"
-docker exec mas-db psql -U postgres -d postdb -c "\dt"
+docker exec mas-db psql -U postgres -d userdb -c "select id, username, nickname from users"   # userdb 의 회원 목록
+docker exec mas-db psql -U postgres -d postdb -c "\dt"   # postdb 의 테이블 목록 (\dt) - users 가 없어야 정상
 ```
 
 ```text
@@ -471,15 +471,19 @@ Did not find any relations.        ← postdb 에는 아직 아무 테이블도 
 
 ```powershell
 # 오류가 나면 "상태코드 {"detail": "..."}" 모양으로 보여 주는 함수
-function Show-Error($err) {
+function Show-Error($err) {                     # $err: catch 에서 받은 오류 ($_)
+  # PowerShell 7 은 응답 본문을 ErrorDetails 에 넣어 준다
   if ($err.ErrorDetails.Message) { $body = $err.ErrorDetails.Message }
   else {
+    # Windows PowerShell 5.1 은 응답 스트림을 직접 UTF-8 로 읽어야 한글이 깨지지 않는다
     $reader = New-Object System.IO.StreamReader($err.Exception.Response.GetResponseStream(), [System.Text.Encoding]::UTF8)
     $body = $reader.ReadToEnd()
   }
-  "$([int]$err.Exception.Response.StatusCode) $body"
+  "$([int]$err.Exception.Response.StatusCode) $body"   # 예: 401 {"detail":"로그인이 필요합니다"}
 }
+# ① 헤더 없이 내 정보 요청 → 401 이 나와야 한다 (try 로 감싸서 오류를 Show-Error 로 보기 좋게 찍는다)
 try { Invoke-RestMethod http://localhost:8081/api/auth/me } catch { Show-Error $_ }
+# ② 게이트웨이인 척 X-User-Id 헤더를 직접 붙여 요청 → 1번 회원 정보가 나온다 (8081 에 바로 보냈기 때문)
 Invoke-RestMethod http://localhost:8081/api/auth/me -Headers @{ "X-User-Id" = "1" }
 ```
 

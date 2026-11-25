@@ -113,9 +113,9 @@ export default ProfilePage;
 **[PS]** 새 터미널에서 (처음 한 번만 `npm install`. 기초 과정의 `frontend` 가 아니라 **`advanced\frontend`** 다)
 
 ```powershell
-cd C:\study\react-spring-mas-postgresql\advanced\frontend
-npm install
-npm run dev
+cd C:\study\react-spring-mas-postgresql\advanced\frontend   # 심화용 React 폴더
+npm install       # 처음 한 번만: 라이브러리 받기
+npm run dev       # http://localhost:5173 (기초 과정의 React 가 켜져 있으면 먼저 Ctrl+C 로 끈다)
 ```
 
 게이트웨이까지 켠 상태에서 http://localhost:5173 → 로그인 → 머리글의 **닉네임**을 누르면 내 정보 화면이 열린다. 닉네임을 바꾸고 **닉네임 바꾸기**를 누른다.

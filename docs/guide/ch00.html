@@ -215,10 +215,21 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <li>JDK 21 (Eclipse Temurin), <strong>IntelliJ IDEA</strong></li>
 <li>Docker Desktop, Git</li>
 </ul>
+<p><strong>[PS]</strong> 설치 확인 - 버전이 나오면 된다 (Docker Desktop 은 먼저 실행해 둔다)</p>
+<pre><code class="language-powershell">node -v                   # Node.js 22 이상 (예: v22.x)
+npm -v                    # Node.js 와 함께 설치된다
+git --version             # Git
+docker --version          # Docker Desktop
+docker compose version    # compose (Docker Desktop 에 들어 있다)
+</code></pre>
+<blockquote class="note">
+<p>JDK 21 은 IntelliJ 가 내려받아 쓰므로 <code>java -version</code> 이 안 나와도 괜찮다(3장 3-4 의 JDK 설정). 명령이 "인식되지 않습니다" 라고 나오면 그 프로그램을 설치한 뒤 <strong>PowerShell 창을 새로 열고</strong> 다시 확인한다.</p>
+</blockquote>
 <p><strong>[PS]</strong> 저장소 받기</p>
-<pre><code class="language-powershell">cd C:\study
-git clone https://github.com/sinaboro/react-spring-mas-postgresql.git
-cd react-spring-mas-postgresql
+<pre><code class="language-powershell">mkdir C:\study -Force      # 실습 폴더 만들기 (이미 있으면 그냥 넘어간다)
+cd C:\study
+git clone https://github.com/sinaboro/react-spring-mas-postgresql.git   # 저장소를 내 PC 로 받는다 (react-spring-mas-postgresql 폴더가 생긴다)
+cd react-spring-mas-postgresql   # 이후 [PS] 명령의 기준 폴더
 </code></pre>
 <p><strong>폴더 구성</strong></p>
 <pre><code class="language-text">react-spring-mas-postgresql/
@@ -237,6 +248,14 @@ cd react-spring-mas-postgresql
 <blockquote class="note">
 <p><strong>먼저 해 볼 사람은</strong> 7장의 "7-1. 켜는 순서" 를 따라 전체를 켜 보자. 완성본을 먼저 만져 보고 1장부터 읽으면 이해가 빠르다.</p>
 </blockquote>
+<p><strong>교안 읽는 법</strong></p>
+<ul>
+<li><strong>[PS]</strong> 표시 아래 명령은 PowerShell(또는 VS Code·IntelliJ 의 터미널)에서 친다. 위치가 중요한 명령은 맨 위에 <code>cd C:\study\...</code> 가 있으니 그 줄부터 친다.</li>
+<li>명령 뒤의 <code># ...</code> 는 <strong>설명(주석)</strong> 이다. PowerShell 은 <code>#</code> 뒤를 무시하므로 함께 복사해 붙여 넣어도 된다.</li>
+<li>명령 아래의 회색 상자(<code>text</code>)는 <strong>화면에 나오는 결과의 예</strong>다. 번호·시각·토큰은 내 화면과 다를 수 있다.</li>
+<li>한 상자씩 붙여 넣고, 결과가 교안과 비슷한지 본 뒤 다음으로 넘어간다. 오류가 나면 <strong>부록 A</strong> 에서 증상을 찾는다.</li>
+<li>PowerShell 에서 <strong>마우스 오른쪽 클릭</strong>이 붙여넣기다. 여러 줄을 붙여 넣으면 한 줄씩 차례로 실행된다.</li>
+</ul>
 <h2 id="정리">정리</h2>
 <ul>
 <li>이 교안은 로그인 게시판 서버를 <strong>게이트웨이 + 회원 서비스 + 게시글 서비스</strong>로 나눈다.</li>

@@ -92,6 +92,33 @@ footer{padding:40px 0 50px;color:var(--sub);font-size:14px;text-align:center}
 <select class="jump" onchange="location.href=this.value" aria-label="장 이동"><option value="ch00.html">0장 심화 과정 안내</option><option value="ch01.html">1장 이벤트와 Kafka - 왜 필요하고 무엇인가</option><option value="ch02.html">2장 준비 - DB 와 Kafka 켜기, 프로젝트 열기</option><option value="ch03.html">3장 user-service - 닉네임 바꾸기와 이벤트 보내기</option><option value="ch04.html">4장 post-service - 이벤트 받아 writer 고치기</option><option value="ch05.html">5장 React - 내 정보 화면</option><option value="ch06.html">6장 실험 - 따라잡기 · 옛 토큰 · Kafka 가 꺼지면</option><option value="ch07.html">7장 정리와 더 나아가기 - Outbox, 탈퇴 이벤트, Redis</option><option value="appA.html" selected>부록 A 오류 해결</option><option value="appB.html">부록 B 확인 문제 풀이</option></select>
 <h1 id="부록-a-오류-해결">부록 A. 오류 해결</h1>
 <p>기초 과정 부록 A 의 내용(포트 충돌, jwt.secret, PowerShell 한글 등)은 심화 과정에도 그대로 해당한다. 여기에는 심화 과정에서 새로 생길 수 있는 것만 모았다.</p>
+<h2 id="a-0-저장소-받기">A-0. 저장소 받기</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>증상</th>
+<th>원인</th>
+<th>해결</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git pull</code> 이 <code>Your local changes ... would be overwritten</code> 으로 멈춘다</td>
+<td>기초 과정에서 고친 파일이 남아 있다</td>
+<td>고친 것을 버려도 되면 <code>git stash</code> 후 다시 <code>git pull</code>. 남기고 싶으면 저장소를 다른 폴더에 새로 <code>git clone</code> 한다</td>
+</tr>
+<tr>
+<td><code>advanced</code> 폴더가 없다</td>
+<td>심화 과정이 생기기 전에 받은 저장소다</td>
+<td><code>git pull</code> 로 최신을 받는다</td>
+</tr>
+<tr>
+<td>5173 이 이미 쓰는 중이라며 React 가 5174 로 켜진다</td>
+<td>기초 과정의 React(<code>npm run dev</code>)가 아직 켜져 있다</td>
+<td>기초 쪽 터미널에서 Ctrl+C 로 끄고 다시 켠다</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="a-1-kafka">A-1. Kafka</h2>
 <div class="tbl"><table>
 <thead>

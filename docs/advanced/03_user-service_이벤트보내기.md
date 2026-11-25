@@ -379,6 +379,7 @@ IntelliJ 콘솔에 이런 줄이 보이면 소식이 Kafka 에 도착한 것이�
 **[PS]** Kafka 에 정말 쌓였는지 직접 꺼내 보자 (5초 동안 읽고 끝난다)
 
 ```powershell
+# user-events 토픽을 처음부터(--from-beginning) 읽어 키와 함께 찍는다. 5초 동안 새 메시지가 없으면 끝난다
 docker exec mas-adv-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic user-events --from-beginning --formatter-property print.key=true --timeout-ms 5000
 ```
 

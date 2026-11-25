@@ -554,8 +554,8 @@ public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleMissingHeader(Missi
 </code></pre>
 <p><strong>② userdb 에 저장됐는지 확인</strong></p>
 <p><strong>[PS]</strong></p>
-<pre><code class="language-powershell">docker exec mas-db psql -U postgres -d userdb -c &quot;select id, username, nickname from users&quot;
-docker exec mas-db psql -U postgres -d postdb -c &quot;\dt&quot;
+<pre><code class="language-powershell">docker exec mas-db psql -U postgres -d userdb -c &quot;select id, username, nickname from users&quot;   # userdb 의 회원 목록
+docker exec mas-db psql -U postgres -d postdb -c &quot;\dt&quot;   # postdb 의 테이블 목록 (\dt) - users 가 없어야 정상
 </code></pre>
 <pre><code class="language-text"> id | username | nickname
 ----+----------+----------
@@ -571,15 +571,19 @@ Did not find any relations.        ← postdb 에는 아직 아무 테이블도 
 <p>헤더 <strong>없이</strong> 보내면 어떻게 될까? PowerShell 로 직접 보내 보자. 먼저 오류 응답을 보기 좋게 찍어 주는 작은 함수를 만든다. (Windows PowerShell 5.1 은 오류 응답의 내용을 보여 주지 않을 때가 있어서 이 함수가 필요하다. 7장에서도 쓴다)</p>
 <p><strong>[PS]</strong></p>
 <pre><code class="language-powershell"># 오류가 나면 &quot;상태코드 {&quot;detail&quot;: &quot;...&quot;}&quot; 모양으로 보여 주는 함수
-function Show-Error($err) {
+function Show-Error($err) {                     # $err: catch 에서 받은 오류 ($_)
+  # PowerShell 7 은 응답 본문을 ErrorDetails 에 넣어 준다
   if ($err.ErrorDetails.Message) { $body = $err.ErrorDetails.Message }
   else {
+    # Windows PowerShell 5.1 은 응답 스트림을 직접 UTF-8 로 읽어야 한글이 깨지지 않는다
     $reader = New-Object System.IO.StreamReader($err.Exception.Response.GetResponseStream(), [System.Text.Encoding]::UTF8)
     $body = $reader.ReadToEnd()
   }
-  &quot;$([int]$err.Exception.Response.StatusCode) $body&quot;
+  &quot;$([int]$err.Exception.Response.StatusCode) $body&quot;   # 예: 401 {&quot;detail&quot;:&quot;로그인이 필요합니다&quot;}
 }
+# ① 헤더 없이 내 정보 요청 → 401 이 나와야 한다 (try 로 감싸서 오류를 Show-Error 로 보기 좋게 찍는다)
 try { Invoke-RestMethod http://localhost:8081/api/auth/me } catch { Show-Error $_ }
+# ② 게이트웨이인 척 X-User-Id 헤더를 직접 붙여 요청 → 1번 회원 정보가 나온다 (8081 에 바로 보냈기 때문)
 Invoke-RestMethod http://localhost:8081/api/auth/me -Headers @{ &quot;X-User-Id&quot; = &quot;1&quot; }
 </code></pre>
 <pre><code class="language-text">401 {&quot;detail&quot;:&quot;로그인이 필요합니다&quot;}

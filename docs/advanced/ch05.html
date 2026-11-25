@@ -212,9 +212,9 @@ export default ProfilePage;
 <p><code>App.jsx</code> 에는 <code>/me</code> 를 <code>ProtectedRoute</code> 로 감싸 더했고, <code>Layout.jsx</code> 에서는 머리글의 닉네임을 <code>&lt;Link to="/me"&gt;</code> 로 바꿨다.</p>
 <h2 id="5-4-켜서-확인하기">5-4. 켜서 확인하기</h2>
 <p><strong>[PS]</strong> 새 터미널에서 (처음 한 번만 <code>npm install</code>. 기초 과정의 <code>frontend</code> 가 아니라 <strong><code>advanced\frontend</code></strong> 다)</p>
-<pre><code class="language-powershell">cd C:\study\react-spring-mas-postgresql\advanced\frontend
-npm install
-npm run dev
+<pre><code class="language-powershell">cd C:\study\react-spring-mas-postgresql\advanced\frontend   # 심화용 React 폴더
+npm install       # 처음 한 번만: 라이브러리 받기
+npm run dev       # http://localhost:5173 (기초 과정의 React 가 켜져 있으면 먼저 Ctrl+C 로 끈다)
 </code></pre>
 <p>게이트웨이까지 켠 상태에서 http://localhost:5173 → 로그인 → 머리글의 <strong>닉네임</strong>을 누르면 내 정보 화면이 열린다. 닉네임을 바꾸고 <strong>닉네임 바꾸기</strong>를 누른다.</p>
 <figure><a href="../images/d2_profile.png" target="_blank"><img src="../images/d2_profile.png" alt="내 정보 화면 - 닉네임을 바꾸면 머리글도 바로 바뀐다" loading="lazy"></a><figcaption>내 정보 화면 - 닉네임을 바꾸면 머리글도 바로 바뀐다</figcaption></figure>

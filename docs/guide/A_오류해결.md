@@ -1,5 +1,16 @@
 # 부록 A. 오류 해결
 
+## A-0. 준비 · 폴더
+
+| 증상 | 원인 | 해결 |
+|---|---|---|
+| `docker`, `git`, `node`, `npm` 이 "인식되지 않습니다" | 설치하지 않았거나, 설치 전에 연 PowerShell 창이다 | 설치한 뒤 PowerShell 창을 **새로** 연다. Docker 는 Docker Desktop 을 실행해 둔다 |
+| `docker compose up` 에서 `failed to connect to the docker API` | Docker Desktop 이 꺼져 있다 | Docker Desktop 을 실행하고 고래 아이콘이 멈출 때까지 기다린다 |
+| `no configuration file provided: not found` | `docker-compose.yml` 이 없는 폴더에서 쳤다 | `cd C:\study\react-spring-mas-postgresql` 후 다시 |
+| `.\gradlew.bat` 이 "인식되지 않습니다" | `backend` 폴더가 아닌 곳에서 쳤다 | `cd C:\study\react-spring-mas-postgresql\backend` 후 다시 |
+| `npm run dev` 가 `Could not read package.json` | `frontend` 폴더가 아닌 곳에서 쳤다 | `cd C:\study\react-spring-mas-postgresql\frontend` 후 다시 |
+| 붙여 넣은 명령이 `>>` 를 보이며 멈춘다 | 따옴표나 `{ }` 가 덜 닫힌 채 붙여 넣어졌다 | Ctrl+C 로 멈추고 상자 전체를 다시 복사해 붙여 넣는다 |
+
 ## A-1. DB
 
 | 증상 | 원인 | 해결 |

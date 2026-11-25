@@ -205,7 +205,7 @@ public class Post {
 **[PS]**
 
 ```powershell
-docker exec mas-db psql -U postgres -d postdb -c "\d posts"
+docker exec mas-db psql -U postgres -d postdb -c "\d posts"   # posts 테이블의 칸(열)과 제약 조건 보기 - Foreign-key 가 없다
 ```
 
 ```text
@@ -487,7 +487,7 @@ IntelliJ 에서 `PostServiceApplication` 을 ▶ 로 실행하고 http://localho
 **[PS]**
 
 ```powershell
-docker exec mas-db psql -U postgres -d postdb -c "truncate posts restart identity"
+docker exec mas-db psql -U postgres -d postdb -c "truncate posts restart identity"   # 글을 모두 지우고 번호(id)를 1부터 다시
 ```
 
 ## 정리

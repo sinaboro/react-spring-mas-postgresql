@@ -347,7 +347,7 @@ public class Post {
 </code></pre>
 <p>서비스를 켠 뒤 <code>postdb</code> 의 <code>posts</code> 테이블을 보면 <strong>외래 키(Foreign-key) 줄이 없다</strong>.</p>
 <p><strong>[PS]</strong></p>
-<pre><code class="language-powershell">docker exec mas-db psql -U postgres -d postdb -c &quot;\d posts&quot;
+<pre><code class="language-powershell">docker exec mas-db psql -U postgres -d postdb -c &quot;\d posts&quot;   # posts 테이블의 칸(열)과 제약 조건 보기 - Foreign-key 가 없다
 </code></pre>
 <pre><code class="language-text">   Column   |              Type              | Nullable
 ------------+--------------------------------+----------
@@ -615,7 +615,7 @@ public class PostController {
 </blockquote>
 <p>시험이 끝나면 이 글은 지워 두자. (7장에서 처음부터 다시 만든다)</p>
 <p><strong>[PS]</strong></p>
-<pre><code class="language-powershell">docker exec mas-db psql -U postgres -d postdb -c &quot;truncate posts restart identity&quot;
+<pre><code class="language-powershell">docker exec mas-db psql -U postgres -d postdb -c &quot;truncate posts restart identity&quot;   # 글을 모두 지우고 번호(id)를 1부터 다시
 </code></pre>
 <h2 id="정리">정리</h2>
 <ul>
